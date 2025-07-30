@@ -6,6 +6,7 @@ use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\LoanController;
 use App\Http\Controllers\API\BookController;
 use App\Http\Controllers\Api\StudentController;
+use App\Http\Controllers\Api\FavoriteController;
 use App\Http\Controllers\API\CategoryController;
 
 Route::get('/user', function (Request $request) {
@@ -31,4 +32,10 @@ Route::delete('/loans/{id}', [LoanController::class, 'cancelLoan']);
 Route::post('/register', [AuthController::class, 'store']);
 Route::post('/login', [AuthController::class, 'signin']);
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'destroy']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/favorites', [FavoriteController::class, 'index']);
+    Route::post('/favorites', [FavoriteController::class, 'store']);
+    Route::delete('/favorites', [FavoriteController::class, 'destroy']);
+});
 

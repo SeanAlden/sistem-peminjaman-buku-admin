@@ -88,6 +88,27 @@ class AuthController extends Controller
     }
 
     // Fungsi untuk melakukan login
+    // public function signin(Request $request)
+    // {
+    //     $request->validate([
+    //         'email' => 'required|email',
+    //         'password' => 'required|string',
+    //     ]);
+
+    //     $user = User::where('email', $request->email)->first();
+    //     if (!$user || !Hash::check($request->password, $user->password)) {
+    //         return response([
+    //             'message' => 'Kredensial login salah'
+    //         ], 401);
+    //     }
+    //     $token = $user->createToken('auth_token')->plainTextToken;
+    //     $response = [
+    //         'user' => $user,
+    //         'token' => $token
+    //     ];
+    //     return response($response, 201);
+    // }
+
     public function signin(Request $request)
     {
         $request->validate([
@@ -96,11 +117,22 @@ class AuthController extends Controller
         ]);
 
         $user = User::where('email', $request->email)->first();
+
+        // Cek apakah user ditemukan dan password sesuai
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response([
                 'message' => 'Kredensial login salah'
             ], 401);
         }
+
+        // Cek apakah usertype adalah 'admin'
+        if ($user->usertype === 'admin') {
+            return response([
+                'message' => 'Login hanya diizinkan untuk user biasa'
+            ], 403);
+        }
+
+        // Jika lolos, generate token dan return response
         $token = $user->createToken('auth_token')->plainTextToken;
         $response = [
             'user' => $user,

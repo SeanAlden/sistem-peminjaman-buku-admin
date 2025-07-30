@@ -17,4 +17,10 @@ class Book extends Model
     {
         return $this->hasMany(Loan::class);
     }
+
+    public function favoritedBy()
+    {
+        return $this->hasMany(Favorite::class);
+    }
+
 }
