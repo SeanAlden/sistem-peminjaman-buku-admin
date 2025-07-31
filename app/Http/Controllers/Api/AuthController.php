@@ -151,37 +151,6 @@ class AuthController extends Controller
         ];
     }
 
-    // Menampilkan semua user
-    public function showAllUser()
-    {
-        $users = User::all();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'All users retrieved successfully',
-            'data' => $users
-        ]);
-    }
-
-    // Menampilkan user berdasarkan ID
-    public function showUserById($id)
-    {
-        $user = User::find($id);
-
-        if (!$user) {
-            return response()->json([
-                'success' => false,
-                'message' => 'User not found'
-            ], 404);
-        }
-
-        return response()->json([
-            'success' => true,
-            'message' => 'User retrieved successfully',
-            'data' => $user
-        ]);
-    }
-
     // Fungsi untuk mengupdate data profil
     public function updateProfile(Request $request)
     {
@@ -236,29 +205,6 @@ class AuthController extends Controller
         ]);
     }
 
-    // public function uploadProfileImage(Request $request)
-    // {
-    //     /**
-    //      * @var \App\Models\User $user
-    //      */
-    //     $user = Auth::user();
-
-    //     if ($request->hasFile('image')) {
-    //         $file = $request->file('image');
-    //         $filename = time() . '_' . $file->getClientOriginalName();
-    //         $path = $file->storeAs('public/profile_images', $filename);
-    //         Log::info("Image stored at path: " . $path);
-
-    //         $user->profile_image = $filename;
-    //         // $user->profile_image = $path;
-    //         $user->save();
-
-    //         return response()->json(['message' => 'Image uploaded', 'filename' => $filename]);
-    //     }
-
-    //     return response()->json(['error' => 'No image uploaded'], 400);
-    // }
-
     // Fungsi untuk mengupdate gambar profil
     public function updateProfileImage(Request $request)
     {
@@ -293,6 +239,60 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'No image uploaded'], 400);
     }
+
+    // Menampilkan semua user
+    public function showAllUser()
+    {
+        $users = User::all();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'All users retrieved successfully',
+            'data' => $users
+        ]);
+    }
+
+    // Menampilkan user berdasarkan ID
+    public function showUserById($id)
+    {
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'User retrieved successfully',
+            'data' => $user
+        ]);
+    }
+
+    // public function uploadProfileImage(Request $request)
+    // {
+    //     /**
+    //      * @var \App\Models\User $user
+    //      */
+    //     $user = Auth::user();
+
+    //     if ($request->hasFile('image')) {
+    //         $file = $request->file('image');
+    //         $filename = time() . '_' . $file->getClientOriginalName();
+    //         $path = $file->storeAs('public/profile_images', $filename);
+    //         Log::info("Image stored at path: " . $path);
+
+    //         $user->profile_image = $filename;
+    //         // $user->profile_image = $path;
+    //         $user->save();
+
+    //         return response()->json(['message' => 'Image uploaded', 'filename' => $filename]);
+    //     }
+
+    //     return response()->json(['error' => 'No image uploaded'], 400);
+    // }
 
     // public function getProfileImage(Request $request) 
     // {

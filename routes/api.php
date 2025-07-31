@@ -32,6 +32,9 @@ Route::delete('/loans/{id}', [LoanController::class, 'cancelLoan']);
 Route::post('/register', [AuthController::class, 'store']);
 Route::post('/login', [AuthController::class, 'signin']);
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'destroy']);
+Route::middleware('auth:sanctum')->put('/user/update', [AuthController::class, 'updateProfile']);
+Route::middleware('auth:sanctum')->put('/user/password', [AuthController::class, 'updatePassword']);
+Route::middleware('auth:sanctum')->post('/user/update-profile-image', [AuthController::class, 'updateProfileImage']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/favorites', [FavoriteController::class, 'index']);
