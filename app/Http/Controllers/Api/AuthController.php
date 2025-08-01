@@ -240,6 +240,16 @@ class AuthController extends Controller
         return response()->json(['message' => 'No image uploaded'], 400);
     }
 
+    // Fungsi untuk mendapatkan data gambar profil
+    public function getProfileImage(Request $request)
+    {
+        $user = Auth::user();
+
+        return response()->json([
+            'profile_image' => $user ? $user->profile_image : null,
+        ], 200);
+    }
+
     // Menampilkan semua user
     public function showAllUser()
     {
@@ -309,16 +319,6 @@ class AuthController extends Controller
     //         'profile_image' => null,
     //     ], 404);
     // }
-
-    // Fungsi untuk mendapatkan data gambar profil
-    public function getProfileImage(Request $request)
-    {
-        $user = Auth::user();
-
-        return response()->json([
-            'profile_image' => $user ? $user->profile_image : null,
-        ], 200);
-    }
 
     // Mengirim kode verifikasi ke email
     public function getVerificationCode(Request $request)

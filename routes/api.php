@@ -35,6 +35,7 @@ Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'dest
 Route::middleware('auth:sanctum')->put('/user/update', [AuthController::class, 'updateProfile']);
 Route::middleware('auth:sanctum')->put('/user/password', [AuthController::class, 'updatePassword']);
 Route::middleware('auth:sanctum')->post('/user/update-profile-image', [AuthController::class, 'updateProfileImage']);
+Route::middleware('auth:sanctum')->get('/user/profile-image', [AuthController::class, 'getProfileImage']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/favorites', [FavoriteController::class, 'index']);

@@ -8,6 +8,7 @@ use App\Http\Middleware\AdminAuthMiddleware;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AdminAuthController;
+use App\Http\Controllers\PredictionController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -43,10 +44,21 @@ Route::middleware('adminMiddleware')->group(function () {
 
     Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
 
+    Route::get('/admin/profile', [AdminAuthController::class, 'editProfile'])->name('admin.profile');
+    Route::post('/admin/profile', [AdminAuthController::class, 'updateProfile'])->name('admin.profile.update');
+
+    Route::get('/admin/password', [AdminAuthController::class, 'editPassword'])->name('admin.password');
+    Route::post('/admin/password', [AdminAuthController::class, 'updatePassword'])->name('admin.password.update');
+
     Route::get('/admin/dashboard', [DashboardController::class, 'viewDashboard'])->name('admin.dashboard');
+
+    Route::get('/predictions', [PredictionController::class, 'index'])->name('predictions.index');
+    Route::post('/predictions/refresh', [PredictionController::class, 'refresh'])->name('predictions.refresh');
 });
 
-Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
-Route::post('/admin/login', [AdminAuthController::class, 'login']);
-Route::get('/admin/register', [AdminAuthController::class, 'showRegisterForm'])->name('admin.register');
-Route::post('/admin/register', [AdminAuthController::class, 'register']);
+Route::middleware('authenticatedAdminMiddleware')->group(function () {
+    Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
+    Route::post('/admin/login', [AdminAuthController::class, 'login']);
+    Route::get('/admin/register', [AdminAuthController::class, 'showRegisterForm'])->name('admin.register');
+    Route::post('/admin/register', [AdminAuthController::class, 'register']);
+});

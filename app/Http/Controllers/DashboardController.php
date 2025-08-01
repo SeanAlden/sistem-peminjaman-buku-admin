@@ -43,4 +43,43 @@ class DashboardController extends Controller
             'userName' => \Illuminate\Support\Facades\Auth::user()->name,
         ]);
     }
+
+    // public function viewDashboard(Request $request)
+    // {
+    //     $year = $request->input('year', now()->year);
+
+    //     $totalBooks = Book::count();
+    //     $totalFine = Loan::whereYear('loan_date', $year)->sum('fine_amount');
+    //     $totalUsers = User::where('usertype', 'user')->count();
+
+    //     $loansPerMonth = Loan::selectRaw('MONTH(loan_date) as month, COUNT(*) as count')
+    //         ->whereYear('loan_date', $year)
+    //         ->groupByRaw('MONTH(loan_date)')
+    //         ->pluck('count', 'month')
+    //         ->toArray();
+
+    //     $labels = [];
+    //     $data = [];
+    //     for ($i = 1; $i <= 12; $i++) {
+    //         $labels[] = Carbon::create()->month($i)->format('F');
+    //         $data[] = $loansPerMonth[$i] ?? 0;
+    //     }
+
+    //     // Tahun-tahun tersedia untuk dropdown
+    //     $availableYears = Loan::selectRaw('YEAR(loan_date) as year')
+    //         ->distinct()
+    //         ->orderByDesc('year')
+    //         ->pluck('year');
+
+    //     return view('dashboard', [
+    //         'totalBooks' => $totalBooks,
+    //         'totalFine' => $totalFine,
+    //         'totalUsers' => $totalUsers,
+    //         'chartLabels' => $labels,
+    //         'chartData' => $data,
+    //         'userName' => \Illuminate\Support\Facades\Auth::user()->name,
+    //         'availableYears' => $availableYears,
+    //         'year' => $year,
+    //     ]);
+    // }
 }

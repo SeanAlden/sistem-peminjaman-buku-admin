@@ -15,8 +15,8 @@
 
         <!-- Sidebar -->
         <aside :class="sidebarExpanded ? 'w-64' : 'w-16'"
-            class="fixed z-30 flex flex-col h-full text-white transition-all duration-300 bg-green-800">
-            <div class="flex items-center justify-between px-4 py-4 border-b border-green-700">
+            class="fixed z-30 flex flex-col h-full text-white transition-all duration-300 bg-orange-800">
+            <div class="flex items-center justify-between px-4 py-4 border-b border-orange-700">
                 <span x-show="sidebarExpanded" class="text-lg font-semibold">Sistem Peminjaman Buku</span>
                 <button @click="sidebarExpanded = !sidebarExpanded" class="text-white focus:outline-none">
                     <!-- Menu Icon -->
@@ -31,7 +31,7 @@
             <nav class="flex-1 mt-4">
                 <!-- Student List with User Icon -->
                 <a href="{{ route('students.index') }}"
-                    class="flex items-center px-4 py-3 transition-colors hover:bg-green-700">
+                    class="flex items-center px-4 py-3 transition-colors hover:bg-orange-700">
                     <!-- Heroicon: User -->
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -42,7 +42,7 @@
                 </a>
 
                 <a href="{{ route('categories.index') }}"
-                    class="flex items-center px-4 py-3 transition-colors hover:bg-green-700">
+                    class="flex items-center px-4 py-3 transition-colors hover:bg-orange-700">
                     <!-- Heroicon: Tag -->
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -54,7 +54,7 @@
 
                 <!-- Books with Book Icon -->
                 <a href="{{ route('books.index') }}"
-                    class="flex items-center px-4 py-3 transition-colors hover:bg-green-700">
+                    class="flex items-center px-4 py-3 transition-colors hover:bg-orange-700">
                     <!-- Heroicon: Book -->
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -66,7 +66,7 @@
 
                 <!-- Loan Menu with Calendar Icon -->
                 <a href="{{ route('loans.index') }}"
-                    class="flex items-center px-4 py-3 transition-colors hover:bg-green-700">
+                    class="flex items-center px-4 py-3 transition-colors hover:bg-orange-700">
                     <!-- Heroicon: Calendar -->
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -111,8 +111,8 @@
 
         <!-- Sidebar -->
         <aside :class="sidebarExpanded ? 'w-64' : 'w-16'"
-            class="fixed z-30 flex flex-col h-full text-white transition-all duration-300 bg-green-800">
-            <div class="flex items-center justify-between px-4 py-4 border-b border-green-700">
+            class="fixed z-30 flex flex-col h-full text-white transition-all duration-300 bg-orange-800">
+            <div class="flex items-center justify-between px-4 py-4 border-b border-orange-700">
                 <span x-show="sidebarExpanded" class="text-lg font-semibold">Sistem Peminjaman Buku</span>
                 <button @click="sidebarExpanded = !sidebarExpanded" class="text-white focus:outline-none">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
@@ -125,7 +125,7 @@
 
             <nav class="flex-1 mt-4 space-y-1">
                 <a href="{{ route('students.index') }}"
-                    class="flex items-center px-4 py-3 transition-colors hover:bg-green-700">
+                    class="flex items-center px-4 py-3 transition-colors hover:bg-orange-700">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -135,7 +135,7 @@
                 </a>
 
                 <a href="{{ route('categories.index') }}"
-                    class="flex items-center px-4 py-3 transition-colors hover:bg-green-700">
+                    class="flex items-center px-4 py-3 transition-colors hover:bg-orange-700">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -145,7 +145,7 @@
                 </a>
 
                 <a href="{{ route('books.index') }}"
-                    class="flex items-center px-4 py-3 transition-colors hover:bg-green-700">
+                    class="flex items-center px-4 py-3 transition-colors hover:bg-orange-700">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -155,7 +155,7 @@
                 </a>
 
                 <a href="{{ route('loans.index') }}"
-                    class="flex items-center px-4 py-3 transition-colors hover:bg-green-700">
+                    class="flex items-center px-4 py-3 transition-colors hover:bg-orange-700">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -166,9 +166,9 @@
             </nav>
 
             <!-- Logout button at the bottom -->
-            <div class="mt-auto px-4 py-3 border-t border-green-700">
+            <div class="mt-auto px-4 py-3 border-t border-orange-700">
                 <button @click="showLogoutConfirm = true"
-                    class="flex items-center w-full px-2 py-2 text-left transition-colors hover:bg-green-700">
+                    class="flex items-center w-full px-2 py-2 text-left transition-colors hover:bg-orange-700">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -249,8 +249,8 @@
     <div x-data="{ sidebarOpen: false, sidebarExpanded: true, showLogoutConfirm: false }">
 
         <aside :class="sidebarExpanded ? 'w-64' : 'w-16'"
-            class="fixed z-30 flex flex-col h-full text-white transition-all duration-300 bg-green-800">
-            <div class="flex items-center justify-between px-4 py-4 border-b border-green-700">
+            class="fixed z-30 flex flex-col h-full text-white transition-all duration-300 bg-orange-800">
+            <div class="flex items-center justify-between px-4 py-4 border-b border-orange-700">
                 <span x-show="sidebarExpanded" class="text-lg font-semibold">Sistem Peminjaman Buku</span>
                 <button @click="sidebarExpanded = !sidebarExpanded" class="text-white focus:outline-none">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
@@ -264,7 +264,7 @@
             <nav class="flex-1 mt-4 space-y-1">
                 <!-- Dashboard Menu -->
                 <a href="{{ route('admin.dashboard') }}"
-                    class="flex items-center px-4 py-3 transition-colors hover:bg-green-700">
+                    class="flex items-center px-4 py-3 transition-colors hover:bg-orange-700">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -273,7 +273,7 @@
                     <span x-show="sidebarExpanded" class="ml-3">Dashboard</span>
                 </a>
                 <a href="{{ route('students.index') }}"
-                    class="flex items-center px-4 py-3 transition-colors hover:bg-green-700">
+                    class="flex items-center px-4 py-3 transition-colors hover:bg-orange-700">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -282,7 +282,7 @@
                     <span x-show="sidebarExpanded" class="ml-3">Student List</span>
                 </a>
                 <a href="{{ route('categories.index') }}"
-                    class="flex items-center px-4 py-3 transition-colors hover:bg-green-700">
+                    class="flex items-center px-4 py-3 transition-colors hover:bg-orange-700">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -291,7 +291,7 @@
                     <span x-show="sidebarExpanded" class="ml-3">Categories</span>
                 </a>
                 <a href="{{ route('books.index') }}"
-                    class="flex items-center px-4 py-3 transition-colors hover:bg-green-700">
+                    class="flex items-center px-4 py-3 transition-colors hover:bg-orange-700">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -300,7 +300,7 @@
                     <span x-show="sidebarExpanded" class="ml-3">Books</span>
                 </a>
                 <a href="{{ route('loans.index') }}"
-                    class="flex items-center px-4 py-3 transition-colors hover:bg-green-700">
+                    class="flex items-center px-4 py-3 transition-colors hover:bg-orange-700">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -308,11 +308,21 @@
                     </svg>
                     <span x-show="sidebarExpanded" class="ml-3">Loan List</span>
                 </a>
+                <!-- Prediction Menu -->
+                <a href="{{ route('predictions.index') }}"
+                    class="flex items-center px-4 py-3 transition-colors hover:bg-orange-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M11 11V3H5a2 2 0 00-2 2v6h8zm2 0h8V5a2 2 0 00-2-2h-6v8zm0 2v8h6a2 2 0 002-2v-6h-8zm-2 0H3v6a2 2 0 002 2h6v-8z" />
+                    </svg>
+                    <span x-show="sidebarExpanded" class="ml-3">Prediction</span>
+                </a>
             </nav>
 
-            <div class="mt-auto px-4 py-3 border-t border-green-700">
+            <div class="mt-auto px-4 py-3 border-t border-orange-700">
                 <button @click="showLogoutConfirm = true"
-                    class="flex items-center w-full px-2 py-2 text-left transition-colors hover:bg-green-700">
+                    class="flex items-center w-full px-2 py-2 text-left transition-colors hover:bg-orange-700">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -334,8 +344,29 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V4a2 2 0 10-4 0v1.341C7.67 7.165 6 9.388 6 12v2.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                     </svg>
-                    <img src="{{ asset('assets/images/profile.png') }}" alt="Profile"
-                        class="w-8 h-8 rounded-full border border-gray-300">
+                    {{-- <img src="{{ asset('assets/images/profile.png') }}" alt="Profile"
+                        class="w-8 h-8 rounded-full border border-gray-300"> --}}
+                    <div class="relative" x-data="{ openDropdown: false }">
+                        <img @click="openDropdown = !openDropdown"
+                            src="{{ Auth::user()->profile_image ? asset('storage/profile_images/' . Auth::user()->profile_image) : asset('assets/images/profile.png') }}"
+                            alt="Profile" class="w-8 h-8 rounded-full border border-gray-300 cursor-pointer">
+
+                        <div x-show="openDropdown" @click.away="openDropdown = false"
+                            class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50 py-2"
+                            style="display: none;">
+                            <div class="px-4 py-2 border-b text-center">
+                                <img src="{{ Auth::user()->profile_image ? asset('storage/profile_images/' . Auth::user()->profile_image) : asset('assets/images/profile.png') }}"
+                                    alt="Profile Image" class="mx-auto mb-2 w-12 h-12 rounded-full border">
+                                <p class="text-sm font-semibold">{{ Auth::user()->name }}</p>
+                                <p class="text-xs text-gray-500">{{ Auth::user()->email }}</p>
+                            </div>
+                            <a href="{{ route('admin.profile') }}"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Edit Profil</a>
+                            <a href="{{ route('admin.password') }}"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Ubah Password</a>
+                        </div>
+                    </div>
+
                 </div>
             </header>
             <main class="p-6">
