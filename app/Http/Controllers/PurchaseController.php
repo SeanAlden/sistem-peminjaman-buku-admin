@@ -1,0 +1,119 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Book;
+use App\Models\Purchase;
+use App\Models\Supplier;
+use Illuminate\Http\Request;
+
+class PurchaseController extends Controller
+{
+    public function index(Request $request)
+    {
+        // $purchases = Purchase::with(['supplier', 'book'])->get();
+        // return view('purchases.purchase_list', compact('purchases'));
+
+        // Mengambil nilai 'search' dari request, defaultnya string kosong
+        $search = $request->input('search', '');
+
+        // Mengambil nilai 'per_page' dari request, defaultnya 10
+        // dan memastikan nilainya adalah integer
+        $perPage = (int) $request->input('per_page', 5);
+
+        // Memulai query pada model Purchase
+        // $query = Book::query();
+        $query = Purchase::query();
+
+        // Jika ada keyword pencarian, tambahkan kondisi where
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->
+                    where('total_price', 'like', "%{$search}%")
+                    ->orWhere('notes', 'like', "%{$search}%")
+                    ->orWhereHas('book', function ($q2) use ($search) {
+                        $q2->where('title', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('supplier', function ($q2) use ($search) {
+                        $q2->where('name', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        // Lakukan pagination pada hasil query
+        // 'appends' digunakan agar parameter 'search' dan 'per_page' tetap ada di URL pagination
+        $purchases = $query->paginate($perPage)->appends($request->except('page'));
+
+        // Kembalikan view 'purchases.purchase_list' dengan data suppliers, search, dan perPage
+        return view('purchases.purchase_list', compact('purchases', 'search', 'perPage'));
+    }
+
+    public function create()
+    {
+        $suppliers = Supplier::all();
+        $books = Book::all();
+        return view('purchases.add_purchase', compact('suppliers', 'books'));
+    }
+
+    public function store(Request $request)
+    {
+        // $request->validate([
+        //     'supplier_id' => 'required',
+        //     'book_id' => 'required',
+        //     'quantity' => 'nullable|integer|min:1',
+        //     'purchase_date' => 'required|date',
+        //     'total_price' => 'required|numeric',
+        //     'notes'=> 'nullable'
+        // ]);
+
+        // Purchase::create($request->all());
+
+        Purchase::create([
+            'supplier_id' => $request->supplier_id,
+            'book_id' => $request->book_id,
+            'quantity' => $request->quantity,
+            'initial_quantity' => $request->quantity, // isi sama dengan quantity saat pertama kali
+            'purchase_date' => $request->purchase_date,
+            'total_price' => $request->total_price,
+            'notes' => $request->notes,
+        ]);
+        return redirect()->route('purchases.index')->with('success', 'Pengadaan berhasil disimpan.');
+    }
+    // public function edit($id)
+    // {
+    //     $purchase = Purchase::findOrFail($id);
+    //     $suppliers = Supplier::all();
+    //     $books = Book::all();
+    //     return response()->json(['purchase' => $purchase, 'suppliers' => $suppliers, 'books' => $books]);
+    // }
+
+    public function edit($id)
+    {
+        $purchase = Purchase::findOrFail($id);
+        $suppliers = Supplier::all();
+        $books = Book::all();
+        return view('purchases.edit_purchase', compact('purchase', 'suppliers', 'books'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $purchase = Purchase::findOrFail($id);
+        $request->validate([
+            'supplier_id' => 'required',
+            'book_id' => 'required',
+            'quantity' => 'required|integer|min:1',
+            'purchase_date' => 'required|date',
+            'total_price' => 'required|numeric',
+        ]);
+        $purchase->update($request->all());
+        return redirect()->route('purchases.index')->with('success', 'Data pengadaan berhasil diperbarui.');
+    }
+
+    public function destroy($id)
+    {
+        Purchase::destroy($id);
+        return redirect()->route('purchases.index')->with('success', 'Data pengadaan berhasil dihapus.');
+    }
+
+}
+

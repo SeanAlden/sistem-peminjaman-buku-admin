@@ -12,10 +12,13 @@ class Loan extends Model
 
     protected $fillable = [
         'book_id',
+        'user_id',   
         'loan_date',
         'return_date',
         'actual_returned_at',
         'status',
+        'loan_duration',
+        'max_returned_at',
         'return_status_note',
         'late_days',
         'fine_amount',
@@ -26,10 +29,17 @@ class Loan extends Model
         'loan_date' => 'datetime',
         'return_date' => 'datetime',
         'actual_returned_at' => 'datetime',
+        'max_returned_at' => 'datetime',
     ];
 
     public function book()
     {
         return $this->belongsTo(Book::class);
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
 }

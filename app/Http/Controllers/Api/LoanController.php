@@ -66,12 +66,17 @@ class LoanController extends Controller
 
         $now = Carbon::now(); // real-time
         $returnDate = Carbon::parse($request->return_date)->setTime(16, 59, 59); // jam otomatis 23:59:59
+        $loanDuration = $book->loan_duration;
+        $maxReturnedAt = $now->copy()->addDays($loanDuration)->setTime(16, 59, 59); // max_returned_at
 
         $loan = Loan::create([
             'book_id' => $book->id,
+            'user_id' => auth()->id(),
             'loan_date' => $now,
             'return_date' => $returnDate,
             'status' => 'borrowed',
+            'loan_duration' => $loanDuration,
+            'max_returned_at' => $maxReturnedAt, // tambahkan ini
         ]);
 
         $book->decrement('stock');
@@ -86,7 +91,10 @@ class LoanController extends Controller
     // Menampilkan semua data peminjaman
     public function index()
     {
-        $loans = Loan::with('book')->orderByDesc('created_at')->get();
+        $loans = Loan::with('book')
+            ->where('user_id', auth()->id())
+            ->orderByDesc('created_at')
+            ->get();
 
         return response()->json([
             'success' => true,
@@ -187,5 +195,22 @@ class LoanController extends Controller
         $loan->delete();
 
         return response()->json(['success' => true, 'message' => 'Peminjaman dibatalkan']);
+    }
+
+    // Mengecek apakah user saat ini sedang meminjam buku tersebut
+    public function checkActiveLoan(Request $request)
+    {
+        $request->validate([
+            'book_id' => 'required|exists:books,id',
+        ]);
+
+        $hasActiveLoan = Loan::where('user_id', auth()->id())
+            ->where('book_id', $request->book_id)
+            ->where('status', 'borrowed')
+            ->exists();
+
+        return response()->json([
+            'has_active_loan' => $hasActiveLoan
+        ]);
     }
 }

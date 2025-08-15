@@ -9,10 +9,68 @@ use Illuminate\Support\Facades\Storage;
 
 class BookController extends Controller
 {
-    public function index()
+    // public function index()
+    // {
+    //     $books = Book::with('category')->get();
+    //     return view('book', compact('books'));
+    // }
+
+    // public function index()
+    // {
+    //     $books = Book::where('status', 'active')->with('category')->get();
+    //     return view('book', compact('books'));
+    // }
+
+    public function index(Request $request)
     {
-        $books = Book::with('category')->get();
-        return view('book', compact('books'));
+        // $perPage = $request->get('per_page', 10);
+        // $search = $request->get('search');
+
+        // $query = Book::where('status', 'active')->with('category');
+
+        // if ($search) {
+        //     $query->where(function ($q) use ($search) {
+        //         $q->where('title', 'like', "%{$search}%")
+        //             ->orWhere('author', 'like', "%{$search}%")
+        //             ->orWhereHas('category', function ($q2) use ($search) {
+        //                 $q2->where('name', 'like', "%{$search}%");
+        //             });
+        //     });
+        // }
+
+        // $books = $query->paginate($perPage)->appends($request->all());
+
+        // return view('book', compact('books'));
+
+        // Mengambil nilai 'search' dari request, defaultnya string kosong
+        $search = $request->input('search', '');
+
+        // Mengambil nilai 'per_page' dari request, defaultnya 6
+        // dan memastikan nilainya adalah integer
+        $perPage = (int) $request->input('per_page', 6);
+
+        // Memulai query pada model Book
+        // $query = Book::query();
+        $query = Book::where('status', 'active')->with('category');
+
+        // Jika ada keyword pencarian, tambahkan kondisi where
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->
+                    where('title', 'like', "%{$search}%")
+                    ->orWhere('author', 'like', "%{$search}%")
+                    ->orWhereHas('category', function ($q2) use ($search) {
+                        $q2->where('name', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        // Lakukan pagination pada hasil query
+        // 'appends' digunakan agar parameter 'search' dan 'per_page' tetap ada di URL pagination
+        $books = $query->paginate($perPage)->appends($request->except('page'));
+
+        // Kembalikan view 'book' dengan data books, search, dan perPage
+        return view('book', compact('books', 'search', 'perPage'));
     }
 
     public function create()
@@ -109,17 +167,52 @@ class BookController extends Controller
         return redirect()->route('books.index')->with('success', 'Buku berhasil diupdate.');
     }
 
+    // public function destroy($id)
+    // {
+    //     $book = Book::findOrFail($id);
+
+    //     if ($book->image_url && Storage::disk('public')->exists($book->image_url)) {
+    //         Storage::disk('public')->delete($book->image_url);
+    //     }
+
+    //     $book->delete();
+
+    //     return redirect()->route('books.index')->with('success', 'Buku berhasil dihapus.');
+    // }
+
     public function destroy($id)
     {
         $book = Book::findOrFail($id);
 
-        if ($book->image_url && Storage::disk('public')->exists($book->image_url)) {
-            Storage::disk('public')->delete($book->image_url);
-        }
+        // Ganti status jadi inactive
+        $book->update(['status' => 'inactive']);
 
-        $book->delete();
-
-        return redirect()->route('books.index')->with('success', 'Buku berhasil dihapus.');
+        return redirect()->route('books.index')->with('success', 'Buku telah dinonaktifkan.');
     }
+
+    // public function activate($id)
+    // {
+    //     $book = Book::findOrFail($id);
+
+    //     $book->update(['status' => 'active']);
+
+    //     return redirect()->route('books.index')->with('success', 'Buku telah diaktifkan kembali.');
+    // }
+
+    public function inactive()
+    {
+        $books = Book::where('status', 'inactive')->with('category')->get();
+        return view('inactive_book', compact('books'));
+    }
+
+    public function restore($id)
+    {
+        $book = Book::findOrFail($id);
+        $book->status = 'active';
+        $book->save();
+
+        return redirect()->route('books.inactive')->with('success', 'Buku diaktifkan kembali.');
+    }
+
 }
 

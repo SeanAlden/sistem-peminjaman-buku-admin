@@ -21,7 +21,7 @@
         <!-- Major -->
         <div>
             <label for="major" class="block font-medium text-gray-700">Major</label>
-            <input type="text" name="Major" id="major"
+            <input type="text" name="major" id="major"
                    class="w-full rounded border border-gray-300 px-4 py-2 focus:border-blue-400 focus:outline-none focus:ring"
                    value="{{ old('major') }}">
             @error('major')

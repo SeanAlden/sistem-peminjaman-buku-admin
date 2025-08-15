@@ -22,12 +22,17 @@ Route::delete('students/{id}/delete', [StudentController::class, 'destroy']);
 
 Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/categories/{id}', [CategoryController::class, 'show']);
-Route::get('/books', [BookController::class, 'index']);
+// Route::get('/books', [BookController::class, 'index']);
+Route::middleware('auth:sanctum')->get('/books', [BookController::class, 'index']);
+Route::middleware('auth:sanctum')->get('/books/{id}', [BookController::class, 'show']);
 
-Route::post('/loans', [LoanController::class, 'store']);
-Route::get('/loans', [LoanController::class, 'index']);
-Route::post('/loans/{id}/return', [LoanController::class, 'returnLoan']);
-Route::delete('/loans/{id}', [LoanController::class, 'cancelLoan']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/loans', [LoanController::class, 'store']);
+    Route::get('/loans', [LoanController::class, 'index']);
+    Route::post('/loans/{id}/return', [LoanController::class, 'returnLoan']);
+    Route::delete('/loans/{id}', [LoanController::class, 'cancelLoan']);
+    Route::get('/loans/check-active', [LoanController::class, 'checkActiveLoan']);
+});
 
 Route::post('/register', [AuthController::class, 'store']);
 Route::post('/login', [AuthController::class, 'signin']);
@@ -36,6 +41,9 @@ Route::middleware('auth:sanctum')->put('/user/update', [AuthController::class, '
 Route::middleware('auth:sanctum')->put('/user/password', [AuthController::class, 'updatePassword']);
 Route::middleware('auth:sanctum')->post('/user/update-profile-image', [AuthController::class, 'updateProfileImage']);
 Route::middleware('auth:sanctum')->get('/user/profile-image', [AuthController::class, 'getProfileImage']);
+Route::post('/forgot-password', [AuthController::class, 'getVerificationCode']);
+Route::post('/verify-code', [AuthController::class, 'validateVerificationCode']);
+Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/favorites', [FavoriteController::class, 'index']);

@@ -8,11 +8,37 @@ use Illuminate\Http\Request;
 class CategoryController extends Controller
 {
     // Menampilkan daftar kategori
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::all();
-        $categories = Category::with('books')->get();
-        return view('categories.category', compact('categories'));
+        // $categories = Category::all();
+        // $categories = Category::with('books')->get();
+        // return view('categories.category', compact('categories'));
+        
+        // Mengambil nilai 'search' dari request, defaultnya string kosong
+        $search = $request->input('search', '');
+        
+        // Mengambil nilai 'per_page' dari request, defaultnya 10
+        // dan memastikan nilainya adalah integer
+        $perPage = (int) $request->input('per_page', 5);
+        
+        // Memulai query pada model Category
+        // $query = Category::query();
+        $query = Category::with('books');
+        
+        // Jika ada keyword pencarian, tambahkan kondisi where
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+        
+        // Lakukan pagination pada hasil query
+        // 'appends' digunakan agar parameter 'search' dan 'per_page' tetap ada di URL pagination
+        $categories = $query->paginate($perPage)->appends($request->except('page'));
+
+        // Kembalikan view 'categories.category' dengan data categories, search, dan perPage
+        return view('categories.category_list', compact('categories', 'search', 'perPage'));
     }
 
     // Form tambah kategori

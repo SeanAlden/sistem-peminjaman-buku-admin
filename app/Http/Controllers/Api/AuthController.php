@@ -250,37 +250,6 @@ class AuthController extends Controller
         ], 200);
     }
 
-    // Menampilkan semua user
-    public function showAllUser()
-    {
-        $users = User::all();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'All users retrieved successfully',
-            'data' => $users
-        ]);
-    }
-
-    // Menampilkan user berdasarkan ID
-    public function showUserById($id)
-    {
-        $user = User::find($id);
-
-        if (!$user) {
-            return response()->json([
-                'success' => false,
-                'message' => 'User not found'
-            ], 404);
-        }
-
-        return response()->json([
-            'success' => true,
-            'message' => 'User retrieved successfully',
-            'data' => $user
-        ]);
-    }
-
     // public function uploadProfileImage(Request $request)
     // {
     //     /**
@@ -388,6 +357,37 @@ class AuthController extends Controller
         DB::table('password_resets')->where('email', $request->email)->delete();
 
         return response()->json(['message' => 'Password has been reset']);
+    }
+
+    // Menampilkan semua user
+    public function showAllUser()
+    {
+        $users = User::all();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'All users retrieved successfully',
+            'data' => $users
+        ]);
+    }
+
+    // Menampilkan user berdasarkan ID
+    public function showUserById($id)
+    {
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'User retrieved successfully',
+            'data' => $user
+        ]);
     }
 }
 

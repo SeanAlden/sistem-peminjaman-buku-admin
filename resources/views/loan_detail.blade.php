@@ -13,10 +13,14 @@
             <p><strong>Penulis:</strong> {{ $loan->book->author }}</p>
             <p><strong>Stok Buku:</strong> {{ $loan->book->stock }}</p>
             <p><strong>Tanggal Pinjam:</strong> {{ $loan->loan_date->format('d-m-Y') }}</p>
-            <p><strong>Tanggal Kembali:</strong> {{ $loan->return_date ? $loan->return_date->format('d-m-Y') : '-' }}</p>
+            <p><strong>Tanggal Janji Kembali:</strong> {{ $loan->return_date ? $loan->return_date->format('d-m-Y') : '-' }}</p>
+            <p><strong>Tanggal Kembali:</strong> {{ $loan->actual_returned_at ? $loan->actual_returned_at->format('d-m-Y') : '-' }}</p>
             <p><strong>Status:</strong> {{ ucfirst($loan->status) }}</p>
+            <p><strong>Keterlambatan Pengembalian:</strong> {{ ucfirst($loan->late_days) }} Hari</p>
+            <p><strong>Catatan: </strong> {{ $loan->return_status_note }}</p>
             <p><strong>Durasi Pinjam:</strong>
                 {{ $duration !== null ? $duration . ' hari' : 'Belum dikembalikan' }}
+                {{-- {{ $duration !== null ? $duration : 'Belum dikembalikan' }} --}}
             </p>
         </div>
     </div>

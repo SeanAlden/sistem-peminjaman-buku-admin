@@ -4,8 +4,13 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoanController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\LostBookController;
+use App\Http\Controllers\ExitBookController;
+use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\SupplierController;
 use App\Http\Middleware\AdminAuthMiddleware;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\EntryBookController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\PredictionController;
@@ -30,6 +35,9 @@ Route::middleware('adminMiddleware')->group(function () {
     Route::get('/admin/books/{id}/edit', [BookController::class, 'edit'])->name('books.edit');
     Route::put('/admin/books/{id}/update', [BookController::class, 'update'])->name('books.update');
     Route::delete('/admin/books/{id}/delete', [BookController::class, 'destroy'])->name('books.destroy');
+    // Route::patch('/books/{id}/activate', [BookController::class, 'activate'])->name('books.activate');
+    Route::get('/books/inactive', [BookController::class, 'inactive'])->name('books.inactive');
+    Route::put('/books/restore/{id}', [BookController::class, 'restore'])->name('books.restore');
 
     Route::get('/admin/categories', [CategoryController::class, 'index'])->name('categories.index');
     Route::get('/admin/categories/create', [CategoryController::class, 'create'])->name('categories.create');
@@ -54,6 +62,36 @@ Route::middleware('adminMiddleware')->group(function () {
 
     Route::get('/predictions', [PredictionController::class, 'index'])->name('predictions.index');
     Route::post('/predictions/refresh', [PredictionController::class, 'refresh'])->name('predictions.refresh');
+
+    // Supplier Routes
+    Route::get('/suppliers', [SupplierController::class, 'index'])->name('suppliers.index');
+    Route::get('/suppliers/create', [SupplierController::class, 'create'])->name('suppliers.create');
+    Route::post('/suppliers', [SupplierController::class, 'store'])->name('suppliers.store');
+    Route::get('/suppliers/{id}/edit', [SupplierController::class, 'edit'])->name('suppliers.edit');
+    Route::put('/suppliers/{id}', [SupplierController::class, 'update'])->name('suppliers.update');
+    Route::delete('/suppliers/{id}', [SupplierController::class, 'destroy'])->name('suppliers.destroy');
+
+    // Purchase Routes
+    Route::get('/purchases', [PurchaseController::class, 'index'])->name('purchases.index');
+    Route::get('/purchases/create', [PurchaseController::class, 'create'])->name('purchases.create');
+    Route::post('/purchases', [PurchaseController::class, 'store'])->name('purchases.store');
+    Route::get('/purchases/{id}/edit', [PurchaseController::class, 'edit'])->name('purchases.edit');
+    Route::put('/purchases/{id}', [PurchaseController::class, 'update'])->name('purchases.update');
+    Route::delete('/purchases/{id}', [PurchaseController::class, 'destroy'])->name('purchases.destroy');
+
+    Route::get('/entry-books', [EntryBookController::class, 'index'])->name('entry_books.index');
+    Route::get('/entry-books/create', [EntryBookController::class, 'create'])->name('entry_books.create');
+    Route::post('/entry-books', [EntryBookController::class, 'store'])->name('entry_books.store');
+    Route::get('/entry-books/{id}/edit', [EntryBookController::class, 'edit'])->name('entry_books.edit');
+    Route::put('/entry-books/{id}', [EntryBookController::class, 'update'])->name('entry_books.update');
+    Route::delete('/entry-books/{id}', [EntryBookController::class, 'destroy'])->name('entry_books.destroy');
+
+    Route::get('/exit-books', [ExitBookController::class, 'index'])->name('exit_books.index');
+    Route::post('/exit-books', [ExitBookController::class, 'store'])->name('exit_books.store');
+    Route::get('/exit-books/{id}/edit', [ExitBookController::class, 'edit'])->name('exit_books.edit');
+    Route::put('/exit-books/{id}', [ExitBookController::class, 'update'])->name('exit_books.update');
+    Route::delete('/exit-books/{id}', [ExitBookController::class, 'destroy'])->name('exit_books.destroy');
+
 });
 
 Route::middleware('authenticatedAdminMiddleware')->group(function () {
@@ -61,4 +99,12 @@ Route::middleware('authenticatedAdminMiddleware')->group(function () {
     Route::post('/admin/login', [AdminAuthController::class, 'login']);
     Route::get('/admin/register', [AdminAuthController::class, 'showRegisterForm'])->name('admin.register');
     Route::post('/admin/register', [AdminAuthController::class, 'register']);
+    Route::get('/forgot-password', [AdminAuthController::class, 'showForgotPasswordForm'])->name('forgot.password');
+    Route::post('/forgot-password', [AdminAuthController::class, 'submitForgotPassword']);
+
+    Route::get('/verify-code', [AdminAuthController::class, 'showVerificationForm'])->name('verify.code');
+    Route::post('/verify-code', [AdminAuthController::class, 'submitVerificationCode']);
+
+    Route::get('/reset-password', [AdminAuthController::class, 'showResetPasswordForm'])->name('reset.password');
+    Route::post('/reset-password', [AdminAuthController::class, 'submitResetPassword']);
 });

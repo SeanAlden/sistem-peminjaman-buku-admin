@@ -16,7 +16,8 @@ class Student extends Model
         'name',
         'major',
         'email',
-        'phone'
+        'phone',
+        'description',
     ];
 
     public function loans()
