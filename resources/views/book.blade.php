@@ -152,7 +152,7 @@
 @section('content')
     <div class="container mx-auto px-4 mt-6">
 
-        <h2 class="text-3xl font-bold mb-6 text-gray-800 text-center">📚 Daftar Buku</h2>
+        <h2 class="text-3xl font-bold mb-6 text-gray-800 text-center dark:text-white">📚 Daftar Buku</h2>
 
         <div class="text-right mb-6 flex justify-end items-center gap-4">
             <a href="{{ route('books.inactive') }}"
@@ -170,7 +170,7 @@
         <div class="flex items-center justify-between mb-4">
             <div class="flex items-center">
                 <form action="{{ route('books.index') }}" method="GET" class="flex items-center">
-                    <label for="per_page" class="mr-2 text-sm text-gray-600">Show:</label>
+                    <label for="per_page" class="mr-2 text-sm text-gray-600 dark:text-white">Show:</label>
                     <select name="per_page" id="per_page"
                         class="block w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                         onchange="this.form.submit()">
@@ -185,7 +185,7 @@
             </div>
             <div class="flex items-center">
                 <form action="{{ route('books.index') }}" method="GET" class="flex items-center">
-                    <label for="search" class="mr-2 text-sm text-gray-600">Search:</label>
+                    <label for="search" class="mr-2 text-sm text-gray-600 dark:text-white">Search:</label>
                     <input type="text" name="search" id="search"
                         class="block w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                         value="{{ $search }}" placeholder="Search...">
@@ -198,7 +198,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach ($books as $book)
                 <div
-                    class="bg-white rounded-xl shadow-md border border-gray-200 hover:shadow-lg transition duration-300 flex flex-col">
+                    class="bg-white dark:bg-gray-500 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 hover:shadow-lg transition duration-300 flex flex-col">
 
                     <img src="{{ asset('storage/' . $book->image_url) }}" alt="book image"
                         class="w-full h-48 object-contain rounded-t-xl"
@@ -206,11 +206,11 @@
 
                     <div class="p-4 flex flex-col justify-between flex-grow">
                         <div>
-                            <h3 class="text-lg font-semibold text-gray-900 mb-1">{{ $book->title }}</h3>
-                            <p class="text-sm text-gray-600 mb-1"><span class="font-medium">Penulis:</span> {{ $book->author }}
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1">{{ $book->title }}</h3>
+                            <p class="text-sm text-gray-600 dark:text-white mb-1"><span class="font-medium">Penulis:</span> {{ $book->author }}
                             </p>
-                            <p class="text-sm text-gray-600 mb-1"><span class="font-medium">Stok:</span> {{ $book->stock }}</p>
-                            <p class="text-sm text-gray-600 mb-4"><span class="font-medium">Kategori:</span>
+                            <p class="text-sm text-gray-600 dark:text-white mb-1"><span class="font-medium">Stok:</span> {{ $book->stock }}</p>
+                            <p class="text-sm text-gray-600 dark:text-white mb-4"><span class="font-medium">Kategori:</span>
                                 {{ $book->category->name }}</p>
                         </div>
 
@@ -243,7 +243,7 @@
         <div class="flex items-center justify-between mt-4">
             <div>
                 @if ($books->total() > 0)
-                    <p class="text-sm text-gray-700">
+                    <p class="text-sm text-gray-700 dark:text-white">
                         Showing {{ $books->firstItem() }} to {{ $books->lastItem() }} of {{ $books->total() }}
                         entries
                     </p>

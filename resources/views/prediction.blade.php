@@ -1,24 +1,24 @@
 {{-- @extends('layouts.app')
 
 @section('content')
-<div class="container mx-auto p-4">
-    <div class="flex justify-between items-center mb-4">
+<div class="container p-4 mx-auto">
+    <div class="flex items-center justify-between mb-4">
         <h2 class="text-2xl font-bold">Prediksi Buku Terlaris</h2>
         <form action="{{ route('predictions.refresh') }}" method="POST">
             @csrf
-            <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
+            <button class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">
                 Refresh Prediksi
             </button>
         </form>
     </div>
 
     @if(session('success'))
-    <div class="mb-4 p-2 bg-green-200 text-green-800 rounded">
+    <div class="p-2 mb-4 text-green-800 bg-green-200 rounded">
         {{ session('success') }}
     </div>
     @endif
 
-    <table class="table-auto w-full border border-gray-200">
+    <table class="w-full border border-gray-200 table-auto">
         <thead>
             <tr class="bg-gray-100">
                 <th class="px-4 py-2 text-left">Judul Buku</th>
@@ -42,13 +42,13 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container mx-auto p-6">
+    <div class="container p-6 mx-auto">
         {{-- Header and Refresh Button --}}
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-3xl font-bold text-gray-800">📈 Prediksi Buku Terlaris</h2>
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-3xl font-bold text-gray-800 dark:text-white">📈 Prediksi Buku Terlaris</h2>
             <form action="{{ route('predictions.refresh') }}" method="POST">
                 @csrf
-                <button class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-lg shadow">
+                <button class="px-5 py-2 font-semibold text-white bg-blue-600 rounded-lg shadow hover:bg-blue-700">
                     🔄 Refresh Prediksi
                 </button>
             </form>
@@ -56,7 +56,7 @@
 
         {{-- Success Message --}}
         @if(session('success'))
-            <div class="mb-4 p-4 bg-green-100 text-green-700 rounded-lg shadow">
+            <div class="p-4 mb-4 text-green-700 bg-green-100 rounded-lg shadow">
                 {{ session('success') }}
             </div>
         @endif
@@ -65,7 +65,7 @@
         <div class="flex items-center justify-between mb-4">
             <div class="flex items-center">
                 <form action="{{ route('predictions.index') }}" method="GET" class="flex items-center">
-                    <label for="per_page" class="mr-2 text-sm text-gray-600">Show:</label>
+                    <label for="per_page" class="mr-2 text-sm text-gray-600 dark:text-white">Show:</label>
                     <select name="per_page" id="per_page"
                         class="block w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                         onchange="this.form.submit()">
@@ -80,7 +80,7 @@
             </div>
             <div class="flex items-center">
                 <form action="{{ route('predictions.index') }}" method="GET" class="flex items-center">
-                    <label for="search" class="mr-2 text-sm text-gray-600">Search:</label>
+                    <label for="search" class="mr-2 text-sm text-gray-600 dark:text-white">Search:</label>
                     <input type="text" name="search" id="search"
                         class="block w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                         value="{{ $search }}" placeholder="Search...">
@@ -91,9 +91,9 @@
         <!-- End Fitur -->
 
         {{-- Table --}}
-        <div class="overflow-x-auto bg-white shadow-md rounded-lg">
+        <div class="overflow-x-auto bg-white rounded-lg shadow-md">
             <table class="min-w-full divide-y divide-gray-200">
-                {{-- <thead class="bg-gray-100 text-gray-600 text-sm uppercase font-semibold">
+                {{-- <thead class="text-sm font-semibold text-gray-600 uppercase bg-gray-100">
                     <tr>
                         <th class="px-6 py-3 text-left">Gambar</th>
                         <th class="px-6 py-3 text-left">Judul Buku</th>
@@ -104,12 +104,12 @@
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
                     @foreach ($predictions as $prediction)
-                    <tr class="hover:bg-gray-50 transition">
+                    <tr class="transition hover:bg-gray-50">
                         <td class="px-6 py-4">
                             <img src="{{ asset('storage/' . $prediction->book->image_url) ?? asset('images/default_book.png') }}"
-                                alt="Cover Buku" class="w-16 h-24 object-contain rounded shadow-sm">
+                                alt="Cover Buku" class="object-contain w-16 h-24 rounded shadow-sm">
                         </td>
-                        <td class="px-6 py-4 text-gray-800 font-medium">
+                        <td class="px-6 py-4 font-medium text-gray-800">
                             {{ $prediction->book->title }}
                         </td>
                         <td class="px-6 py-4 text-gray-600">
@@ -118,13 +118,13 @@
                         <td class="px-6 py-4 text-gray-600">
                             {{ $prediction->loan_count }}
                         </td>
-                        <td class="px-6 py-4 text-blue-600 font-semibold">
+                        <td class="px-6 py-4 font-semibold text-blue-600">
                             {{ $prediction->predicted_popularity }}%
                         </td>
                     </tr>
                     @endforeach
                 </tbody> --}}
-                <thead class="bg-gray-100 text-gray-600 text-sm uppercase font-semibold">
+                <thead class="text-sm font-semibold text-gray-600 uppercase bg-gray-100 dark:bg-gray-300">
                     <tr>
                         <th class="px-6 py-3 text-left">Gambar</th>
                         <th class="px-6 py-3 text-left">Judul Buku</th>
@@ -134,26 +134,26 @@
                         <th class="px-6 py-3 text-left">Prediksi (Jumlah Buku Dipinjam Bulan Depan)</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
+                <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-500">
                     @foreach ($predictions as $prediction)
-                        <tr class="hover:bg-gray-50 transition">
+                        <tr class="transition hover:bg-gray-50 dark:hover:bg-gray-400">
                             <td class="px-6 py-4">
                                 <img src="{{ asset('storage/' . ($prediction->book->image_url ?? 'images/default_book.png')) }}"
-                                    alt="Cover Buku" class="w-16 h-24 object-contain rounded shadow-sm">
+                                    alt="Cover Buku" class="object-contain w-16 h-24 rounded shadow-sm">
                             </td>
-                            <td class="px-6 py-4 text-gray-800 font-medium">
+                            <td class="px-6 py-4 font-medium text-gray-800 dark:text-white">
                                 {{ $prediction->book->title }}
                             </td>
-                            <td class="px-6 py-4 text-gray-600">
+                            <td class="px-6 py-4 text-gray-600 dark:text-white">
                                 {{ $prediction->book->category->name ?? '-' }}
                             </td>
-                            <td class="px-6 py-4 text-gray-600">
+                            <td class="px-6 py-4 text-gray-600 dark:text-white">
                                 {{ $prediction->loan_count }}
                             </td>
-                            <td class="px-6 py-4 text-blue-600 font-semibold">
+                            <td class="px-6 py-4 font-semibold text-blue-600 dark:text-blue-300">
                                 {{ $prediction->predicted_popularity }}%
                             </td>
-                            <td class="px-6 py-4 text-green-600 font-semibold">
+                            <td class="px-6 py-4 font-semibold text-green-600 dark:text-green-300">
                                 {{ $prediction->des_prediction !== null ? number_format($prediction->des_prediction, 0) : '-' }}
                             </td>
                         </tr>
@@ -165,7 +165,7 @@
         <div class="flex items-center justify-between mt-4">
             <div>
                 @if ($predictions->total() > 0)
-                    <p class="text-sm text-gray-700">
+                    <p class="text-sm text-gray-700 dark:text-white">
                         Showing {{ $predictions->firstItem() }} to {{ $predictions->lastItem() }} of {{ $predictions->total() }}
                         entries
                     </p>

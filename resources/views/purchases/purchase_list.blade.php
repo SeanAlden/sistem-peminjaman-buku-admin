@@ -1,61 +1,10 @@
-{{-- @extends('layouts.app')
-
-@section('content')
-<div class="container mx-auto">
-    <h1 class="text-2xl font-bold mb-4">Daftar Pengadaan</h1>
-
-    <a href="{{ route('purchases.create') }}" class="bg-blue-500 text-white px-4 py-2 rounded">Tambah Pengadaan</a>
-
-    @if(session('success'))
-    <div class="text-green-600 mt-2">{{ session('success') }}</div>
-    @endif
-
-    <table class="table-auto w-full mt-4 border-collapse">
-        <thead>
-            <tr class="bg-gray-100">
-                <th class="px-4 py-2 border">ID</th>
-                <th class="px-4 py-2 border">Supplier</th>
-                <th class="px-4 py-2 border">Buku</th>
-                <th class="px-4 py-2 border">Jumlah</th>
-                <th class="px-4 py-2 border">Tanggal</th>
-                <th class="px-4 py-2 border">Total Harga</th>
-                <th class="px-4 py-2 border">Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($purchases as $purchase)
-            <tr>
-                <td class="border px-4 py-2">{{ $purchase->id }}</td>
-                <td class="border px-4 py-2">{{ $purchase->supplier->name }}</td>
-                <td class="border px-4 py-2">{{ $purchase->book->title }}</td>
-                <td class="border px-4 py-2">{{ $purchase->quantity }}</td>
-                <td class="border px-4 py-2">{{ $purchase->purchase_date }}</td>
-                <td class="border px-4 py-2">Rp{{ number_format($purchase->total_price, 2, ',', '.') }}</td>
-                <td class="border px-4 py-2 flex gap-2 justify-center">
-                    <a href="{{ route('purchases.edit', $purchase->id) }}"
-                        class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600">Edit</a>
-
-                    <form action="{{ route('purchases.destroy', $purchase->id) }}" method="POST"
-                        onsubmit="return confirm('Yakin ingin menghapus data ini?')">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit"
-                            class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Delete</button>
-                    </form>
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
-</div>
-@endsection --}}
-
 @extends('layouts.app')
 
 @section('content')
     <div class="container mx-auto px-4">
         <h1 class="text-3xl font-bold mb-6 text-gray-800">📦 Daftar Pengadaan</h1>
 
+        {{-- Bagian Tombol Tambah, Notifikasi, dan Filter tidak berubah --}}
         <div class="flex justify-between items-center mb-4">
             <a href="{{ route('purchases.create') }}"
                 class="inline-flex items-center bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 transition">
@@ -74,8 +23,8 @@
             </div>
         @endif
 
-        <!-- Fitur Search dan Items per Page -->
         <div class="flex items-center justify-between mb-4">
+            {{-- Form Per Page --}}
             <div class="flex items-center">
                 <form action="{{ route('purchases.index') }}" method="GET" class="flex items-center">
                     <label for="per_page" class="mr-2 text-sm text-gray-600">Show:</label>
@@ -91,6 +40,7 @@
                     <input type="hidden" name="search" value="{{ $search }}">
                 </form>
             </div>
+            {{-- Form Search --}}
             <div class="flex items-center">
                 <form action="{{ route('purchases.index') }}" method="GET" class="flex items-center">
                     <label for="search" class="mr-2 text-sm text-gray-600">Search:</label>
@@ -101,84 +51,97 @@
                 </form>
             </div>
         </div>
-        <!-- End Fitur -->
 
         <div class="overflow-x-auto">
             <table class="w-full table-auto border-collapse bg-white shadow-md rounded-lg overflow-hidden">
                 <thead>
                     <tr class="bg-gray-200 text-gray-700 text-sm uppercase tracking-wider">
-                        <th class="px-4 py-3 border">ID</th>
-                        <th class="px-4 py-3 border">Supplier</th>
                         <th class="px-4 py-3 border">Buku</th>
-                        {{-- <th class="px-4 py-3 border">Jumlah</th> --}}
-                        <th class="px-4 py-3 border">Jumlah (Sisa / Awal)</th>
+                        <th class="px-4 py-3 border">Supplier</th>
                         <th class="px-4 py-3 border">Tanggal</th>
+                        <th class="px-4 py-3 border">Jumlah (Sisa / Awal)</th>
+                        {{-- PERUBAHAN 1: Menambahkan kolom baru untuk total --}}
+                        <th class="px-4 py-3 border text-center bg-gray-300">Total Pengadaan (Buku Ini)</th>
                         <th class="px-4 py-3 border">Total Harga</th>
-                        <th class="px-4 py-3 border">Catatan</th>
                         <th class="px-4 py-3 border">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="text-gray-700 text-sm">
-                    @foreach($purchases as $purchase)
+                    {{-- PERUBAHAN 2: Inisialisasi variabel untuk melacak grup buku --}}
+                    @php $currentBookId = null; @endphp
+
+                    @forelse($purchases as $purchase)
+                        {{-- Menambahkan garis pemisah antar grup buku --}}
+                        @if ($purchase->book_id !== $currentBookId && $currentBookId !== null)
+                            <tr class="bg-gray-200">
+                                <td colspan="7" class="py-1"></td>
+                            </tr>
+                        @endif
+
                         <tr class="hover:bg-gray-100 transition">
-                            <td class="border px-4 py-2 text-center">{{ $purchase->id }}</td>
+                            <td class="border px-4 py-2 font-semibold">{{ $purchase->book->title }}</td>
                             <td class="border px-4 py-2">{{ $purchase->supplier->name }}</td>
-                            <td class="border px-4 py-2">{{ $purchase->book->title }}</td>
-                            {{-- <td class="border px-4 py-2 text-center">{{ $purchase->quantity }}</td> --}}
-                            {{-- <td class="border px-4 py-2 text-center">
-                                {{ $purchase->quantity }} / {{ $purchase->initial_quantity }}
-                            </td> --}}
-                            @php
-                                $percentage = ($purchase->initial_quantity > 0)
-                                    ? ($purchase->quantity / $purchase->initial_quantity) * 100
-                                    : 0;
-                            @endphp
+                            <td class="border px-4 py-2 text-center">
+                                {{ \Carbon\Carbon::parse($purchase->purchase_date)->format('d M Y') }}</td>
                             <td class="border px-4 py-2 text-center">
                                 <div class="text-sm font-semibold">
                                     {{ $purchase->quantity }} / {{ $purchase->initial_quantity }}
                                 </div>
+                                @php
+                                    $percentage = ($purchase->initial_quantity > 0) ? ($purchase->quantity / $purchase->initial_quantity) * 100 : 0;
+                                @endphp
                                 <div class="w-full bg-gray-200 rounded-full h-2 mt-1">
                                     <div class="bg-blue-600 h-2 rounded-full" style="width: {{ $percentage }}%;"></div>
                                 </div>
                             </td>
 
-                            <td class="border px-4 py-2 text-center">{{ $purchase->purchase_date }}</td>
-                            <td class="border px-4 py-2 text-right">Rp{{ number_format($purchase->total_price, 2, ',', '.') }}
+                            {{-- PERUBAHAN 3: Logika untuk menampilkan total hanya sekali per grup --}}
+                            @if ($purchase->book_id !== $currentBookId)
+                                <td class="border px-4 py-2 text-center align-middle font-bold text-lg bg-gray-50"
+                                    rowspan="{{ $purchases->where('book_id', $purchase->book_id)->count() }}">
+                                    {{ $bookTotalQuantities[$purchase->book_id] ?? 'N/A' }}
+                                </td>
+                            @endif
+
+                            <td class="border px-4 py-2 text-right">Rp{{ number_format($purchase->total_price, 0, ',', '.') }}
                             </td>
-                            <td class="border px-4 py-2 text-center">{{ $purchase->notes }}</td>
                             <td class="border px-4 py-2 text-center">
                                 <div class="flex justify-center gap-2">
                                     <a href="{{ route('purchases.edit', $purchase->id) }}"
-                                        class="inline-flex items-center bg-yellow-400 text-white px-3 py-1 rounded hover:bg-yellow-500 transition">
-                                        ✏️ Edit
-                                    </a>
+                                        class="inline-flex items-center bg-yellow-400 text-white px-3 py-1 rounded hover:bg-yellow-500 transition">✏️
+                                        Edit</a>
                                     <form action="{{ route('purchases.destroy', $purchase->id) }}" method="POST"
                                         onsubmit="return confirm('Yakin ingin menghapus data ini?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"
-                                            class="inline-flex items-center bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition">
-                                            🗑️ Delete
-                                        </button>
+                                            class="inline-flex items-center bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition">🗑️
+                                            Delete</button>
                                     </form>
                                 </div>
                             </td>
                         </tr>
-                    @endforeach
-
-                    @if($purchases->isEmpty())
+                        {{-- PERUBAHAN 4: Update ID buku saat ini --}}
+                        @php $currentBookId = $purchase->book_id; @endphp
+                    @empty
                         <tr>
                             <td colspan="7" class="text-center py-4 text-gray-500">Belum ada data pengadaan.</td>
                         </tr>
-                    @endif
+                    @endforelse
                 </tbody>
             </table>
         </div>
+
+        {{-- Fitur Pagination (tidak berubah) --}}
+        {{-- <div class="mt-4">
+            {{ $purchases->links() }}
+        </div> --}}
+
         <!-- Fitur Pagination -->
         <div class="flex items-center justify-between mt-4">
             <div>
                 @if ($purchases->total() > 0)
-                    <p class="text-sm text-gray-700">
+                    <p class="text-sm text-gray-700 dark:text-white">
                         Showing {{ $purchases->firstItem() }} to {{ $purchases->lastItem() }} of {{ $purchases->total() }}
                         entries
                     </p>

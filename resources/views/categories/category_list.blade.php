@@ -3,7 +3,7 @@
 @section('content')
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-            <h1 class="text-3xl font-bold text-gray-800">📚 Daftar Kategori</h1>
+            <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-300">📚 Daftar Kategori</h1>
             <a href="{{ route('categories.create') }}"
                 class="inline-block bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-2 rounded-lg shadow transition duration-300">
                 + Tambah Kategori
@@ -26,7 +26,7 @@
         <div class="flex items-center justify-between mb-4">
             <div class="flex items-center">
                 <form action="{{ route('categories.index') }}" method="GET" class="flex items-center">
-                    <label for="per_page" class="mr-2 text-sm text-gray-600">Show:</label>
+                    <label for="per_page" class="mr-2 text-sm text-gray-600 dark:text-gray-300">Show:</label>
                     <select name="per_page" id="per_page"
                         class="block w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                         onchange="this.form.submit()">
@@ -41,7 +41,7 @@
             </div>
             <div class="flex items-center">
                 <form action="{{ route('categories.index') }}" method="GET" class="flex items-center">
-                    <label for="search" class="mr-2 text-sm text-gray-600">Search:</label>
+                    <label for="search" class="mr-2 text-sm text-gray-600 dark:text-gray-300">Search:</label>
                     <input type="text" name="search" id="search"
                         class="block w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                         value="{{ $search }}" placeholder="Search...">
@@ -52,8 +52,8 @@
         <!-- End Fitur -->
 
         <div class="overflow-x-auto rounded-lg shadow">
-            <table class="min-w-full bg-white divide-y divide-gray-200">
-                <thead class="bg-gray-100">
+            <table class="min-w-full bg-white divide-y divide-gray-200 dark:bg-gray-500">
+                <thead class="bg-gray-100 dark:bg-gray-300">
                     <tr>
                         <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Nama</th>
                         <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Deskripsi</th>
@@ -63,7 +63,7 @@
                 </thead>
                 <tbody class="divide-y divide-gray-200">
                     @forelse ($categories as $category)
-                        <tr class="hover:bg-gray-50">
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-600">
                             {{-- <td class="px-6 py-4 text-sm text-gray-700">
                                 {{ $category->description }}
                             </td> --}}
@@ -71,16 +71,16 @@
                             {{-- <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
                                 {{ $category->name }}
                             </td> --}}
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-600 hover:underline font-medium">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-600 dark:text-blue-300 hover:underline font-medium">
                                 <a href="{{ route('categories.show', $category->id) }}">
                                     {{ $category->name }}
                                 </a>
                             </td>
 
-                            <td class="px-6 py-4 text-sm text-gray-700">
+                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-white">
                                 {{ \Illuminate\Support\Str::limit($category->description, 20, '...') }}
                             </td>
-                            <td class="px-6 py-4 text-sm text-gray-700">
+                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-white">
                                 @if ($category->books->count())
                                     <ul class="list-disc list-inside space-y-1">
                                         @foreach ($category->books as $book)
@@ -138,7 +138,7 @@
         <div class="flex items-center justify-between mt-4">
             <div>
                 @if ($categories->total() > 0)
-                    <p class="text-sm text-gray-700">
+                    <p class="text-sm text-gray-700 dark:text-gray-300">
                         Showing {{ $categories->firstItem() }} to {{ $categories->lastItem() }} of {{ $categories->total() }} entries
                     </p>
                 @endif

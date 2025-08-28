@@ -1,30 +1,59 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container mx-auto px-4 py-6" x-data="entryBookApp()">
-        <div class="flex justify-between items-center mb-6">
+    <div class="container px-4 py-6 mx-auto" x-data="entryBookApp()">
+        <div class="flex items-center justify-between mb-6">
             <h2 class="text-2xl font-bold">Barang Masuk</h2>
-            <button @click="openAddModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">+ Tambah
+            <button @click="openAddModal()" class="px-4 py-2 text-white bg-blue-600 rounded cursor-pointer hover:bg-blue-700">+ Tambah
                 Barang Masuk</button>
         </div>
 
         @if(session('success'))
-            <div class="bg-green-100 text-green-800 p-4 rounded mb-4">
+            <div class="p-4 mb-4 text-green-800 bg-green-100 rounded">
                 {{ session('success') }}
             </div>
         @endif
 
-        <div class="overflow-x-auto">
-            <table class="w-full table-auto border border-gray-200 bg-white rounded shadow">
+        <!-- Fitur Search dan Items per Page -->
+        <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center">
+                <form action="{{ route('entry_books.index') }}" method="GET" class="flex items-center">
+                    <label for="per_page" class="mr-2 text-sm text-gray-600 dark:text-white">Show:</label>
+                    <select name="per_page" id="per_page"
+                        class="block w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                        onchange="this.form.submit()">
+                        <option value="5" {{ $perPage == 5 ? 'selected' : '' }}>5</option>
+                        <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
+                        <option value="25" {{ $perPage == 25 ? 'selected' : '' }}>25</option>
+                        <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option>
+                        <option value="100" {{ $perPage == 100 ? 'selected' : '' }}>100</option>
+                    </select>
+                    <input type="hidden" name="search" value="{{ $search }}">
+                </form>
+            </div>
+            <div class="flex items-center">
+                <form action="{{ route('entry_books.index') }}" method="GET" class="flex items-center">
+                    <label for="search" class="mr-2 text-sm text-gray-600 dark:text-white">Search:</label>
+                    <input type="text" name="search" id="search"
+                        class="block w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                        value="{{ $search }}" placeholder="Search...">
+                    <input type="hidden" name="per_page" value="{{ $perPage }}">
+                </form>
+            </div>
+        </div>
+        <!-- End Fitur -->
+
+        {{-- <div class="overflow-x-auto"> --}}
+            <table class="min-w-full bg-white border">
                 <thead class="bg-gray-100">
-                    <tr class="text-left">
-                        <th class="p-3 border-b">Gambar</th>
-                        <th class="p-3 border-b">Nama Buku</th>
-                        <th class="p-3 border-b">Kategori</th>
-                        <th class="p-3 border-b">Stok Sebelum</th>
-                        <th class="p-3 border-b">Jumlah Masuk</th>
-                        <th class="p-3 border-b">Stok Setelah</th>
-                        <th class="p-3 border-b text-center">Aksi</th>
+                    <tr class="text-left bg-gray-200">
+                        <th class="px-4 py-2 border">Gambar</th>
+                        <th class="px-4 py-2 border">Nama Buku</th>
+                        <th class="px-4 py-2 border">Kategori</th>
+                        <th class="px-4 py-2 border">Stok Sebelum</th>
+                        <th class="px-4 py-2 border">Jumlah Masuk</th>
+                        <th class="px-4 py-2 border">Stok Setelah</th>
+                        <th class="px-4 py-2 border">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -32,16 +61,16 @@
                         <tr class="border-b hover:bg-gray-50">
                             <td class="p-3">
                                 <img src="{{ asset('storage/' . $entry->book->image_url) }}" alt="{{ $entry->book->title }}"
-                                    class="w-14 h-20 object-cover">
+                                    class="object-cover h-20 w-14">
                             </td>
-                            <td class="p-3">{{ $entry->book->title }}</td>
-                            <td class="p-3">{{ $entry->book->category->name ?? '-' }}</td>
-                            <td class="p-3">{{ $entry->stock_before }}</td>
-                            <td class="p-3">{{ $entry->stock_in }}</td>
-                            <td class="p-3">{{ $entry->stock_after }}</td>
-                            <td class="p-3 text-center">
+                            <td class="px-4 py-2 border">{{ $entry->book->title }}</td>
+                            <td class="px-4 py-2 border">{{ $entry->book->category->name ?? '-' }}</td>
+                            <td class="px-4 py-2 border">{{ $entry->stock_before }}</td>
+                            <td class="px-4 py-2 font-bold text-green-500">+ {{ $entry->stock_in }}</td>
+                            <td class="px-4 py-2 border">{{ $entry->stock_after }}</td>
+                            <td class="px-4 py-2 border">
                                 <button @click="openEditModal({{ $entry->id }}, {{ $entry->book_id }}, {{ $entry->stock_in }})"
-                                    class="text-blue-500 hover:underline mr-2">Ubah</button>
+                                    class="mr-2 text-blue-500 hover:underline">Ubah</button>
                                 <form action="{{ route('entry_books.destroy', $entry->id) }}" method="POST" class="inline"
                                     onsubmit="return confirm('Yakin ingin menghapus?')">
                                     @csrf @method('DELETE')
@@ -56,13 +85,97 @@
                     @endforelse
                 </tbody>
             </table>
+        {{-- </div> --}}
+        <!-- Fitur Pagination -->
+        <div class="flex items-center justify-between mt-4">
+            <div>
+                @if ($entries->total() > 0)
+                    <p class="text-sm text-gray-700 dark:text-white">
+                        Showing {{ $entries->firstItem() }} to {{ $entries->lastItem() }} of {{ $entries->total() }}
+                        entries
+                    </p>
+                @endif
+            </div>
+            <div>
+                @if ($entries->hasPages())
+                    <nav role="navigation" aria-label="Pagination Navigation" class="flex items-center">
+                        {{-- Previous Page Link --}}
+                        @if ($entries->onFirstPage())
+                            <span class="px-3 py-1 mr-1 text-gray-400 bg-white border rounded cursor-not-allowed">Prev</span>
+                        @else
+                            <a href="{{ $entries->previousPageUrl() }}" rel="prev"
+                                class="px-3 py-1 mr-1 text-gray-700 bg-white border rounded hover:bg-gray-50">Prev</a>
+                        @endif
+
+                        @php
+                            $currentPage = $entries->currentPage();
+                            $lastPage = $entries->lastPage();
+                            $links = [];
+
+                            // Logic untuk menampilkan link pagination
+                            if ($lastPage <= 7) {
+                                for ($i = 1; $i <= $lastPage; $i++) {
+                                    $links[] = $i;
+                                }
+                            } else {
+                                $links[] = 1;
+                                if ($currentPage > 4) {
+                                    $links[] = '...';
+                                }
+
+                                $start = max(2, $currentPage - 1);
+                                $end = min($lastPage - 1, $currentPage + 1);
+
+                                if ($currentPage <= 4) {
+                                    $start = 2;
+                                    $end = 5;
+                                }
+
+                                if ($currentPage >= $lastPage - 3) {
+                                    $start = $lastPage - 4;
+                                    $end = $lastPage - 1;
+                                }
+
+                                for ($i = $start; $i <= $end; $i++) {
+                                    $links[] = $i;
+                                }
+
+                                if ($currentPage < $lastPage - 3) {
+                                    $links[] = '...';
+                                }
+                                $links[] = $lastPage;
+                            }
+                        @endphp
+
+                        @foreach ($links as $link)
+                            @if ($link === '...')
+                                <span class="px-3 py-1 mr-1 text-gray-500 bg-white border rounded">{{ $link }}</span>
+                            @elseif ($link == $currentPage)
+                                <span class="px-3 py-1 mr-1 text-white bg-blue-500 border border-blue-500 rounded">{{ $link }}</span>
+                            @else
+                                <a href="{{ $entries->url($link) }}"
+                                    class="px-3 py-1 mr-1 text-gray-700 bg-white border rounded hover:bg-gray-50">{{ $link }}</a>
+                            @endif
+                        @endforeach
+
+                        {{-- Next Page Link --}}
+                        @if ($entries->hasMorePages())
+                            <a href="{{ $entries->nextPageUrl() }}" rel="next"
+                                class="px-3 py-1 ml-1 text-gray-700 bg-white border rounded hover:bg-gray-50">Next</a>
+                        @else
+                            <span class="px-3 py-1 ml-1 text-gray-400 bg-white border rounded cursor-not-allowed">Next</span>
+                        @endif
+                    </nav>
+                @endif
+            </div>
         </div>
+        <!-- End Fitur Pagination -->
 
         <!-- Modal Tambah/Ubah -->
-        <div class="fixed inset-0 flex items-center justify-center z-50" x-show="isModalOpen"
+        <div class="fixed inset-0 z-50 flex items-center justify-center" x-show="isModalOpen"
             style="display: none; background-color: rgba(0, 0, 0, 0.5);">
-            <div class="bg-white p-6 rounded shadow w-full max-w-md" @click.away="closeModal">
-                <h3 class="text-lg font-semibold mb-4" x-text="isEdit ? 'Ubah Barang Masuk' : 'Tambah Barang Masuk'"></h3>
+            <div class="w-full max-w-md p-6 bg-white rounded shadow" @click.away="closeModal">
+                <h3 class="mb-4 text-lg font-semibold" x-text="isEdit ? 'Ubah Barang Masuk' : 'Tambah Barang Masuk'"></h3>
                 <form :action="formAction" method="POST">
                     @csrf
                     <template x-if="isEdit">
@@ -70,9 +183,9 @@
                     </template>
 
                     <div class="mb-4">
-                        <label class="block font-medium mb-1">Pilih Buku</label>
+                        <label class="block mb-1 font-medium">Pilih Buku</label>
                         <select name="book_id" x-model="selectedBookId" :disabled="isEdit"
-                            class="w-full border rounded px-3 py-2">
+                            class="w-full px-3 py-2 border rounded">
                             <option value="">-- Pilih Buku --</option>
                             @foreach($books as $book)
                                 <option value="{{ $book->id }}">
@@ -83,16 +196,16 @@
                     </div>
 
                     <div class="mb-4">
-                        <label class="block font-medium mb-1">Jumlah Stok Masuk</label>
+                        <label class="block mb-1 font-medium">Jumlah Stok Masuk</label>
                         <input type="number" name="stock_in" x-model="stockIn"
-                            :placeholder="`Masukkan jumlah (maksimal ${maxStock})`" class="w-full border rounded px-3 py-2"
+                            :placeholder="`Masukkan jumlah (maksimal ${maxStock})`" class="w-full px-3 py-2 border rounded"
                             min="1" :max="maxStock" />
                         <span class="text-sm text-gray-500">Maksimal: <span x-text="maxStock"></span></span>
                     </div>
 
                     <div class="flex justify-end">
-                        <button type="button" @click="closeModal" class="mr-2 px-4 py-2 border rounded">Batal</button>
-                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        <button type="button" @click="closeModal" class="px-4 py-2 mr-2 border rounded">Batal</button>
+                        <button type="submit" class="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700">
                             Simpan
                         </button>
                     </div>

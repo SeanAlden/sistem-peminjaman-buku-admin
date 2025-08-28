@@ -14,6 +14,8 @@ use App\Http\Controllers\EntryBookController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\PredictionController;
+use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\StockManagementController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -92,6 +94,11 @@ Route::middleware('adminMiddleware')->group(function () {
     Route::put('/exit-books/{id}', [ExitBookController::class, 'update'])->name('exit_books.update');
     Route::delete('/exit-books/{id}', [ExitBookController::class, 'destroy'])->name('exit_books.destroy');
 
+    Route::get('/my-reservations', [ReservationController::class, 'index'])->name('reservations.index');
+    Route::post('/reservations', [ReservationController::class, 'store'])->name('reservations.store');
+    Route::delete('/reservations/{reservation}', [ReservationController::class, 'destroy'])->name('reservations.destroy');
+
+    Route::get('/stock-management', [StockManagementController::class, 'index'])->name('stock.management');
 });
 
 Route::middleware('authenticatedAdminMiddleware')->group(function () {

@@ -1,30 +1,32 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container">
-        <h1 class="text-2xl font-bold mb-4">Barang Keluar</h1>
+    <div class="container px-4 py-6 mx-auto">
+        <div class="flex items-center justify-between mb-6">
+            <h1 class="mb-4 text-2xl font-bold">Barang Keluar</h1>
+            <!-- Tombol untuk memunculkan modal tambah -->
+            <button onclick="openAddModal()"
+                class="px-4 py-2 text-white bg-blue-600 rounded cursor-pointer hover:bg-blue-700">+ Tambah Barang
+                Keluar</button>
+        </div>
 
         @if(session('success'))
-            <div class="bg-green-100 text-green-700 p-2 rounded mb-3">
+            <div class="p-2 mb-3 text-green-700 bg-green-100 rounded">
                 {{ session('success') }}
             </div>
         @endif
 
-        <!-- Tombol untuk memunculkan modal tambah -->
-        <button onclick="openAddModal()" class="mb-4 px-4 py-2 bg-blue-600 text-white rounded">+ Tambah Barang
-            Keluar</button>
-
         <!-- Modal Tambah Data -->
-        <div id="addModal" class="fixed z-10 inset-0 hidden items-center justify-center"
+        <div id="addModal" class="fixed inset-0 z-10 items-center justify-center hidden"
             style="background-color: rgba(0, 0, 0, 0.5);">
-            <div class="bg-white w-full max-w-xl rounded shadow-lg p-6">
-                <h2 class="text-xl font-semibold mb-4">Tambah Barang Keluar</h2>
+            <div class="w-full max-w-xl p-6 bg-white rounded shadow-lg">
+                <h2 class="mb-4 text-xl font-semibold">Tambah Barang Keluar</h2>
                 <form action="{{ route('exit_books.store') }}" method="POST">
                     @csrf
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <div>
                             <label>Buku</label>
-                            <select name="book_id" class="w-full border p-2 rounded">
+                            <select name="book_id" class="w-full p-2 border rounded">
                                 @foreach($books as $book)
                                     <option value="{{ $book->id }}">{{ $book->title }}</option>
                                 @endforeach
@@ -32,7 +34,7 @@
                         </div>
                         <div>
                             <label>Supplier</label>
-                            <select name="supplier_id" class="w-full border p-2 rounded">
+                            <select name="supplier_id" class="w-full p-2 border rounded">
                                 @foreach($suppliers as $supplier)
                                     <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
                                 @endforeach
@@ -40,34 +42,34 @@
                         </div>
                         <div>
                             <label>Jumlah Keluar</label>
-                            <input type="number" name="stock_out" class="w-full border p-2 rounded" min="1" required>
+                            <input type="number" name="stock_out" class="w-full p-2 border rounded" min="1" required>
                         </div>
                         <div>
                             <label>Alasan</label>
-                            <input type="text" name="reason" class="w-full border p-2 rounded"
+                            <input type="text" name="reason" class="w-full p-2 border rounded"
                                 placeholder="Rusak, robek, dll">
                         </div>
                     </div>
-                    <div class="mt-4 flex justify-end">
+                    <div class="flex justify-end mt-4">
                         <button type="button" onclick="closeAddModal()" class="mr-2 text-gray-600">Batal</button>
-                        <button class="bg-blue-600 text-white px-4 py-2 rounded">Simpan</button>
+                        <button class="px-4 py-2 text-white bg-blue-600 rounded">Simpan</button>
                     </div>
                 </form>
             </div>
         </div>
 
         <!-- Modal Edit Data -->
-        <div id="editModal" class="fixed z-10 inset-0 hidden items-center justify-center"
+        <div id="editModal" class="fixed inset-0 z-10 items-center justify-center hidden"
             style="background-color: rgba(0, 0, 0, 0.5);">
-            <div class="bg-white w-full max-w-xl rounded shadow-lg p-6">
-                <h2 class="text-xl font-semibold mb-4">Edit Barang Keluar</h2>
+            <div class="w-full max-w-xl p-6 bg-white rounded shadow-lg">
+                <h2 class="mb-4 text-xl font-semibold">Edit Barang Keluar</h2>
                 <form id="editForm" method="POST">
                     @csrf
                     @method('PUT')
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <div>
                             <label>Buku</label>
-                            <select name="book_id" id="edit_book_id" class="w-full border p-2 rounded">
+                            <select name="book_id" id="edit_book_id" class="w-full p-2 border rounded">
                                 @foreach($books as $book)
                                     <option value="{{ $book->id }}">{{ $book->title }}</option>
                                 @endforeach
@@ -75,7 +77,7 @@
                         </div>
                         <div>
                             <label>Supplier</label>
-                            <select name="supplier_id" id="edit_supplier_id" class="w-full border p-2 rounded">
+                            <select name="supplier_id" id="edit_supplier_id" class="w-full p-2 border rounded">
                                 @foreach($suppliers as $supplier)
                                     <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
                                 @endforeach
@@ -83,26 +85,56 @@
                         </div>
                         <div>
                             <label>Jumlah Keluar</label>
-                            <input type="number" name="stock_out" id="edit_stock_out" class="w-full border p-2 rounded"
+                            <input type="number" name="stock_out" id="edit_stock_out" class="w-full p-2 border rounded"
                                 min="1" required>
                         </div>
                         <div>
                             <label>Alasan</label>
-                            <input type="text" name="reason" id="edit_reason" class="w-full border p-2 rounded">
+                            <input type="text" name="reason" id="edit_reason" class="w-full p-2 border rounded">
                         </div>
                     </div>
-                    <div class="mt-4 flex justify-end">
+                    <div class="flex justify-end mt-4">
                         <button type="button" onclick="closeEditModal()" class="mr-2 text-gray-600">Batal</button>
-                        <button class="bg-green-600 text-white px-4 py-2 rounded">Perbarui</button>
+                        <button class="px-4 py-2 text-white bg-green-600 rounded">Perbarui</button>
                     </div>
                 </form>
             </div>
         </div>
 
+        <!-- Fitur Search dan Items per Page -->
+        <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center">
+                <form action="{{ route('exit_books.index') }}" method="GET" class="flex items-center">
+                    <label for="per_page" class="mr-2 text-sm text-gray-600 dark:text-white">Show:</label>
+                    <select name="per_page" id="per_page"
+                        class="block w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                        onchange="this.form.submit()">
+                        <option value="5" {{ $perPage == 5 ? 'selected' : '' }}>5</option>
+                        <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
+                        <option value="25" {{ $perPage == 25 ? 'selected' : '' }}>25</option>
+                        <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option>
+                        <option value="100" {{ $perPage == 100 ? 'selected' : '' }}>100</option>
+                    </select>
+                    <input type="hidden" name="search" value="{{ $search }}">
+                </form>
+            </div>
+            <div class="flex items-center">
+                <form action="{{ route('exit_books.index') }}" method="GET" class="flex items-center">
+                    <label for="search" class="mr-2 text-sm text-gray-600 dark:text-white">Search:</label>
+                    <input type="text" name="search" id="search"
+                        class="block w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                        value="{{ $search }}" placeholder="Search...">
+                    <input type="hidden" name="per_page" value="{{ $perPage }}">
+                </form>
+            </div>
+        </div>
+        <!-- End Fitur -->
+
         <!-- Tabel Data -->
         <table class="min-w-full bg-white border">
             <thead>
-                <tr class="bg-gray-200 text-left">
+                <tr class="text-left bg-gray-200">
+                    <th class="px-4 py-2 border">Gambar</th> <!-- Tambahkan ini -->
                     <th class="px-4 py-2 border">Buku</th>
                     <th class="px-4 py-2 border">Supplier</th>
                     <th class="px-4 py-2 border">Stok Sebelum</th>
@@ -114,16 +146,32 @@
             </thead>
             <tbody>
                 @foreach($exits as $exit)
-                    <tr>
-                        <td class="border px-4 py-2">{{ $exit->book->title }}</td>
-                        <td class="border px-4 py-2">{{ $exit->supplier->name }}</td>
-                        <td class="border px-4 py-2">{{ $exit->stock_before }}</td>
-                        <td class="border px-4 py-2">{{ $exit->stock_out }}</td>
-                        <td class="border px-4 py-2">{{ $exit->stock_after }}</td>
-                        <td class="border px-4 py-2">{{ $exit->reason }}</td>
-                        <td class="border px-4 py-2">
+                    <tr class="border-b hover:bg-gray-50">
+                        {{-- <td class="px-4 py-2 border">
+                            @if($exit->book->image_url)
+                            <img src="{{ asset('storage/' . $exit->book->image_url) }}" alt="Gambar Buku"
+                                class="object-cover w-16 h-20 rounded" />
+                            @else
+                            <span class="text-gray-500">Tidak ada gambar</span>
+                            @endif
+                        </td> --}}
+                        <td class="px-4 py-2 text-center border">
+                            @if($exit->book->image_url)
+                                <img src="{{ asset('storage/' . $exit->book->image_url) }}" alt="Gambar Buku"
+                                    class="object-cover w-16 h-20 mx-auto rounded" />
+                            @else
+                                <span class="text-gray-500">Tidak ada gambar</span>
+                            @endif
+                        </td>
+                        <td class="px-4 py-2 border">{{ $exit->book->title }}</td>
+                        <td class="px-4 py-2 border">{{ $exit->supplier->name }}</td>
+                        <td class="px-4 py-2 border">{{ $exit->stock_before }}</td>
+                        <td class="px-4 py-2 font-bold text-red-500">- {{ $exit->stock_out }}</td>
+                        <td class="px-4 py-2 border">{{ $exit->stock_after }}</td>
+                        <td class="px-4 py-2 border">{{ $exit->reason }}</td>
+                        <td class="px-4 py-2 border">
                             <button onclick="openEditModal({{ $exit }})"
-                                class="text-blue-500 hover:underline mr-2">Edit</button>
+                                class="mr-2 text-blue-500 hover:underline">Edit</button>
                             <form action="{{ route('exit_books.destroy', $exit->id) }}" method="POST"
                                 onsubmit="return confirm('Yakin hapus?')" class="inline-block">
                                 @csrf
@@ -135,6 +183,91 @@
                 @endforeach
             </tbody>
         </table>
+
+        <!-- Fitur Pagination -->
+        <div class="flex items-center justify-between mt-4">
+            <div>
+                @if ($exits->total() > 0)
+                    <p class="text-sm text-gray-700 dark:text-white">
+                        Showing {{ $exits->firstItem() }} to {{ $exits->lastItem() }} of {{ $exits->total() }}
+                        exits
+                    </p>
+                @endif
+            </div>
+            <div>
+                @if ($exits->hasPages())
+                    <nav role="navigation" aria-label="Pagination Navigation" class="flex items-center">
+                        {{-- Previous Page Link --}}
+                        @if ($exits->onFirstPage())
+                            <span class="px-3 py-1 mr-1 text-gray-400 bg-white border rounded cursor-not-allowed">Prev</span>
+                        @else
+                            <a href="{{ $exits->previousPageUrl() }}" rel="prev"
+                                class="px-3 py-1 mr-1 text-gray-700 bg-white border rounded hover:bg-gray-50">Prev</a>
+                        @endif
+
+                        @php
+                            $currentPage = $exits->currentPage();
+                            $lastPage = $exits->lastPage();
+                            $links = [];
+
+                            // Logic untuk menampilkan link pagination
+                            if ($lastPage <= 7) {
+                                for ($i = 1; $i <= $lastPage; $i++) {
+                                    $links[] = $i;
+                                }
+                            } else {
+                                $links[] = 1;
+                                if ($currentPage > 4) {
+                                    $links[] = '...';
+                                }
+
+                                $start = max(2, $currentPage - 1);
+                                $end = min($lastPage - 1, $currentPage + 1);
+
+                                if ($currentPage <= 4) {
+                                    $start = 2;
+                                    $end = 5;
+                                }
+
+                                if ($currentPage >= $lastPage - 3) {
+                                    $start = $lastPage - 4;
+                                    $end = $lastPage - 1;
+                                }
+
+                                for ($i = $start; $i <= $end; $i++) {
+                                    $links[] = $i;
+                                }
+
+                                if ($currentPage < $lastPage - 3) {
+                                    $links[] = '...';
+                                }
+                                $links[] = $lastPage;
+                            }
+                        @endphp
+
+                        @foreach ($links as $link)
+                            @if ($link === '...')
+                                <span class="px-3 py-1 mr-1 text-gray-500 bg-white border rounded">{{ $link }}</span>
+                            @elseif ($link == $currentPage)
+                                <span class="px-3 py-1 mr-1 text-white bg-blue-500 border border-blue-500 rounded">{{ $link }}</span>
+                            @else
+                                <a href="{{ $exits->url($link) }}"
+                                    class="px-3 py-1 mr-1 text-gray-700 bg-white border rounded hover:bg-gray-50">{{ $link }}</a>
+                            @endif
+                        @endforeach
+
+                        {{-- Next Page Link --}}
+                        @if ($exits->hasMorePages())
+                            <a href="{{ $exits->nextPageUrl() }}" rel="next"
+                                class="px-3 py-1 ml-1 text-gray-700 bg-white border rounded hover:bg-gray-50">Next</a>
+                        @else
+                            <span class="px-3 py-1 ml-1 text-gray-400 bg-white border rounded cursor-not-allowed">Next</span>
+                        @endif
+                    </nav>
+                @endif
+            </div>
+        </div>
+        <!-- End Fitur Pagination -->
     </div>
 
     <script>

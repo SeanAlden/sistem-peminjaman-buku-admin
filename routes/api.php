@@ -8,6 +8,8 @@ use App\Http\Controllers\API\BookController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\FavoriteController;
 use App\Http\Controllers\API\CategoryController;
+use App\Http\Controllers\API\BookDetailController;
+use App\Http\Controllers\API\ReservationController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -27,11 +29,27 @@ Route::middleware('auth:sanctum')->get('/books', [BookController::class, 'index'
 Route::middleware('auth:sanctum')->get('/books/{id}', [BookController::class, 'show']);
 
 Route::middleware('auth:sanctum')->group(function () {
+    // Route::post('/loans', [LoanController::class, 'store']);
+    // Route::get('/loans', [LoanController::class, 'index']);
+    // Route::post('/loans/{id}/return', [LoanController::class, 'returnLoan']);
+    // Route::delete('/loans/{id}', [LoanController::class, 'cancelLoan']);
+    // Route::get('/loans/check-active', [LoanController::class, 'checkActiveLoan']);
+
+    // Routes Peminjaman (Existing)
     Route::post('/loans', [LoanController::class, 'store']);
     Route::get('/loans', [LoanController::class, 'index']);
     Route::post('/loans/{id}/return', [LoanController::class, 'returnLoan']);
     Route::delete('/loans/{id}', [LoanController::class, 'cancelLoan']);
     Route::get('/loans/check-active', [LoanController::class, 'checkActiveLoan']);
+
+    // Perubahan: Routes Reservasi (Baru)
+    Route::get('/my-reservations', [ReservationController::class, 'index']);
+    Route::get('/reservations/books/{id}', [ReservationController::class, 'show']);
+    Route::post('/reservations', [ReservationController::class, 'store']);
+    Route::delete('/reservations/{reservation}', [ReservationController::class, 'destroy']);
+
+    // --- PERBAIKAN: Gunakan route baru ini untuk detail buku ---
+    Route::get('/book-details/{book}', [BookDetailController::class, 'show']);
 });
 
 Route::post('/register', [AuthController::class, 'store']);

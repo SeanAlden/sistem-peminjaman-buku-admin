@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container mx-auto">
-    <h1 class="text-2xl font-bold mb-4">Daftar Peminjaman</h1>
+    <h1 class="mb-4 text-2xl font-bold">Daftar Peminjaman</h1>
 
     <table class="min-w-full bg-white rounded shadow">
         <thead>
@@ -23,10 +23,10 @@
                 <td class="px-4 py-2 border-b">{{ $loan->book->title }}</td>
                 <td class="px-4 py-2 border-b">{{ $loan->loan_date->format('d-m-Y') }}</td>
                 <td class="px-4 py-2 border-b">{{ $loan->return_date ? $loan->return_date->format('d-m-Y') : '-' }}</td>
-                <td class="px-4 py-2 border-b capitalize">{{ $loan->status }}</td>
-                <td class="px-4 py-2 border-b capitalize">{{ $loan->late_days }}</td>
-                <td class="px-4 py-2 border-b capitalize">{{ $loan->fine_amount }}</td>
-                <td class="px-4 py-2 border-b capitalize">{{ $loan->return_status_note }}</td>
+                <td class="px-4 py-2 capitalize border-b">{{ $loan->status }}</td>
+                <td class="px-4 py-2 capitalize border-b">{{ $loan->late_days }}</td>
+                <td class="px-4 py-2 capitalize border-b">{{ $loan->fine_amount }}</td>
+                <td class="px-4 py-2 capitalize border-b">{{ $loan->return_status_note }}</td>
                 <td class="px-4 py-2 border-b">
                     <a href="{{ route('loans.show', $loan->id) }}" class="text-blue-600 hover:underline">Detail</a>
                 </td>
@@ -40,14 +40,14 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container mx-auto px-4 py-8">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6">📖 Daftar Peminjaman</h1>
+    <div class="container px-4 py-8 mx-auto">
+        <h1 class="mb-6 text-3xl font-bold text-gray-800 dark:text-white">📖 Daftar Peminjaman</h1>
 
         <!-- Fitur Search dan Items per Page -->
         <div class="flex items-center justify-between mb-4">
             <div class="flex items-center">
                 <form action="{{ route('loans.index') }}" method="GET" class="flex items-center">
-                    <label for="per_page" class="mr-2 text-sm text-gray-600">Show:</label>
+                    <label for="per_page" class="mr-2 text-sm text-gray-600 dark:text-white">Show:</label>
                     <select name="per_page" id="per_page"
                         class="block w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                         onchange="this.form.submit()">
@@ -62,7 +62,7 @@
             </div>
             <div class="flex items-center">
                 <form action="{{ route('loans.index') }}" method="GET" class="flex items-center">
-                    <label for="search" class="mr-2 text-sm text-gray-600">Search:</label>
+                    <label for="search" class="mr-2 text-sm text-gray-600 dark:text-white">Search:</label>
                     <input type="text" name="search" id="search"
                         class="block w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                         value="{{ $search }}" placeholder="Search...">
@@ -73,66 +73,72 @@
         <!-- End Fitur -->
 
         <div class="overflow-x-auto rounded shadow-lg">
-            <table class="min-w-full divide-y divide-gray-200 bg-white">
-                <thead class="bg-gray-100">
+            <table class="min-w-full bg-white divide-y divide-gray-200">
+                <thead class="bg-gray-100 dark:bg-gray-300">
                     <tr>
-                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Gambar</th>
-                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Judul Buku</th>
-                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Email User</th>
-                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Durasi Peminjaman Maksimal</th>
-                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Tanggal Peminjaman</th>
-                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Janji Tanggal Kembali</th>
-                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Tanggal Maks Kembali</th>
-                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Status</th>
-                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Tanggal Pengembalian</th>
-                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Durasi Keterlambatan</th>
-                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Total Denda</th>
-                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Catatan</th>
-                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Aksi</th>
+                        <th class="px-6 py-3 text-sm font-medium text-left text-gray-700">Gambar</th>
+                        <th class="px-6 py-3 text-sm font-medium text-left text-gray-700">Judul Buku</th>
+                        <th class="px-6 py-3 text-sm font-medium text-left text-gray-700">Email User</th>
+                        <th class="px-6 py-3 text-sm font-medium text-left text-gray-700">Durasi Peminjaman
+                            Maksimal</th>
+                        <th class="px-6 py-3 text-sm font-medium text-left text-gray-700">Tanggal Peminjaman
+                        </th>
+                        <th class="px-6 py-3 text-sm font-medium text-left text-gray-700 ">Janji Tanggal
+                            Kembali</th>
+                        <th class="px-6 py-3 text-sm font-medium text-left text-gray-700">Tanggal Maks
+                            Kembali</th>
+                        <th class="px-6 py-3 text-sm font-medium text-left text-gray-700">Status</th>
+                        <th class="px-6 py-3 text-sm font-medium text-left text-gray-700">Tanggal
+                            Pengembalian</th>
+                        <th class="px-6 py-3 text-sm font-medium text-left text-gray-700">Durasi
+                            Keterlambatan</th>
+                        <th class="px-6 py-3 text-sm font-medium text-left text-gray-700">Total Denda</th>
+                        <th class="px-6 py-3 text-sm font-medium text-left text-gray-700">Catatan</th>
+                        <th class="px-6 py-3 text-sm font-medium text-left text-gray-700">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-200 text-sm text-gray-700">
+                <tbody class="text-sm text-gray-700 divide-y divide-gray-200">
                     @foreach ($loans as $loan)
-                        <tr class="hover:bg-gray-50 transition duration-300">
+                        <tr class="transition duration-300 hover:bg-gray-50 dark:bg-gray-500 dark:hover:bg-gray-600">
                             <td class="px-6 py-4">
                                 <img src="{{ asset('storage/' . $loan->book->image_url) }}" alt="Book Image"
-                                    class="w-16 h-20 object-contain rounded shadow">
+                                    class="object-contain w-16 h-20 rounded shadow">
                             </td>
-                            <td class="px-6 py-4 font-semibold">{{ $loan->book->title }}</td>
-                            <td class="px-6 py-4">{{ $loan->user->email ?? '-' }}</td>
-                            <td class="px-6 py-4 text-center">{{ $loan->loan_duration ?? '-' }} Hari</td>
-                            <td class="px-6 py-4">{{ $loan->loan_date->format('d-m-Y') }}</td>
-                            <td class="px-6 py-4">
+                            <td class="px-6 py-4 font-semibold dark:text-white">{{ $loan->book->title }}</td>
+                            <td class="px-6 py-4 dark:text-white">{{ $loan->user->email ?? '-' }}</td>
+                            <td class="px-6 py-4 text-center dark:text-white">{{ $loan->loan_duration ?? '-' }} Hari</td>
+                            <td class="px-6 py-4 dark:text-white">{{ $loan->loan_date->format('d-m-Y') }}</td>
+                            <td class="px-6 py-4 dark:text-white">
                                 {{ $loan->return_date ? $loan->return_date->format('d-m-Y') : '-' }}
                             </td>
-                            <td class="px-6 py-4">
+                            <td class="px-6 py-4 dark:text-white">
                                 {{ $loan->max_returned_at ? $loan->max_returned_at->format('d-m-Y') : '-' }}
                             </td>
 
-                            <td class="px-6 py-4 capitalize">
+                            <td class="px-6 py-4 capitalize dark:text-white">
                                 <span
                                     class="inline-block px-2 py-1 rounded 
-                                                                    {{ $loan->status === 'returned' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' }}">
+                                                                            {{ $loan->status === 'returned' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' }}">
                                     {{ $loan->status }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4">
+                            <td class="px-6 py-4 dark:text-white">
                                 {{ $loan->actual_returned_at ? $loan->actual_returned_at->format('d-m-Y') : '-' }}
                             </td>
 
                             {{-- <td class="px-6 py-4">
                                 {{ $loan->actual_returned_at ? $loan->actual_returned_at : '-' }}
                             </td> --}}
-                            <td class="px-6 py-4 text-center">{{ $loan->late_days ?? '-' }} Hari</td>
-                            <td class="px-6 py-4">
+                            <td class="px-6 py-4 text-center dark:text-white">{{ $loan->late_days ?? '-' }} Hari</td>
+                            <td class="px-6 py-4 dark:text-white">
                                 {{ $loan->fine_amount ? 'Rp ' . number_format($loan->fine_amount, 0, ',', '.') : '-' }}
                             </td>
-                            <td class="px-6 py-4 capitalize">
+                            <td class="px-6 py-4 capitalize dark:text-white">
                                 {{ str_replace('_', ' ', $loan->return_status_note ?? '-') }}
                             </td>
                             <td class="px-6 py-4">
                                 <a href="{{ route('loans.show', $loan->id) }}"
-                                    class="text-blue-600 hover:underline font-medium">Detail</a>
+                                    class="font-medium text-blue-600 dark:text-blue-300 hover:underline">Detail</a>
                             </td>
                         </tr>
                     @endforeach
@@ -144,7 +150,7 @@
         <div class="flex items-center justify-between mt-4">
             <div>
                 @if ($loans->total() > 0)
-                    <p class="text-sm text-gray-700">
+                    <p class="text-sm text-gray-700 dark:text-white">
                         Showing {{ $loans->firstItem() }} to {{ $loans->lastItem() }} of {{ $loans->total() }}
                         entries
                     </p>

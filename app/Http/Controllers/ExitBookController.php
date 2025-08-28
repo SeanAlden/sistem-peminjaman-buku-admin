@@ -9,13 +9,50 @@ use Illuminate\Http\Request;
 
 class ExitBookController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $exits = ExitBook::with(['book.category', 'supplier'])->latest()->get();
+        // $exits = ExitBook::with(['book.category', 'supplier'])->latest()->get();
+        // $books = Book::all();
+        // $suppliers = Supplier::all();
+
+        // return view('exit_books.exit_books', compact('exits', 'books', 'suppliers'));
+
+        // Mengambil nilai 'search' dari request, defaultnya string kosong
+        $search = $request->input('search', '');
+
+        // Mengambil nilai 'per_page' dari request, defaultnya 5
+        // dan memastikan nilainya adalah integer
+        $perPage = (int) $request->input('per_page', 5);
+
+        // Memulai query pada model ExitBook
+        $query = ExitBook::with(['book.category', 'supplier'])->latest();
+
+        // Jika ada keyword pencarian, tambahkan kondisi where
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->
+                    where('stock_before', 'like', "%{$search}%")
+                    ->orWhere('stock_out', 'like', "%{$search}%")
+                    ->orWhere('stock_after', 'like', "%{$search}%")
+                    ->orWhere('reason', 'like', "%{$search}%")
+                    ->orWhereHas('book', function ($q2) use ($search) {
+                        $q2->where('title', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('supplier', function ($q2) use ($search) {
+                        $q2->where('name', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        $exits = $query->paginate($perPage)->appends($request->except('page'));
+        // Lakukan pagination pada hasil query
+        // 'appends' digunakan agar parameter 'search' dan 'per_page' tetap ada di URL pagination
+
         $books = Book::all();
         $suppliers = Supplier::all();
 
-        return view('exit_books.exit_books', compact('exits', 'books', 'suppliers'));
+        // Kembalikan view 
+        return view('exit_books.exit_books', compact('exits', 'books', 'suppliers', 'search', 'perPage'));
     }
 
     public function store(Request $request)

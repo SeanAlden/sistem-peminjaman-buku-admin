@@ -6,30 +6,61 @@ use App\Models\Book;
 use App\Models\Purchase;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PurchaseController extends Controller
 {
+    // public function index(Request $request)
+    // {
+    //     // $purchases = Purchase::with(['supplier', 'book'])->get();
+    //     // return view('purchases.purchase_list', compact('purchases'));
+
+    //     // Mengambil nilai 'search' dari request, defaultnya string kosong
+    //     $search = $request->input('search', '');
+
+    //     // Mengambil nilai 'per_page' dari request, defaultnya 10
+    //     // dan memastikan nilainya adalah integer
+    //     $perPage = (int) $request->input('per_page', 5);
+
+    //     // Memulai query pada model Purchase
+    //     // $query = Book::query();
+    //     $query = Purchase::query();
+
+    //     // Jika ada keyword pencarian, tambahkan kondisi where
+    //     if (!empty($search)) {
+    //         $query->where(function ($q) use ($search) {
+    //             $q->
+    //                 where('total_price', 'like', "%{$search}%")
+    //                 ->orWhere('notes', 'like', "%{$search}%")
+    //                 ->orWhereHas('book', function ($q2) use ($search) {
+    //                     $q2->where('title', 'like', "%{$search}%");
+    //                 })
+    //                 ->orWhereHas('supplier', function ($q2) use ($search) {
+    //                     $q2->where('name', 'like', "%{$search}%");
+    //                 });
+    //         });
+    //     }
+
+    //     // Lakukan pagination pada hasil query
+    //     // 'appends' digunakan agar parameter 'search' dan 'per_page' tetap ada di URL pagination
+    //     $purchases = $query->paginate($perPage)->appends($request->except('page'));
+
+    //     // Kembalikan view 'purchases.purchase_list' dengan data suppliers, search, dan perPage
+    //     return view('purchases.purchase_list', compact('purchases', 'search', 'perPage'));
+    // }
+
     public function index(Request $request)
     {
-        // $purchases = Purchase::with(['supplier', 'book'])->get();
-        // return view('purchases.purchase_list', compact('purchases'));
-
-        // Mengambil nilai 'search' dari request, defaultnya string kosong
         $search = $request->input('search', '');
-
-        // Mengambil nilai 'per_page' dari request, defaultnya 10
-        // dan memastikan nilainya adalah integer
         $perPage = (int) $request->input('per_page', 5);
 
         // Memulai query pada model Purchase
-        // $query = Book::query();
-        $query = Purchase::query();
+        $query = Purchase::with(['supplier', 'book']); // Eager load relasi
 
-        // Jika ada keyword pencarian, tambahkan kondisi where
+        // ... (logika pencarian Anda tidak perlu diubah) ...
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
-                $q->
-                    where('total_price', 'like', "%{$search}%")
+                $q->where('total_price', 'like', "%{$search}%")
                     ->orWhere('notes', 'like', "%{$search}%")
                     ->orWhereHas('book', function ($q2) use ($search) {
                         $q2->where('title', 'like', "%{$search}%");
@@ -40,12 +71,20 @@ class PurchaseController extends Controller
             });
         }
 
-        // Lakukan pagination pada hasil query
-        // 'appends' digunakan agar parameter 'search' dan 'per_page' tetap ada di URL pagination
+        // --- PERUBAHAN 1: Mengurutkan data berdasarkan buku ---
+        // Ini akan mengelompokkan semua pembelian untuk buku yang sama secara visual.
+        $query->orderBy('book_id', 'asc')->orderBy('purchase_date', 'asc');
+
         $purchases = $query->paginate($perPage)->appends($request->except('page'));
 
-        // Kembalikan view 'purchases.purchase_list' dengan data suppliers, search, dan perPage
-        return view('purchases.purchase_list', compact('purchases', 'search', 'perPage'));
+        // --- PERUBAHAN 2: Menghitung total kuantitas awal untuk setiap buku ---
+        // Kita membuat sebuah array asosiatif [book_id => total_quantity]
+        $bookTotalQuantities = Purchase::select('book_id', DB::raw('SUM(initial_quantity) as total'))
+            ->groupBy('book_id')
+            ->pluck('total', 'book_id');
+
+        // Kembalikan view dengan data tambahan '$bookTotalQuantities'
+        return view('purchases.purchase_list', compact('purchases', 'bookTotalQuantities', 'search', 'perPage'));
     }
 
     public function create()

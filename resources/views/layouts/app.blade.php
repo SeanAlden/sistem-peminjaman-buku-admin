@@ -23,7 +23,7 @@
             <div class="flex items-center justify-between px-4 py-4 border-b border-orange-700">
                 <span x-show="sidebarExpanded" class="text-lg font-semibold">Sistem Peminjaman Buku</span>
                 <button @click="sidebarExpanded = !sidebarExpanded"
-                    class="text-white focus:outline-none cursor-pointer">
+                    class="text-white cursor-pointer focus:outline-none">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -177,9 +177,9 @@
                     <button @click="open = !open"
                         class="flex items-center w-full px-4 py-3 transition-colors hover:bg-orange-700 focus:outline-none">
                         <img src="{{ asset('assets/icons/book.png') }}" class="w-5 h-5" alt="Book Icon">
-                        <span x-show="sidebarExpanded" class="ml-3 flex-1 text-left">Books</span>
+                        <span x-show="sidebarExpanded" class="flex-1 ml-3 text-left">Books</span>
                         <svg x-show="sidebarExpanded" :class="{ 'rotate-90': open }"
-                            class="w-4 h-4 ml-auto transform transition-transform" fill="none" stroke="currentColor"
+                            class="w-4 h-4 ml-auto transition-transform transform" fill="none" stroke="currentColor"
                             viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                         </svg>
@@ -188,20 +188,28 @@
                     <!-- Submenus -->
                     <div x-show="open" x-collapse class="ml-8 space-y-1">
                         <a href="{{ route('books.index') }}"
-                            class="flex items-center px-4 py-2 text-sm transition-colors hover:bg-orange-700 rounded">
+                            class="flex items-center px-4 py-2 text-sm transition-colors rounded hover:bg-orange-700">
                             <span>All Books</span>
                         </a>
                         <a href="{{ route('purchases.index') }}"
-                            class="flex items-center px-4 py-2 text-sm transition-colors hover:bg-orange-700 rounded">
+                            class="flex items-center px-4 py-2 text-sm transition-colors rounded hover:bg-orange-700">
                             <span>Purchases</span>
                         </a>
                         <a href="{{ route('entry_books.index') }}"
-                            class="flex items-center px-4 py-2 text-sm transition-colors hover:bg-orange-700 rounded">
+                            class="flex items-center px-4 py-2 text-sm transition-colors rounded hover:bg-orange-700">
                             <span>Entry Books</span>
                         </a>
                         <a href="{{ route('exit_books.index') }}"
-                            class="flex items-center px-4 py-2 text-sm transition-colors hover:bg-orange-700 rounded">
+                            class="flex items-center px-4 py-2 text-sm transition-colors rounded hover:bg-orange-700">
                             <span>Exit Books</span>
+                        </a>
+                        <a href="{{ route('stock.management') }}"
+                            class="flex items-center px-4 py-2 text-sm transition-colors rounded hover:bg-orange-700">
+                            <span>Stock Management Report</span>
+                        </a>
+                        <a href="{{ route('reservations.index') }}"
+                            class="flex items-center px-4 py-2 text-sm transition-colors rounded hover:bg-orange-700">
+                            <span>Reservations</span>
                         </a>
                     </div>
                 </div>
@@ -228,9 +236,9 @@
                 </a>
             </nav>
 
-            <div class="mt-auto px-4 py-3 border-t border-orange-700">
+            <div class="px-4 py-3 mt-auto border-t border-orange-700">
                 <button @click="showLogoutConfirm = true"
-                    class="flex items-center w-full px-2 py-2 text-left transition-colors hover:bg-orange-700 cursor-pointer">
+                    class="flex items-center w-full px-2 py-2 text-left transition-colors cursor-pointer hover:bg-orange-700">
                     {{-- <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -242,7 +250,7 @@
             </div>
         </aside>
 
-        <div :class="sidebarExpanded ? 'ml-64' : 'ml-16'" class="transition-all duration-300 min-h-screen">
+        <div :class="sidebarExpanded ? 'ml-64' : 'ml-16'" class="min-h-screen transition-all duration-300">
             {{-- <header class="flex items-center justify-between px-6 py-4 bg-white border-b shadow-sm">
                 <div class="flex items-center space-x-4">
                     <a href="#" class="text-lg font-bold text-gray-700 hover:underline">FAQ</a>
@@ -253,7 +261,7 @@
                         <img @click="openDropdown = !openDropdown"
                             src="{{ Auth::user()->profile_image ? asset('storage/profile_images/' . Auth::user()->profile_image) : asset('assets/images/profile.png') }}"
                             alt="Profile"
-                            class="w-10 h-10 rounded-full border-2 border-gray-300 cursor-pointer transition duration-200 hover:scale-105">
+                            class="w-10 h-10 transition duration-200 border-2 border-gray-300 rounded-full cursor-pointer hover:scale-105">
 
                         <!-- Dropdown -->
                         <div x-show="openDropdown" @click.away="openDropdown = false"
@@ -263,24 +271,24 @@
                             x-transition:leave="transition ease-in duration-150"
                             x-transition:leave-start="opacity-100 translate-y-0"
                             x-transition:leave-end="opacity-0 translate-y-1"
-                            class="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-xl z-50 overflow-hidden">
+                            class="absolute right-0 z-50 w-64 mt-2 overflow-hidden bg-white rounded-lg shadow-xl">
                             <!-- Profile Section -->
-                            <div class="px-5 py-4 bg-gray-50 border-b text-center">
+                            <div class="px-5 py-4 text-center border-b bg-gray-50">
                                 <img src="{{ Auth::user()->profile_image ? asset('storage/profile_images/' . Auth::user()->profile_image) : asset('assets/images/profile.png') }}"
-                                    alt="Profile Image" class="mx-auto mb-2 w-14 h-14 rounded-full border">
+                                    alt="Profile Image" class="mx-auto mb-2 border rounded-full w-14 h-14">
                                 <p class="text-base font-semibold text-gray-800">{{ Auth::user()->name }}</p>
                                 <p class="text-sm text-gray-500">{{ Auth::user()->email }}</p>
                             </div>
 
                             <!-- Menu Items -->
                             <a href="{{ route('admin.profile') }}"
-                                class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition">
+                                class="flex items-center px-4 py-3 text-sm text-gray-700 transition hover:bg-gray-100">
                                 <img src="{{ asset('assets/icons/user-edit.png') }}" class="w-4 h-4 mr-2"
                                     alt="Edit Icon">
                                 Edit Profil
                             </a>
                             <a href="{{ route('admin.password') }}"
-                                class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition">
+                                class="flex items-center px-4 py-3 text-sm text-gray-700 transition hover:bg-gray-100">
                                 <img src="{{ asset('assets/icons/lock.png') }}" class="w-4 h-4 mr-2"
                                     alt="Password Icon">
                                 Ubah Password
@@ -296,14 +304,14 @@
 
             <!-- HEADER -->
             <header
-                class="fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-6 py-4 bg-gray-300 text-white border-b border-gray-700 shadow-sm dark:bg-gray-600">
+                class="fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-6 py-4 text-white bg-gray-300 border-b border-gray-700 shadow-sm dark:bg-gray-600">
                 <div class="flex items-center space-x-4">
                     <a href="#" class="text-lg font-bold hover:underline">FAQ</a>
                 </div>
                 <div class="flex items-center space-x-6">
                     <!-- Dark Mode Toggle -->
                     {{-- <button @click="darkMode = !darkMode"
-                        class="w-8 h-8 rounded-full flex items-center justify-center transition hover:bg-gray-200 dark:hover:bg-gray-700">
+                        class="flex items-center justify-center w-8 h-8 transition rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
                         <template x-if="!darkMode">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-800" viewBox="0 0 24 24"
                                 fill="currentColor">
@@ -322,7 +330,7 @@
                     </button> --}}
 
                     <button @click="darkMode = !darkMode; window.darkMode = darkMode"
-                        class="w-8 h-8 rounded-full flex items-center justify-center transition hover:bg-gray-200 dark:hover:bg-gray-700">
+                        class="flex items-center justify-center w-8 h-8 transition rounded-full cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700">
 
                         <template x-if="!darkMode">
                             <img src="/assets/icons/moon.png" alt="Moon Icon" class="w-5 h-5">
@@ -337,7 +345,7 @@
                     <!-- Notification Icon -->
                     {{-- <div class="relative">
                         <img src="{{ asset('assets/icons/notification.png') }}" alt="Notification"
-                            class="w-6 h-6 cursor-pointer hover:scale-110 transition">
+                            class="w-6 h-6 transition cursor-pointer hover:scale-110">
                         <!-- You can add badge here later -->
                     </div> --}}
 
@@ -346,7 +354,7 @@
                         <img :src="darkMode 
             ? '{{ asset('assets/icons/notification_white.png') }}' 
             : '{{ asset('assets/icons/notification.png') }}'" alt="Notification"
-                            class="w-6 h-6 cursor-pointer hover:scale-110 transition">
+                            class="w-6 h-6 transition cursor-pointer hover:scale-110">
                         <!-- You can add badge here later -->
                     </div>
 
@@ -355,7 +363,7 @@
                         <img @click="openDropdown = !openDropdown"
                             src="{{ Auth::user()->profile_image ? asset('storage/profile_images/' . Auth::user()->profile_image) : asset('assets/images/profile.png') }}"
                             alt="Profile"
-                            class="w-10 h-10 rounded-full border-2 border-white cursor-pointer transition duration-200 hover:scale-105">
+                            class="w-10 h-10 transition duration-200 border-2 border-white rounded-full cursor-pointer hover:scale-105">
 
                         <!-- Dropdown -->
                         <div x-show="openDropdown" @click.away="openDropdown = false"
@@ -365,24 +373,24 @@
                             x-transition:leave="transition ease-in duration-150"
                             x-transition:leave-start="opacity-100 translate-y-0"
                             x-transition:leave-end="opacity-0 translate-y-1"
-                            class="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-xl z-50 overflow-hidden">
+                            class="absolute right-0 z-50 w-64 mt-2 overflow-hidden bg-white rounded-lg shadow-xl">
                             <!-- Profile Section -->
-                            <div class="px-5 py-4 bg-gray-50 border-b text-center">
+                            <div class="px-5 py-4 text-center border-b bg-gray-50">
                                 <img src="{{ Auth::user()->profile_image ? asset('storage/profile_images/' . Auth::user()->profile_image) : asset('assets/images/profile.png') }}"
-                                    alt="Profile Image" class="mx-auto mb-2 w-14 h-14 rounded-full border">
+                                    alt="Profile Image" class="mx-auto mb-2 border rounded-full w-14 h-14">
                                 <p class="text-base font-semibold text-gray-800">{{ Auth::user()->name }}</p>
                                 <p class="text-sm text-gray-500">{{ Auth::user()->email }}</p>
                             </div>
 
                             <!-- Menu Items -->
                             <a href="{{ route('admin.profile') }}"
-                                class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition">
+                                class="flex items-center px-4 py-3 text-sm text-gray-700 transition hover:bg-gray-100">
                                 <img src="{{ asset('assets/icons/user-edit.png') }}" class="w-4 h-4 mr-2"
                                     alt="Edit Icon">
                                 Edit Profil
                             </a>
                             <a href="{{ route('admin.password') }}"
-                                class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition">
+                                class="flex items-center px-4 py-3 text-sm text-gray-700 transition hover:bg-gray-100">
                                 <img src="{{ asset('assets/icons/lock.png') }}" class="w-4 h-4 mr-2"
                                     alt="Password Icon">
                                 Ubah Password
@@ -393,27 +401,27 @@
             </header>
 
             <!-- MAIN CONTENT -->
-            <main class="pt-20 p-6">
+            <main class="p-6 pt-20">
                 @yield('content')
                 @yield('scripts')
             </main>
         </div>
 
         {{-- <div x-show="showLogoutConfirm"
-            class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" style="display: none;">
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" style="display: none;">
             --}}
-            <div x-show="showLogoutConfirm" class="fixed inset-0 flex items-center justify-center z-50"
+            <div x-show="showLogoutConfirm" class="fixed inset-0 z-50 flex items-center justify-center"
                 style="display: none; background-color: rgba(0, 0, 0, 0.5);">
-                <div @click.away="showLogoutConfirm = false" class="bg-white p-6 rounded shadow-md w-full max-w-md">
-                    <h2 class="text-lg font-semibold mb-4">Konfirmasi Logout</h2>
+                <div @click.away="showLogoutConfirm = false" class="w-full max-w-md p-6 bg-white rounded shadow-md">
+                    <h2 class="mb-4 text-lg font-semibold">Konfirmasi Logout</h2>
                     <p class="mb-6">Apakah Anda ingin melakukan logout?</p>
                     <div class="flex justify-end space-x-4">
                         <button @click="showLogoutConfirm = false"
-                            class="px-4 py-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300 cursor-pointer">No</button>
+                            class="px-4 py-2 text-gray-700 bg-gray-200 rounded cursor-pointer hover:bg-gray-300">No</button>
                         <form method="POST" action="{{ route('admin.logout') }}">
                             @csrf
                             <button type="submit"
-                                class="px-4 py-2 text-white bg-red-600 rounded hover:bg-red-700 cursor-pointer">Yes</button>
+                                class="px-4 py-2 text-white bg-red-600 rounded cursor-pointer hover:bg-red-700">Yes</button>
                         </form>
                     </div>
                 </div>
