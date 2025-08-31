@@ -48,13 +48,13 @@
 //         if ($hasActiveLoan) {
 //             return back()->with('error', 'Anda sudah meminjam buku ini.');
 //         }
-        
+
 //         // 3. Cek apakah user sudah punya reservasi aktif untuk buku ini
 //         $hasActiveReservation = Reservation::where('user_id', $user->id)
 //             ->where('book_id', $book->id)
 //             ->whereIn('status', ['pending', 'available'])
 //             ->exists();
-        
+
 //         if ($hasActiveReservation) {
 //             return back()->with('error', 'Anda sudah memiliki reservasi untuk buku ini.');
 //         }
@@ -73,7 +73,7 @@
 //                 'status' => 'pending',
 //             ]);
 //         });
-        
+
 //         return redirect()->route('reservations.index')->with('success', 'Anda berhasil masuk ke dalam antrian untuk buku ' . $book->title);
 //     }
 
@@ -123,13 +123,56 @@ class ReservationController extends Controller
     /**
      * Menampilkan daftar reservasi berdasarkan peran pengguna.
      */
-    public function index()
+    public function index(Request $request)
     {
+        // $user = Auth::user();
+
+        // // Siapkan query dasar dengan eager loading untuk relasi book dan user
+        // $reservationsQuery = Reservation::with(['book', 'user'])
+        //     ->orderBy('created_at', 'desc');
+
+        // // Cek peran pengguna yang sedang login
+        // if ($user->usertype === 'admin') {
+        //     // Jika admin, tampilkan semua reservasi dari pengguna yang bertipe 'user'
+        //     $reservations = $reservationsQuery->whereHas('user', function ($query) {
+        //         $query->where('usertype', 'user');
+        //     })->get();
+        // } else {
+        //     // Jika bukan admin (adalah user), tampilkan hanya reservasinyanya sendiri
+        //     $reservations = $reservationsQuery->where('user_id', $user->id)->get();
+        // }
+
+        // return view('reservations', compact('reservations'));
+
         $user = Auth::user();
-        
+
         // Siapkan query dasar dengan eager loading untuk relasi book dan user
-        $reservationsQuery = Reservation::with(['book', 'user'])
-                                      ->orderBy('created_at', 'desc');
+        $reservationsQuery = Reservation::with(['book', 'user'])->orderBy('created_at', 'desc');
+
+        // Mengambil nilai 'search' dari request, defaultnya string kosong
+        $search = $request->input('search', '');
+
+        // Mengambil nilai 'per_page' dari request, defaultnya 10
+        // dan memastikan nilainya adalah integer
+        $perPage = (int) $request->input('per_page', 5);
+
+        // Memulai query pada model Category
+        // $query = Category::query();
+        // $query = Category::with('books');
+
+        // Jika ada keyword pencarian, tambahkan kondisi where
+        if (!empty($search)) {
+            $reservationsQuery->where(function ($q) use ($search) {
+                $q->where('status', 'like', "%{$search}%")
+                    ->orWhereHas('book', function ($q2) use ($search) {
+                        $q2->where('title', 'like', "%{$search}%");
+                        $q2->orWhere('author', 'like', "%{$search}%");
+                    })->orWhereHas('user', function ($q2) use ($search) {
+                        $q2->where('name', 'like', "%{$search}%");
+                        $q2->orWhere('email', 'like', "%{$search}%");
+                    });
+            });
+        }
 
         // Cek peran pengguna yang sedang login
         if ($user->usertype === 'admin') {
@@ -142,7 +185,12 @@ class ReservationController extends Controller
             $reservations = $reservationsQuery->where('user_id', $user->id)->get();
         }
 
-        return view('reservations', compact('reservations'));
+        // Lakukan pagination pada hasil query
+        // 'appends' digunakan agar parameter 'search' dan 'per_page' tetap ada di URL pagination
+        $reservations = $reservationsQuery->paginate($perPage)->appends($request->except('page'));
+
+        // Kembalikan view 'categories.category' dengan data categories, search, dan perPage
+        return view('reservations', compact('reservations', 'search', 'perPage'));
     }
 
     // Method store() dan destroy() tidak perlu diubah
@@ -174,13 +222,13 @@ class ReservationController extends Controller
         if ($hasActiveLoan) {
             return back()->with('error', 'Anda sudah meminjam buku ini.');
         }
-        
+
         // 3. Cek apakah user sudah punya reservasi aktif untuk buku ini
         $hasActiveReservation = Reservation::where('user_id', $user->id)
             ->where('book_id', $book->id)
             ->whereIn('status', ['pending', 'available'])
             ->exists();
-        
+
         if ($hasActiveReservation) {
             return back()->with('error', 'Anda sudah memiliki reservasi untuk buku ini.');
         }
@@ -199,7 +247,7 @@ class ReservationController extends Controller
                 'status' => 'pending',
             ]);
         });
-        
+
         return redirect()->route('reservations.index')->with('success', 'Anda berhasil masuk ke dalam antrian untuk buku ' . $book->title);
     }
 
@@ -222,7 +270,7 @@ class ReservationController extends Controller
         $book = $reservation->book;
         $queuePosition = $reservation->queue_position;
 
-        DB::transaction(function() use ($reservation, $book, $queuePosition) {
+        DB::transaction(function () use ($reservation, $book, $queuePosition) {
             $reservation->update(['status' => 'cancelled']);
 
             // Update posisi antrian untuk user lain di belakangnya

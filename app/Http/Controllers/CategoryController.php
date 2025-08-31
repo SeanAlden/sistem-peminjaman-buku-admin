@@ -13,26 +13,26 @@ class CategoryController extends Controller
         // $categories = Category::all();
         // $categories = Category::with('books')->get();
         // return view('categories.category', compact('categories'));
-        
+
         // Mengambil nilai 'search' dari request, defaultnya string kosong
         $search = $request->input('search', '');
-        
+
         // Mengambil nilai 'per_page' dari request, defaultnya 10
         // dan memastikan nilainya adalah integer
         $perPage = (int) $request->input('per_page', 5);
-        
+
         // Memulai query pada model Category
         // $query = Category::query();
         $query = Category::with('books');
-        
+
         // Jika ada keyword pencarian, tambahkan kondisi where
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                ->orWhere('description', 'like', "%{$search}%");
+                    ->orWhere('description', 'like', "%{$search}%");
             });
         }
-        
+
         // Lakukan pagination pada hasil query
         // 'appends' digunakan agar parameter 'search' dan 'per_page' tetap ada di URL pagination
         $categories = $query->paginate($perPage)->appends($request->except('page'));
@@ -68,9 +68,15 @@ class CategoryController extends Controller
     }
 
     // Form edit kategori
+    // public function edit(Category $category)
+    // {
+    //     return view('categories.edit_category', compact('category'));
+    // }
+
+    // Mengembalikan data kategori sebagai JSON untuk modal edit
     public function edit(Category $category)
     {
-        return view('categories.edit_category', compact('category'));
+        return response()->json($category);
     }
 
     // Simpan hasil edit

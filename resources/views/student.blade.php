@@ -1,91 +1,3 @@
-{{-- @extends('layouts.app')
-
-@section('content')
-<div class="container mx-auto mt-6">
-    <h2 class="mb-4 text-2xl font-bold text-gray-800">Student List</h2>
-
-    @if(session('success'))
-    <div class="px-4 py-3 mb-4 text-green-700 bg-green-100 border border-green-400 rounded">
-        {{ session('success') }}
-    </div>
-    @endif
-
-    <div class="mb-4">
-        <a href="{{ route('students.create') }}"
-            class="inline-block px-4 py-2 font-semibold text-white bg-blue-600 rounded shadow hover:bg-blue-700">
-            + Add Student
-        </a>
-    </div>
-
-    <div>
-        <form method="GET" action="" class="inline-block">
-            <label for="per_page" class="mr-2">Show:</label>
-            <select name="per_page" onchange="this.form.submit()" class="px-2 py-1 border rounded-md">
-                @foreach([10, 25, 50, 100] as $size)
-                <option value="{{ $size }}" {{ request('per_page', 10)==$size ? 'selected' : '' }}>{{ $size }}</option>
-                @endforeach
-            </select>
-            <span class="ml-2">entries</span>
-        </form>
-
-        <form method="GET" action="" class="flex items-center space-x-2">
-            <input type="text" name="search" placeholder="Search..." value="{{ request('search') }}"
-                class="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400" />
-            <button type="submit" class="px-3 py-2 text-white bg-blue-600 rounded hover:bg-blue-700">
-                Search
-            </button>
-        </form>
-    </div>
-
-    <div class="overflow-x-auto">
-        <table class="min-w-full bg-white rounded shadow">
-            <thead>
-                <tr class="text-sm leading-normal text-gray-700 uppercase bg-gray-200">
-                    <th class="px-6 py-3 text-left">Name</th>
-                    <th class="px-6 py-3 text-left">Major</th>
-                    <th class="px-6 py-3 text-left">Email</th>
-                    <th class="px-6 py-3 text-left">Phone</th>
-                    <th class="px-6 py-3 text-left">Actions</th>
-                </tr>
-            </thead>
-            <tbody class="text-sm text-gray-600">
-                @foreach($students as $student)
-                <tr class="border-b hover:bg-gray-50">
-                    <td class="px-6 py-3">{{ $student->name }}</td>
-                    <td class="px-6 py-3">{{ $student->major }}</td>
-                    <td class="px-6 py-3">{{ $student->email }}</td>
-                    <td class="px-6 py-3">{{ $student->phone }}</td>
-                    <td class="flex px-6 py-3 space-x-2">
-                        <a href="{{ route('students.show', $student->id) }}"
-                            class="px-3 py-1 text-sm text-white bg-blue-500 rounded hover:bg-blue-600">View</a>
-                        <a href="{{ route('students.edit', $student->id) }}"
-                            class="px-3 py-1 text-sm text-white bg-yellow-500 rounded hover:bg-yellow-600">Edit</a>
-                        <form action="{{ route('students.destroy', $student->id) }}" method="POST"
-                            onsubmit="return confirm('Delete this student?');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit"
-                                class="px-3 py-1 text-sm text-white bg-red-500 rounded hover:bg-red-600">
-                                Delete
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-        @php
-        $from = ($students->currentPage() - 1) * $students->perPage() + 1;
-        $to = min($from + $students->perPage() - 1, $students->total());
-        @endphp
-        <p class="text-sm text-gray-600">
-            Showing {{ $from }} to {{ $to }} of {{ $students->total() }} entries
-        </p>
-        {{ $students->appends(request()->query())->onEachSide(1)->links('vendor.pagination.tailwind') }}
-    </div>
-</div>
-@endsection --}}
-
 @extends('layouts.app')
 
 @section('content')
@@ -99,12 +11,8 @@
         @endif
 
         <div class="mb-4">
-            {{-- <a href="{{ route('students.create') }}"
-                class="inline-block px-4 py-2 font-semibold text-white bg-blue-600 rounded shadow hover:bg-blue-700">
-                + Add Student
-            </a> --}}
             <button onclick="openModal('createModal')"
-                class="inline-block px-4 py-2 font-semibold text-white bg-blue-600 rounded shadow hover:bg-blue-700">
+                class="inline-block px-4 py-2 font-semibold text-white bg-blue-600 rounded shadow hover:bg-blue-700 cursor-pointer">
                 + Add Student
             </button>
         </div>
@@ -171,16 +79,25 @@
                                     </button>
                                 </form> --}}
                                 <button onclick='fillViewModal(@json($student))'
-                                    class="px-3 py-1 text-sm text-white bg-blue-500 rounded hover:bg-blue-600">View</button>
+                                    class="px-3 py-1 text-sm text-white bg-blue-500 rounded hover:bg-blue-600 cursor-pointer">View</button>
 
                                 <button onclick='fillEditModal(@json($student))'
-                                    class="px-3 py-1 text-sm text-white bg-yellow-500 rounded hover:bg-yellow-600">Edit</button>
-                                <form action="{{ route('students.destroy', $student->id) }}" method="POST"
+                                    class="px-3 py-1 text-sm text-white bg-yellow-500 rounded hover:bg-yellow-600 cursor-pointer">Edit</button>
+                                {{-- <form action="{{ route('students.destroy', $student->id) }}" method="POST"
                                     onsubmit="return confirm('Delete this student?');">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit"
                                         class="px-3 py-1 text-sm text-white bg-red-500 rounded hover:bg-red-600">
+                                        Delete
+                                    </button>
+                                </form> --}}
+                                <form id="deleteForm-{{ $student->id }}" action="{{ route('students.destroy', $student->id) }}"
+                                    method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="button" onclick="openDeleteModal({{ $student->id }})"
+                                        class="px-3 py-1 text-sm text-white bg-red-500 rounded hover:bg-red-600 cursor-pointer">
                                         Delete
                                     </button>
                                 </form>
@@ -355,7 +272,8 @@
         </div>
 
         <!-- View Modal -->
-        <div id="viewModal" class="fixed inset-0 z-50 hidden overflow-y-auto" style="background-color: rgba(0, 0, 0, 0.5);">
+        {{-- <div id="viewModal" class="fixed inset-0 z-50 hidden overflow-y-auto"
+            style="background-color: rgba(0, 0, 0, 0.5);">
             <div class="relative w-full max-w-lg p-6 mx-auto mt-20 bg-white rounded shadow-lg">
                 <h2 class="mb-4 text-xl font-semibold text-gray-700">Student Details</h2>
                 <div class="mb-2"><strong>Name:</strong> <span id="viewName"></span></div>
@@ -368,10 +286,63 @@
                         class="px-4 py-2 text-white bg-blue-600 rounded">Close</button>
                 </div>
             </div>
+        </div> --}}
+
+        <!-- View Modal -->
+        <div id="viewModal" class="fixed inset-0 z-50 hidden flex items-center justify-center"
+            style="background-color: rgba(0, 0, 0, 0.5);">
+            <div class="relative w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
+                <h2 class="mb-4 text-xl font-semibold text-gray-700">Student Details</h2>
+                <div class="space-y-2 max-h-[70vh] overflow-y-auto pr-2">
+                    <div><strong>Name:</strong> <span id="viewName"></span></div>
+                    <div><strong>Major:</strong> <span id="viewMajor"></span></div>
+                    <div><strong>Email:</strong> <span id="viewEmail"></span></div>
+                    <div><strong>Phone:</strong> <span id="viewPhone"></span></div>
+                    <div>
+                        <strong>Description:</strong>
+                        <div id="viewDescription"
+                            class="mt-1 p-2 border rounded bg-gray-50 max-h-40 overflow-y-auto text-gray-700 text-sm">
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-end mt-6">
+                    <button onclick="closeModal('viewModal')"
+                        class="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700">Close</button>
+                </div>
+            </div>
         </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div id="deleteModal" class="fixed inset-0 z-50 hidden overflow-y-auto"
+            style="background-color: rgba(0, 0, 0, 0.5);">
+            <div class="relative w-full max-w-md p-6 mx-auto mt-40 bg-white rounded shadow-lg">
+                <h2 class="mb-4 text-lg font-semibold text-gray-800">Confirm Delete</h2>
+                <p class="mb-6 text-gray-600">Are you sure you want to delete this student?</p>
+                <div class="flex justify-end space-x-2">
+                    <button onclick="closeModal('deleteModal')"
+                        class="px-4 py-2 text-gray-600 bg-gray-200 rounded">Cancel</button>
+                    <button id="confirmDeleteBtn" class="px-4 py-2 text-white bg-red-600 rounded hover:bg-red-700">Yes,
+                        Delete</button>
+                </div>
+            </div>
+        </div>
+
 @endsection
     @section('scripts')
         <script>
+            let deleteStudentId = null;
+
+            function openDeleteModal(studentId) {
+                deleteStudentId = studentId;
+                document.getElementById('deleteModal').classList.remove('hidden');
+            }
+
+            document.getElementById('confirmDeleteBtn').addEventListener('click', function () {
+                if (deleteStudentId) {
+                    document.getElementById(`deleteForm-${deleteStudentId}`).submit();
+                }
+            });
+
             function openModal(id) {
                 document.getElementById(id).classList.remove('hidden');
             }

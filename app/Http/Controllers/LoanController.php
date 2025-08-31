@@ -34,6 +34,8 @@ class LoanController extends Controller
                     ->orWhere('return_status_note', 'like', "%{$search}%")
                     ->orWhereHas('book', function ($q2) use ($search) {
                         $q2->where('title', 'like', "%{$search}%");
+                    })->orWhereHas('user', function ($q2) use ($search) {
+                        $q2->where('email', 'like', "%{$search}%");
                     });
             });
         }

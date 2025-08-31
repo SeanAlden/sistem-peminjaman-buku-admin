@@ -44,19 +44,19 @@
                                                 {{-- <td class="px-4 py-2 text-center border">
                                                     {{ $log['type'] === 'Masuk' ? '+' : '-' }}{{ $log['amount'] }}
                                                 </td> --}}
-                                                {{-- <td
+                                                <td
                                                     class="px-4 py-2 text-center border 
                                                            {{ $log['type'] === 'Masuk' ? 'text-green-600 font-bold' : 'text-red-600 font-bold' }}">
                                                     {{ $log['type'] === 'Masuk' ? '+' : '-' }}{{ $log['amount'] }}
-                                                </td> --}}
-                                                <td class="px-4 py-2 text-center border 
+                                                </td>
+                                                {{-- <td class="px-4 py-2 text-center 
                                    {{ $log['type'] === 'Masuk' ? 'text-green-600 font-bold' : 'text-red-600 font-bold' }}">
                                                     @if($log['type'] === 'Masuk')
                                                         ⬆️ +{{ $log['amount'] }}
                                                     @else
                                                         ⬇️ -{{ $log['amount'] }}
                                                     @endif
-                                                </td>
+                                                </td> --}}
 
                                                 <td class="px-4 py-2 text-center border">{{ $log['stock_after'] }}</td>
                                             </tr>

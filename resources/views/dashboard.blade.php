@@ -26,11 +26,11 @@
                 <img src="{{ asset('assets/icons/fine.png') }}" alt="Fine Icon" class="object-contain h-14 w-14">
             </div>
 
-            {{-- Total Pengguna --}}
+            {{-- Total Anggota --}}
             <div
                 class="flex items-center justify-between p-6 shadow-md bg-gradient-to-br from-green-400 to-green-500 rounded-xl">
                 <div>
-                    <h2 class="mb-1 text-lg font-semibold text-gray-100">Total Pengguna</h2>
+                    <h2 class="mb-1 text-lg font-semibold text-gray-100">Total Anggota</h2>
                     <p class="text-3xl font-extrabold text-gray-100">{{ $totalUsers }}</p>
                 </div>
                 <img src="{{ asset('assets/icons/user.png') }}" alt="User Icon" class="object-contain h-14 w-14">
@@ -82,7 +82,6 @@
             {{-- Grafik Kategori --}}
             <div class="p-6 bg-white shadow-md dark:bg-gray-700 rounded-xl">
                 <h2 class="mb-4 text-xl font-bold text-gray-800 dark:text-gray-100">📊 Top 5 Kategori Buku</h2>
-                {{-- <canvas id="categoryChart"></canvas> --}}
                 <div class="flex justify-center">
                     <canvas id="categoryChart" class="w-64 h-64"></canvas>
                 </div>
@@ -95,12 +94,14 @@
             <div class="p-6 bg-white shadow-md dark:bg-gray-700 rounded-xl">
                 <h2 class="mb-4 text-xl font-bold text-gray-800 dark:text-gray-100">📚 Buku Paling Sering Dipinjam</h2>
                 <ul class="space-y-2">
-                    @foreach ($mostBorrowedBooks as $book)
+                    @forelse ($mostBorrowedBooks as $book)
                         <li class="flex items-center justify-between text-gray-700 dark:text-gray-200">
                             <span>{{ $book->title }}</span>
                             <span class="font-semibold">{{ $book->loan_count }}x</span>
                         </li>
-                    @endforeach
+                    @empty
+                        <li class="text-gray-500 dark:text-gray-400">Tidak ada data.</li>
+                    @endforelse
                 </ul>
             </div>
 
@@ -108,17 +109,18 @@
             <div class="p-6 bg-white shadow-md dark:bg-gray-700 rounded-xl">
                 <h2 class="mb-4 text-xl font-bold text-gray-800 dark:text-gray-100">👤 Peminjam Paling Aktif</h2>
                 <ul class="space-y-3">
-                    @foreach ($mostActiveUsers as $user)
+                    @forelse ($mostActiveUsers as $user)
                         <li class="flex items-center justify-between text-gray-700 dark:text-gray-200">
                             <div class="flex items-center space-x-3">
-                                <img src="{{ asset('public/storage/' . $user->profile_image) }}" alt="User Photo"
-                                    class="object-cover w-10 h-10 rounded-full"
-                                    onerror="this.onerror=null;this.src='{{ asset('assets/images/profile.png') }}';">
+                                <img src="{{ $user->profile_image ? asset('storage/profile_images/' . $user->profile_image) : asset('assets/images/profile.png') }}"
+                                    alt="User Photo" class="object-cover w-10 h-10 rounded-full">
                                 <span>{{ $user->name }}</span>
                             </div>
                             <span class="font-semibold">{{ $user->loan_count }}x</span>
                         </li>
-                    @endforeach
+                    @empty
+                        <li class="text-gray-500 dark:text-gray-400">Tidak ada data.</li>
+                    @endforelse
                 </ul>
             </div>
 
@@ -131,157 +133,169 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 
     <script>
-        // function getChartColors(darkMode) {
-        //     return {
-        //         text: darkMode ? '#E5E7EB' : '#374151',
-        //         grid: darkMode ? '#4B5563' : '#E5E7EB',
-        //         tooltipBg: darkMode ? '#1F2937' : '#F9FAFB',
-        //         tooltipText: '#F3F4F6',
-        //     };
-        // }
+        // document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('alpine:init', () => {
+            // --- PERBAIKAN UTAMA: Seluruh logika grafik dimasukkan ke dalam event listener Alpine ---
 
-        function getChartColors(darkMode) {
-            return {
-                text: darkMode ? '#E5E7EB' : '#374151',
-                grid: darkMode ? '#4B5563' : '#E5E7EB',
-                tooltipBg: darkMode ? '#1F2937' : '#F9FAFB',
-                tooltipText: '#F3F4F6',
-                datalabelText: darkMode ? '#F9FAFB' : '#111827',
-            };
-        }
+            function getChartColors(darkMode) {
+                return {
+                    text: darkMode ? '#E5E7EB' : '#374151',
+                    grid: darkMode ? '#4B5563' : '#E5E7EB',
+                    tooltipBg: darkMode ? '#1F2937' : '#FFFFFF',
+                    // --- PERBAIKAN 1: Membuat warna tooltip dinamis ---
+                    tooltipText: darkMode ? '#F3F4F6' : '#111827', // Terang saat dark, Gelap saat light
+                    datalabelText: darkMode ? '#F9FAFB' : '#111827',
+                };
+            }
 
-        // const darkMode = window.darkMode ?? false;
-        const darkMode = document.documentElement.classList.contains('dark');
+            const initialDarkMode = document.documentElement.classList.contains('dark');
+            let colors = getChartColors(initialDarkMode);
 
-        const colors = getChartColors(darkMode);
-
-        const ctx = document.getElementById('loanChart').getContext('2d');
-        const loanChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: {!! json_encode($chartLabels) !!},
-                datasets: [{
-                    label: 'Jumlah Peminjaman',
-                    data: {!! json_encode($chartData) !!},
-                    backgroundColor: 'rgba(59, 130, 246, 0.2)',
-                    borderColor: 'rgba(59, 130, 246, 1)',
-                    pointBackgroundColor: 'rgba(59, 130, 246, 1)',
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0.3,
-                    pointRadius: 5,
-                    pointHoverRadius: 7
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top',
-                        labels: {
-                            color: colors.text
+            // --- Chart Peminjaman (Loan Chart) ---
+            const ctxLoan = document.getElementById('loanChart').getContext('2d');
+            const loanChart = new Chart(ctxLoan, {
+                type: 'line',
+                data: {
+                    labels: {!! json_encode($chartLabels) !!},
+                    datasets: [{
+                        label: 'Jumlah Peminjaman',
+                        data: {!! json_encode($chartData) !!},
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            labels: { color: colors.text }
+                        },
+                        tooltip: {
+                            backgroundColor: colors.tooltipBg,
+                            titleColor: colors.tooltipText,
+                            bodyColor: colors.tooltipText,
+                            borderColor: colors.grid,
+                            borderWidth: 1,
                         }
                     },
-                    tooltip: {
-                        backgroundColor: colors.tooltipBg,
-                        titleColor: colors.tooltipText,
-                        bodyColor: colors.tooltipText,
-                        borderColor: colors.grid,
-                        borderWidth: 1,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { stepSize: 1, color: colors.text },
+                            grid: { color: colors.grid }
+                        },
+                        x: {
+                            ticks: { color: colors.text },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+
+            // --- Chart Kategori (Category Chart) ---
+            const ctxCategory = document.getElementById('categoryChart').getContext('2d');
+            const categoryChart = new Chart(ctxCategory, {
+                type: 'pie',
+                data: {
+                    labels: {!! json_encode($categoryLabels) !!},
+                    datasets: [{
+                        data: {!! json_encode($categoryData) !!},
+                        backgroundColor: {!! json_encode($categoryBgColors) !!},
+                        borderColor: {!! json_encode($categoryBorderColors) !!},
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: { color: colors.text }
+                        },
+                        tooltip: {
+                            backgroundColor: colors.tooltipBg,
+                            titleColor: colors.tooltipText,
+                            bodyColor: colors.tooltipText,
+                        },
+                        datalabels: {
+                            color: colors.datalabelText,
+                            formatter: (value, context) => {
+                                const percentage = {!! json_encode($categoryPercentages) !!}[context.dataIndex];
+                                return percentage + '%';
+                            },
+                            font: { weight: 'bold', size: 14 }
+                        }
                     }
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            stepSize: 1,
-                            color: colors.text,
-                            font: { size: 12 }
-                        },
-                        grid: {
-                            color: colors.grid
-                        }
-                    },
-                    x: {
-                        ticks: {
-                            color: colors.text,
-                            font: { size: 12 }
-                        },
-                        grid: {
-                            display: false
-                        }
-                    }
-                }
-            }
-        });
+                plugins: [ChartDataLabels]
+            });
 
-        const ctx2 = document.getElementById('categoryChart').getContext('2d');
-        const categoryChart = new Chart(ctx2, {
-            type: 'pie',
-            data: {
-                labels: {!! json_encode($categoryLabels) !!},
-                datasets: [{
-                    data: {!! json_encode($categoryData) !!},
-                    backgroundColor: {!! json_encode($categoryBgColors) !!},
-                    borderColor: {!! json_encode($categoryBorderColors) !!},
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false, // penting biar bisa kontrol tinggi manual
-                aspectRatio: 1, // 1 = persegi, bisa ubah jadi 0.8 / 1.2 sesuai kebutuhan
-                plugins: {
-                    legend: {
-                        position: 'right',
-                        labels: { color: colors.text }
-                    },
-                    tooltip: {
-                        backgroundColor: colors.tooltipBg,
-                        titleColor: colors.tooltipText,
-                        bodyColor: colors.tooltipText,
-                    },
-                    datalabels: {
-                        // color: '#fff',
-                        color: colors.datalabelText,
-                        formatter: (value, context) => {
-                            const percentage = {!! json_encode($categoryPercentages) !!}[context.dataIndex];
-                            return percentage + '%';
-                        },
-                        font: {
-                            weight: 'bold',
-                            size: 14
-                        }
-                    }
-                }
-            },
-            plugins: [ChartDataLabels]
-        });
+            // --- Event Listener untuk Dark Mode Toggle ---
+            // document.addEventListener('alpine:init', () => {
+            //     Alpine.effect(() => {
+            //         const newDarkMode = document.documentElement.classList.contains('dark');
+            //         const newColors = getChartColors(newDarkMode);
 
-        document.addEventListener('alpine:init', () => {
+            //         [loanChart, categoryChart].forEach(chart => {
+            //             // Update warna umum
+            //             chart.options.plugins.legend.labels.color = newColors.text;
+            //             chart.options.plugins.tooltip.backgroundColor = newColors.tooltipBg;
+            //             chart.options.plugins.tooltip.titleColor = newColors.tooltipText;
+            //             chart.options.plugins.tooltip.bodyColor = newColors.tooltipText;
+
+            //             // --- PERBAIKAN 2: Tambahkan update untuk Datalabels ---
+            //             if (chart.options.plugins.datalabels) {
+            //                 chart.options.plugins.datalabels.color = newColors.datalabelText;
+            //             }
+
+            //             // Update warna sumbu (hanya untuk line chart)
+            //             if (chart.options.scales) {
+            //                 Object.values(chart.options.scales).forEach(scale => {
+            //                     if (scale.ticks) scale.ticks.color = newColors.text;
+            //                     if (scale.grid) scale.grid.color = newColors.grid;
+            //                 });
+            //             }
+
+            //             chart.update();
+            //         });
+            //     });
+            // });
+
+            // Ini adalah bagian kuncinya:
+            // Alpine.effect() akan secara otomatis berjalan setiap kali
+            // state di dalam store ('theme.dark') berubah.
             Alpine.effect(() => {
-                // const newDarkMode = Alpine.store('darkMode');
-                const newDarkMode = Alpine.store?.('darkMode') ?? document.documentElement.classList.contains('dark');
-
+                const newDarkMode = Alpine.store('theme').dark;
                 const newColors = getChartColors(newDarkMode);
 
+                console.log('Dark mode changed, updating charts...');
+
                 [loanChart, categoryChart].forEach(chart => {
-                    if (chart.options.plugins.legend.labels)
-                        chart.options.plugins.legend.labels.color = newColors.text;
-                    if (chart.options.plugins.tooltip) {
-                        chart.options.plugins.tooltip.backgroundColor = newColors.tooltipBg;
-                        chart.options.plugins.tooltip.titleColor = newColors.tooltipText;
-                        chart.options.plugins.tooltip.bodyColor = newColors.tooltipText;
-                        chart.options.plugins.tooltip.borderColor = newColors.grid;
+                    // Update semua warna yang diperlukan
+                    chart.options.plugins.legend.labels.color = newColors.text;
+                    chart.options.plugins.tooltip.backgroundColor = newColors.tooltipBg;
+                    chart.options.plugins.tooltip.titleColor = newColors.tooltipText;
+                    chart.options.plugins.tooltip.bodyColor = newColors.tooltipText;
+
+                    if (chart.options.plugins.datalabels) {
+                        chart.options.plugins.datalabels.color = newColors.datalabelText;
                     }
+
                     if (chart.options.scales) {
                         Object.values(chart.options.scales).forEach(scale => {
                             if (scale.ticks) scale.ticks.color = newColors.text;
                             if (scale.grid) scale.grid.color = newColors.grid;
                         });
                     }
-                    chart.update();
+                    
+                    chart.update(); // Terapkan perubahan ke grafik
                 });
             });
         });
