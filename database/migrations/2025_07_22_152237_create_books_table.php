@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->string('author');
             $table->integer('stock')->default(0);
             $table->longText('description');
+            $table->integer('loan_duration')->default('7');
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });

@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\API;
 
 use Auth;
-use App\Models\Loan;
 use App\Models\Book;
+use App\Models\Loan;
 use App\Models\Reservation;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -12,24 +12,9 @@ use Illuminate\Support\Facades\Storage;
 
 class BookController extends Controller
 {
-    // public function index()
-    // {
-    //     $books = Book::where('status', 'active')->with('category')->get();
-
-    //     // Tambahkan full URL ke image
-    //     foreach ($books as $book) {
-    //         $book->image_url = asset('storage/' . $book->image_url);
-    //     }
-
-    //     return response()->json([
-    //         'success' => true,
-    //         'data' => $books,
-    //     ]);
-    // }
-
     public function index(Request $request)
     {
-        $user = Auth::guard('sanctum')->user(); // gunakan auth via sanctum
+        $user = Auth::guard('sanctum')->user();
 
         $books = Book::where('status', 'active')->with('category')->get();
 
@@ -37,10 +22,9 @@ class BookController extends Controller
             $book->image_url = asset('storage/' . $book->image_url);
 
             if ($user) {
-                // Cek apakah user sedang meminjam buku ini
                 $book->is_borrowed = Loan::where('user_id', $user->id)
                     ->where('book_id', $book->id)
-                    ->where('status', 'borrowed') // jika kamu menyimpan status
+                    ->where('status', 'borrowed')
                     ->exists();
             } else {
                 $book->is_borrowed = false;
@@ -56,27 +40,27 @@ class BookController extends Controller
     // public function show($id)
     // {
     //     $user = Auth::guard('sanctum')->user();
-
     //     $book = Book::with('category')->find($id);
 
     //     if (!$book) {
-    //         return response()->json([
-    //             'success' => false,
-    //             'message' => 'Buku tidak ditemukan',
-    //         ], 404);
+    //         return response()->json(['success' => false, 'message' => 'Buku tidak ditemukan'], 404);
     //     }
 
-    //     // Tambahkan URL gambar lengkap
     //     $book->image_url = asset('storage/' . $book->image_url);
 
-    //     // Cek apakah user sedang meminjam buku ini
     //     if ($user) {
-    //         $book->is_borrowed = Loan::where('user_id', $user->id)
+    //         $book->is_borrowed_by_user = Loan::where('user_id', $user->id)
     //             ->where('book_id', $book->id)
     //             ->where('status', 'borrowed')
     //             ->exists();
+
+    //         $book->has_active_reservation_by_user = Reservation::where('user_id', $user->id)
+    //             ->where('book_id', $book->id)
+    //             ->whereIn('status', ['pending', 'available'])
+    //             ->exists();
     //     } else {
-    //         $book->is_borrowed = false;
+    //         $book->is_borrowed_by_user = false;
+    //         $book->has_active_reservation_by_user = false;
     //     }
 
     //     return response()->json([
@@ -85,38 +69,43 @@ class BookController extends Controller
     //     ]);
     // }
 
-    public function show($id)
+    public function show(Book $book)
     {
-        $user = Auth::guard('sanctum')->user();
-        $book = Book::with('category')->find($id);
+        $user = Auth::user();
 
-        if (!$book) {
-            return response()->json(['success' => false, 'message' => 'Buku tidak ditemukan'], 404);
-        }
-
-        $book->image_url = asset('storage/' . $book->image_url);
+        // Ambil data dasar buku
+        $bookData = $book->load('category');
+        $bookData->image_url = asset('storage/' . $bookData->image_url);
 
         if ($user) {
-            // Cek apakah user sedang meminjam buku ini
-            $book->is_borrowed_by_user = Loan::where('user_id', $user->id)
+            // Cek pinjaman aktif
+            $bookData->is_borrowed_by_user = Loan::where('user_id', $user->id)
                 ->where('book_id', $book->id)
                 ->where('status', 'borrowed')
                 ->exists();
 
-            // Cek apakah user memiliki reservasi aktif untuk buku ini
-            $book->has_active_reservation_by_user = Reservation::where('user_id', $user->id)
+            // Cari data reservasi aktif
+            $activeReservation = Reservation::where('user_id', $user->id)
                 ->where('book_id', $book->id)
                 ->whereIn('status', ['pending', 'available'])
-                ->exists();
+                ->first();
+
+            // Set flag dan data berdasarkan hasil pencarian reservasi
+            $bookData->has_active_reservation_by_user = !is_null($activeReservation);
+            $bookData->active_reservation_id = $activeReservation ? $activeReservation->id : null;
+            $bookData->active_reservation_status = $activeReservation ? $activeReservation->status : null;
+
         } else {
             // Default value jika tidak ada user yang login
-            $book->is_borrowed_by_user = false;
-            $book->has_active_reservation_by_user = false;
+            $bookData->is_borrowed_by_user = false;
+            $bookData->has_active_reservation_by_user = false;
+            $bookData->active_reservation_id = null;
+            $bookData->active_reservation_status = null;
         }
 
         return response()->json([
             'success' => true,
-            'data' => $book,
+            'data' => $bookData,
         ]);
     }
 }

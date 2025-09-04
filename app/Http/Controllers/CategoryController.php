@@ -10,10 +10,6 @@ class CategoryController extends Controller
     // Menampilkan daftar kategori
     public function index(Request $request)
     {
-        // $categories = Category::all();
-        // $categories = Category::with('books')->get();
-        // return view('categories.category', compact('categories'));
-
         // Mengambil nilai 'search' dari request, defaultnya string kosong
         $search = $request->input('search', '');
 
@@ -66,12 +62,6 @@ class CategoryController extends Controller
 
         return redirect()->route('categories.index')->with('success', 'Kategori berhasil ditambahkan.');
     }
-
-    // Form edit kategori
-    // public function edit(Category $category)
-    // {
-    //     return view('categories.edit_category', compact('category'));
-    // }
 
     // Mengembalikan data kategori sebagai JSON untuk modal edit
     public function edit(Category $category)

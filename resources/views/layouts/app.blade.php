@@ -147,7 +147,7 @@
                                 --}}
 
                                 <button @click="$store.theme.toggle()"
-                                    class="flex items-center justify-center w-8 h-8 transition rounded-full cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700">
+                                    class="flex items-center justify-center w-8 h-8 transition rounded-full cursor-pointer hover:bg-blue-200 dark:hover:bg-blue-700">
 
                                     {{-- <template x-if="!darkMode">
                                         <img src="/assets/icons/moon.png" alt="Moon Icon" class="w-5 h-5">

@@ -26,7 +26,8 @@ Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/categories/{id}', [CategoryController::class, 'show']);
 // Route::get('/books', [BookController::class, 'index']);
 Route::middleware('auth:sanctum')->get('/books', [BookController::class, 'index']);
-Route::middleware('auth:sanctum')->get('/books/{id}', [BookController::class, 'show']);
+// Route::middleware('auth:sanctum')->get('/books/{id}', [BookController::class, 'show']);
+Route::middleware('auth:sanctum')->get('/book-details/{book}', [BookController::class, 'show']);
 
 Route::middleware('auth:sanctum')->group(function () {
     // Route::post('/loans', [LoanController::class, 'store']);
@@ -49,7 +50,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/reservations/{reservation}', [ReservationController::class, 'destroy']);
 
     // --- PERBAIKAN: Gunakan route baru ini untuk detail buku ---
-    Route::get('/book-details/{book}', [BookDetailController::class, 'show']);
+    // Route::get('/book-details/{book}', [BookDetailController::class, 'show']);
 });
 
 Route::post('/register', [AuthController::class, 'store']);
