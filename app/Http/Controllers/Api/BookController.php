@@ -12,24 +12,88 @@ use Illuminate\Support\Facades\Storage;
 
 class BookController extends Controller
 {
+    // public function index(Request $request)
+    // {
+    //     $user = Auth::guard('sanctum')->user();
+
+    //     $books = Book::where('status', 'active')->with('category')->get();
+
+    //     foreach ($books as $book) {
+    //         $book->image_url = asset('storage/' . $book->image_url);
+
+    //         if ($user) {
+    //             $book->is_borrowed = Loan::where('user_id', $user->id)
+    //                 ->where('book_id', $book->id)
+    //                 ->where('status', 'borrowed')
+    //                 ->exists();
+    //         } else {
+    //             $book->is_borrowed = false;
+    //         }
+    //     }
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'data' => $books,
+    //     ]);
+    // }
+
+    // public function index(Request $request)
+    // {
+    //     $user = Auth::guard('sanctum')->user();
+    //     $reservedBookIds = [];
+
+    //     // Jika user login, ambil ID buku yang sedang mereka reservasi
+    //     if ($user) {
+    //         $reservedBookIds = Reservation::where('user_id', $user->id)
+    //             ->whereIn('status', ['pending', 'available'])
+    //             ->pluck('book_id') // Ambil hanya kolom book_id
+    //             ->toArray(); // Konversi menjadi array
+    //     }
+
+    //     $books = Book::where('status', 'active')->with('category')->get();
+
+    //     // Tambahkan atribut custom ke setiap buku
+    //     $books->map(function ($book) use ($user, $reservedBookIds) {
+    //         // Menambahkan URL gambar yang lengkap
+    //         $book->image_url = $book->image_url ? asset('storage/' . $book->image_url) : null;
+
+    //         // Tambahkan flag is_reserved_by_user
+    //         $book->is_reserved_by_user = in_array($book->id, $reservedBookIds);
+
+    //         return $book;
+    //     });
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'data' => $books,
+    //     ]);
+    // }
+
     public function index(Request $request)
     {
         $user = Auth::guard('sanctum')->user();
+        $reservedBookIds = [];
+
+        // Jika user login, ambil ID buku yang sedang mereka reservasi
+        if ($user) {
+            $reservedBookIds = Reservation::where('user_id', $user->id)
+                ->whereIn('status', ['pending', 'available'])
+                ->pluck('book_id') // Ambil hanya kolom book_id
+                ->toArray(); // Konversi menjadi array
+        }
 
         $books = Book::where('status', 'active')->with('category')->get();
 
-        foreach ($books as $book) {
-            $book->image_url = asset('storage/' . $book->image_url);
+        // Tambahkan atribut custom ke setiap buku
+        $books->map(function ($book) use ($user, $reservedBookIds) {
+            // Menambahkan URL gambar yang lengkap
+            $book->image_url = $book->image_url ? asset('storage/' . $book->image_url) : null;
 
-            if ($user) {
-                $book->is_borrowed = Loan::where('user_id', $user->id)
-                    ->where('book_id', $book->id)
-                    ->where('status', 'borrowed')
-                    ->exists();
-            } else {
-                $book->is_borrowed = false;
-            }
-        }
+            // Tambahkan flag is_reserved_by_user
+            $book->is_reserved_by_user = in_array($book->id, $reservedBookIds);
+
+            return $book;
+        });
 
         return response()->json([
             'success' => true,

@@ -359,6 +359,37 @@ class AuthController extends Controller
         return response()->json(['message' => 'Password has been reset']);
     }
 
+    // // Menampilkan semua user
+    // public function showAllUser()
+    // {
+    //     $users = User::all();
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'message' => 'All users retrieved successfully',
+    //         'data' => $users
+    //     ]);
+    // }
+
+    // // Menampilkan user berdasarkan ID
+    // public function showUserById($id)
+    // {
+    //     $user = User::find($id);
+
+    //     if (!$user) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'User not found'
+    //         ], 404);
+    //     }
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'message' => 'User retrieved successfully',
+    //         'data' => $user
+    //     ]);
+    // }
+
     // Menampilkan semua user
     public function showAllUser()
     {
@@ -389,6 +420,28 @@ class AuthController extends Controller
             'data' => $user
         ]);
     }
+
+    // Menampilkan user dengan usertype selain 'user' (misalnya admin)
+    public function showNonUser()
+    {
+        $users = User::where('usertype', '!=', 'user')->get();
+
+        if ($users->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No non-user accounts found'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Non-user accounts retrieved successfully',
+            'data' => $users
+        ]);
+    }
+
 }
+
+
 
 

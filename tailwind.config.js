@@ -35,7 +35,8 @@ export default {
   },
 
   // plugins: [forms, require('tailwind-scrollbar-hide'),],
-  plugins: [forms, scrollbarHide],
+  plugins: [forms, require('tailwind-scrollbar'),],
+  // plugins: [forms, scrollbarHide],
   // darkMode: 'selector'
   // darkMode: ['class', '[data-theme="dark"]'],
   darkMode: 'class',

@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\LoanController;
 use App\Http\Controllers\API\BookController;
@@ -39,9 +40,10 @@ Route::middleware('auth:sanctum')->group(function () {
     // Routes Peminjaman (Existing)
     Route::post('/loans', [LoanController::class, 'store']);
     Route::get('/loans', [LoanController::class, 'index']);
-    Route::post('/loans/{id}/return', [LoanController::class, 'returnLoan']);
+    // Route::post('/loans/{id}/return', [LoanController::class, 'returnLoan']);
     Route::delete('/loans/{id}', [LoanController::class, 'cancelLoan']);
     Route::get('/loans/check-active', [LoanController::class, 'checkActiveLoan']);
+    Route::post('/loans/{id}/request-return', [LoanController::class, 'requestReturn']); // <-- ROUTE BARU
 
     // Perubahan: Routes Reservasi (Baru)
     Route::get('/my-reservations', [ReservationController::class, 'index']);
@@ -63,10 +65,18 @@ Route::middleware('auth:sanctum')->get('/user/profile-image', [AuthController::c
 Route::post('/forgot-password', [AuthController::class, 'getVerificationCode']);
 Route::post('/verify-code', [AuthController::class, 'validateVerificationCode']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+Route::get('/users', [AuthController::class, 'showAllUser']);         // Semua user
+Route::get('/users/{id}', [AuthController::class, 'showUserById']);   // User by ID
+Route::get('/non-users', [AuthController::class, 'showNonUser']);     // User selain 'user'
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/favorites', [FavoriteController::class, 'index']);
     Route::post('/favorites', [FavoriteController::class, 'store']);
     Route::delete('/favorites', [FavoriteController::class, 'destroy']);
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/chat/messages/{user}', [ChatController::class, 'getMessages']);
+    Route::post('/chat/send/{user}', [ChatController::class, 'sendMessage']);
 });
 

@@ -22,6 +22,6 @@ class Student extends Model
 
     public function loans()
     {
-        return $this->hasMany(Loan::class);
+        return $this->hasMany(Loan::class, 'user_id');
     }
 }

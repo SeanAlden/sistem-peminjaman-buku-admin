@@ -20,9 +20,9 @@
         {{-- <aside :class="sidebarExpanded ? 'w-64' : 'w-16'"
             class="fixed top-0 z-50 flex flex-col h-full text-white transition-all duration-300 bg-orange-800"> --}}
             <aside :class="sidebarExpanded ? 'w-64' : 'w-16'"
-                class="fixed top-0 z-50 flex flex-col h-full text-white transition-all duration-300 bg-gradient-to-b from-orange-700 to-orange-900 shadow-lg">
+                class="fixed top-0 z-50 flex flex-col h-full text-white transition-all duration-300 shadow-lg bg-gradient-to-b from-orange-700 to-orange-900">
                 <div class="flex items-center justify-between px-4 py-4 border-b border-orange-700">
-                    <span x-show="sidebarExpanded" class="text-lg text-yellow-300 font-semibold">𝓑𝓸𝓸𝓴 𝓢𝔂𝓼𝓽𝓮𝓶 𝓐𝓭𝓶𝓲𝓷</span>
+                    <span x-show="sidebarExpanded" class="text-lg font-semibold text-yellow-300">ᒪIᗷᖇᗩᖇY ᗩᗪᗰIᑎ</span>
                     <button @click="sidebarExpanded = !sidebarExpanded"
                         class="text-white cursor-pointer focus:outline-none">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
@@ -33,101 +33,121 @@
                     </button>
                 </div>
 
-                <nav class="flex-1 mt-4 space-y-1">
-                    <!-- Dashboard Menu -->
-                    <a href="{{ route('admin.dashboard') }}"
-                        class="flex items-center px-4 py-3 transition-colors hover:bg-orange-700">
-                        <img src="{{ asset('assets/icons/dashboard.png') }}" class="w-5 h-5" alt="Dashboard Icon">
-                        <span x-show="sidebarExpanded" class="ml-3">Dashboard</span>
-                    </a>
+                {{-- <div class="flex-1 overflow-y-auto"> --}}
+                    <div
+                        class="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-orange-600 scrollbar-track-orange-900/30">
+                        <nav class="mt-4 space-y-1">
+                            <!-- Dashboard Menu -->
+                            <a href="{{ route('admin.dashboard') }}"
+                                class="flex items-center px-4 py-3 transition-colors hover:bg-orange-700">
+                                <img src="{{ asset('assets/icons/dashboard.png') }}" class="w-5 h-5"
+                                    alt="Dashboard Icon">
+                                <span x-show="sidebarExpanded" class="ml-3">Dashboard</span>
+                            </a>
 
-                    <!-- Student List Menu -->
-                    <a href="{{ route('students.index') }}"
-                        class="flex items-center px-4 py-3 transition-colors hover:bg-orange-700">
-                        <img src="{{ asset('assets/icons/student.png') }}" class="w-5 h-5" alt="Student Icon">
-                        <span x-show="sidebarExpanded" class="ml-3">Student List</span>
-                    </a>
+                            <!-- Student List Menu -->
+                            <a href="{{ route('students.index') }}"
+                                class="flex items-center px-4 py-3 transition-colors hover:bg-orange-700">
+                                <img src="{{ asset('assets/icons/student.png') }}" class="w-5 h-5" alt="Student Icon">
+                                <span x-show="sidebarExpanded" class="ml-3">Student List</span>
+                            </a>
 
-                    <!-- Categories Menu -->
-                    <a href="{{ route('categories.index') }}"
-                        class="flex items-center px-4 py-3 transition-colors hover:bg-orange-700">
-                        <img src="{{ asset('assets/icons/category.png') }}" class="w-5 h-5" alt="Category Icon">
-                        <span x-show="sidebarExpanded" class="ml-3">Categories</span>
-                    </a>
+                            <!-- Categories Menu -->
+                            <a href="{{ route('categories.index') }}"
+                                class="flex items-center px-4 py-3 transition-colors hover:bg-orange-700">
+                                <img src="{{ asset('assets/icons/category.png') }}" class="w-5 h-5" alt="Category Icon">
+                                <span x-show="sidebarExpanded" class="ml-3">Categories</span>
+                            </a>
 
-                    <!-- Books Menu with Submenu -->
-                    <div x-data="{ open: false }">
-                        <!-- Parent Book Menu -->
-                        <button @click="open = !open"
-                            class="flex items-center w-full px-4 py-3 transition-colors hover:bg-orange-700 focus:outline-none">
-                            <img src="{{ asset('assets/icons/book.png') }}" class="w-5 h-5" alt="Book Icon">
-                            <span x-show="sidebarExpanded" class="flex-1 ml-3 text-left">Books</span>
-                            <svg x-show="sidebarExpanded" :class="{ 'rotate-90': open }"
-                                class="w-4 h-4 ml-auto transition-transform transform" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 5l7 7-7 7" />
-                            </svg>
-                        </button>
+                            <!-- Books Menu with Submenu -->
+                            <div x-data="{ open: false }">
+                                <!-- Parent Book Menu -->
+                                <button @click="open = !open"
+                                    class="flex items-center w-full px-4 py-3 transition-colors hover:bg-orange-700 focus:outline-none">
+                                    <img src="{{ asset('assets/icons/book.png') }}" class="w-5 h-5" alt="Book Icon">
+                                    <span x-show="sidebarExpanded" class="flex-1 ml-3 text-left">Books</span>
+                                    <svg x-show="sidebarExpanded" :class="{ 'rotate-90': open }"
+                                        class="w-4 h-4 ml-auto transition-transform transform" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </button>
 
-                        <!-- Submenus -->
-                        <div x-show="open" x-collapse class="ml-8 space-y-1">
-                            <a href="{{ route('books.index') }}"
-                                class="flex items-center px-4 py-2 text-sm transition-colors rounded hover:bg-orange-700">
-                                <span>All Books</span>
+                                <!-- Submenus -->
+                                <div x-show="open" x-collapse class="ml-8 space-y-1">
+                                    <a href="{{ route('books.index') }}"
+                                        class="flex items-center px-4 py-2 text-sm transition-colors rounded hover:bg-orange-700">
+                                        <span>All Books</span>
+                                    </a>
+                                    <a href="{{ route('purchases.index') }}"
+                                        class="flex items-center px-4 py-2 text-sm transition-colors rounded hover:bg-orange-700">
+                                        <span>Purchases</span>
+                                    </a>
+                                    <a href="{{ route('entry_books.index') }}"
+                                        class="flex items-center px-4 py-2 text-sm transition-colors rounded hover:bg-orange-700">
+                                        <span>Entry Books</span>
+                                    </a>
+                                    <a href="{{ route('exit_books.index') }}"
+                                        class="flex items-center px-4 py-2 text-sm transition-colors rounded hover:bg-orange-700">
+                                        <span>Exit Books</span>
+                                    </a>
+                                    <a href="{{ route('stock.management') }}"
+                                        class="flex items-center px-4 py-2 text-sm transition-colors rounded hover:bg-orange-700">
+                                        <span>Stock Management Report</span>
+                                    </a>
+                                    <a href="{{ route('reservations.index') }}"
+                                        class="flex items-center px-4 py-2 text-sm transition-colors rounded hover:bg-orange-700">
+                                        <span>Reservations</span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- Suppliers Menu -->
+                            <a href="{{ route('suppliers.index') }}"
+                                class="flex items-center px-4 py-3 transition-colors hover:bg-orange-700">
+                                <img src="{{ asset('assets/icons/supplier.png') }}" class="w-5 h-5" alt="Supplier Icon">
+                                <span x-show="sidebarExpanded" class="ml-3">Suppliers</span>
                             </a>
-                            <a href="{{ route('purchases.index') }}"
-                                class="flex items-center px-4 py-2 text-sm transition-colors rounded hover:bg-orange-700">
-                                <span>Purchases</span>
+
+                            <!-- Employees Menu -->
+                            <a href="{{ route('employees.index') }}"
+                                class="flex items-center px-4 py-3 transition-colors hover:bg-orange-700">
+                                <img src="{{ asset('assets/icons/employee.png') }}" class="w-5 h-5" alt="Supplier Icon">
+                                <span x-show="sidebarExpanded" class="ml-3">Employees</span>
                             </a>
-                            <a href="{{ route('entry_books.index') }}"
-                                class="flex items-center px-4 py-2 text-sm transition-colors rounded hover:bg-orange-700">
-                                <span>Entry Books</span>
+
+                            <!-- Payroll Menu -->
+                            <a href="{{ route('payrolls.index') }}"
+                                class="flex items-center px-4 py-3 transition-colors hover:bg-orange-700">
+                                <img src="{{ asset('assets/icons/payroll.png') }}" class="w-5 h-5" alt="Supplier Icon">
+                                <span x-show="sidebarExpanded" class="ml-3">Payrolls</span>
                             </a>
-                            <a href="{{ route('exit_books.index') }}"
-                                class="flex items-center px-4 py-2 text-sm transition-colors rounded hover:bg-orange-700">
-                                <span>Exit Books</span>
+
+                            <!-- Loan List Menu -->
+                            <a href="{{ route('loans.index') }}"
+                                class="flex items-center px-4 py-3 transition-colors hover:bg-orange-700">
+                                <img src="{{ asset('assets/icons/loan.png') }}" class="w-5 h-5" alt="Loan Icon">
+                                <span x-show="sidebarExpanded" class="ml-3">Loan List</span>
                             </a>
-                            <a href="{{ route('stock.management') }}"
-                                class="flex items-center px-4 py-2 text-sm transition-colors rounded hover:bg-orange-700">
-                                <span>Stock Management Report</span>
+
+                            <!-- Prediction Menu -->
+                            <a href="{{ route('predictions.index') }}"
+                                class="flex items-center px-4 py-3 transition-colors hover:bg-orange-700">
+                                <img src="{{ asset('assets/icons/prediction.png') }}" class="w-5 h-5"
+                                    alt="Prediction Icon">
+                                <span x-show="sidebarExpanded" class="ml-3">Prediction</span>
                             </a>
-                            <a href="{{ route('reservations.index') }}"
-                                class="flex items-center px-4 py-2 text-sm transition-colors rounded hover:bg-orange-700">
-                                <span>Reservations</span>
-                            </a>
-                        </div>
+                        </nav>
                     </div>
 
-                    <!-- Suppliers Menu -->
-                    <a href="{{ route('suppliers.index') }}"
-                        class="flex items-center px-4 py-3 transition-colors hover:bg-orange-700">
-                        <img src="{{ asset('assets/icons/supplier.png') }}" class="w-5 h-5" alt="Supplier Icon">
-                        <span x-show="sidebarExpanded" class="ml-3">Suppliers</span>
-                    </a>
-
-                    <!-- Loan List Menu -->
-                    <a href="{{ route('loans.index') }}"
-                        class="flex items-center px-4 py-3 transition-colors hover:bg-orange-700">
-                        <img src="{{ asset('assets/icons/loan.png') }}" class="w-5 h-5" alt="Loan Icon">
-                        <span x-show="sidebarExpanded" class="ml-3">Loan List</span>
-                    </a>
-
-                    <!-- Prediction Menu -->
-                    <a href="{{ route('predictions.index') }}"
-                        class="flex items-center px-4 py-3 transition-colors hover:bg-orange-700">
-                        <img src="{{ asset('assets/icons/prediction.png') }}" class="w-5 h-5" alt="Prediction Icon">
-                        <span x-show="sidebarExpanded" class="ml-3">Prediction</span>
-                    </a>
-                </nav>
-
-                <div class="px-4 py-3 mt-auto border-t border-orange-700">
-                    <button @click="showLogoutConfirm = true"
-                        class="flex items-center w-full px-2 py-2 text-left transition-colors cursor-pointer hover:bg-orange-700">
-                        <img src="{{ asset('assets/icons/logout.png') }}" class="w-5 h-5" alt="LogOut Icon">
-                        <span x-show="sidebarExpanded" class="ml-3">Logout</span>
-                    </button>
-                </div>
+                    <div class="px-4 py-3 mt-auto border-t border-orange-700">
+                        <button @click="showLogoutConfirm = true"
+                            class="flex items-center w-full px-2 py-2 text-left transition-colors cursor-pointer hover:bg-orange-700">
+                            <img src="{{ asset('assets/icons/logout.png') }}" class="w-5 h-5" alt="LogOut Icon">
+                            <span x-show="sidebarExpanded" class="ml-3">Logout</span>
+                        </button>
+                    </div>
             </aside>
 
             <div :class="sidebarExpanded ? 'ml-64' : 'ml-16'" class="min-h-screen transition-all duration-300">
@@ -136,7 +156,7 @@
                     class="fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-6 py-4 text-white bg-gray-300 border-b border-gray-700 shadow-sm dark:bg-gray-600">
                     --}}
                     <header
-                        class="fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-6 py-4 text-gray-800 dark:text-white bg-gradient-to-r from-blue-300 to-blue-400 dark:from-blue-300 dark:to-blue-400 shadow-md">
+                        class="fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-6 py-4 text-gray-800 shadow-md dark:text-white bg-gradient-to-r from-blue-300 to-blue-400 dark:from-blue-300 dark:to-blue-400">
                         <div class="flex items-center space-x-4">
                             <a href="#" class="text-lg font-bold hover:underline">FAQ</a>
                         </div>
@@ -167,12 +187,16 @@
 
                                 <!-- Notification Icon -->
                                 {{-- <div class="relative">
-                                    <img :src="darkMode 
-            ? '{{ asset('assets/icons/notification_white.png') }}' 
-            : '{{ asset('assets/icons/notification.png') }}'" alt="Notification"
-                                        class="w-6 h-6 transition cursor-pointer hover:scale-110">
+                                    <img :src="darkMode ? '{{ asset('assets/icons/notification_white.png') }}' : '{{ asset('assets/icons/notification.png') }}'"
+                                        alt="Notification" class="w-6 h-6 transition cursor-pointer hover:scale-110">
                                     <!-- You can add badge here later -->
                                 </div> --}}
+
+                                <div class="relative">
+                                    <img src="{{ asset('assets/icons/notification.png') }}" alt="Notification"
+                                        class="w-6 h-6 transition cursor-pointer hover:scale-110">
+                                    <!-- You can add badge here later -->
+                                </div>
 
                                 <!-- Profile Dropdown -->
                                 <div class="relative" x-data="{ openDropdown: false }">
@@ -261,22 +285,5 @@
     {{-- Section scripts dipindah ke sini agar bisa mengakses store --}}
     @yield(section: 'scripts')
 </body>
-{{--
-<script>
-    // Inject Alpine darkMode value ke window agar bisa digunakan di chart script
-    document.addEventListener('alpine:init', () => {
-        Alpine.data('app', () => ({
-            darkMode: JSON.parse(localStorage.getItem('darkMode') || 'false'),
-        }));
-
-        // Set window.darkMode agar bisa digunakan di luar Alpine
-        window.darkMode = JSON.parse(localStorage.getItem('darkMode') || 'false');
-
-        // Update value jika toggle darkMode berubah
-        Alpine.effect(() => {
-            window.darkMode = Alpine.store('darkMode');
-        });
-    });
-</script> --}}
 
 </html>

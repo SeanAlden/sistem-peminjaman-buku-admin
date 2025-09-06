@@ -2,164 +2,124 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Loan;
+use Carbon\Carbon;
 use App\Models\Book;
-use Carbon\CarbonInterval;
+use App\Models\Loan;
 use Illuminate\Http\Request;
+use App\Models\Reservation; // Pastikan Reservation di-import
+use Illuminate\Support\Facades\Log; // Pastikan Log di-import
 
 class LoanController extends Controller
 {
-    // Menampilkan semua data peminjaman
     public function index(Request $request)
     {
-        // $loans = Loan::with(['book', 'user'])->latest()->get();
-        // return view('loan', compact('loans'));
-
-        // Mengambil nilai 'search' dari request, defaultnya string kosong
         $search = $request->input('search', '');
-
-        // Mengambil nilai 'per_page' dari request, defaultnya 10
-        // dan memastikan nilainya adalah integer
         $perPage = (int) $request->input('per_page', 5);
 
-        // Memulai query pada model Loan
-        // $query = Book::query();
-        $query = Loan::with(['book', 'user'])->latest();
+        // Mengurutkan berdasarkan status 'pending_return' terlebih dahulu
+        $query = Loan::with(['book', 'user'])
+            ->orderByRaw("FIELD(status, 'pending_return', 'borrowed', 'returned')")
+            ->latest();
 
-        // Jika ada keyword pencarian, tambahkan kondisi where
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
-                $q->
-                    where('status', 'like', "%{$search}%")
+                $q->where('status', 'like', "%{$search}%")
                     ->orWhere('return_status_note', 'like', "%{$search}%")
                     ->orWhereHas('book', function ($q2) use ($search) {
                         $q2->where('title', 'like', "%{$search}%");
-                    })->orWhereHas('user', function ($q2) use ($search) {
-                        $q2->where('email', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('user', function ($q2) use ($search) {
+                        $q2->where('name', 'like', "%{$search}%")
+                           ->orWhere('email', 'like', "%{$search}%");
                     });
             });
         }
 
-        // Lakukan pagination pada hasil query
-        // 'appends' digunakan agar parameter 'search' dan 'per_page' tetap ada di URL pagination
         $loans = $query->paginate($perPage)->appends($request->except('page'));
-
-        // Kembalikan view 'loan' dengan data loans, search, dan perPage
         return view('loan', compact('loans', 'search', 'perPage'));
     }
 
-    // Menampilkan detail peminjaman berdasarkan ID
     public function show($id)
     {
-        $loan = Loan::with('book')->findOrFail($id);
-
-        // Hitung durasi peminjaman jika return_date tersedia
-        // $duration = null;
-        // if ($loan->actual_returned_at && $loan->loan_date) {
-        //     $duration = $loan->loan_date->diffInDays($loan->actual_returned_at);
-        // }
-
+        $loan = Loan::with(['book', 'user'])->findOrFail($id);
         $duration = null;
         if ($loan->actual_returned_at && $loan->loan_date) {
             $duration = intval($loan->loan_date->diffInDays($loan->actual_returned_at));
         }
-
         return view('loan_detail', compact('loan', 'duration'));
     }
 
-    // public function show($id)
-    // {
-    //     $loan = Loan::with('book')->findOrFail($id);
+    /**
+     * Method baru untuk mengonfirmasi pengembalian buku oleh admin.
+     * Ini berisi logika inti yang sebelumnya ada di API.
+     */
+    public function confirmReturn(Request $request, $id)
+    {
+        Log::info("Admin memulai konfirmasi pengembalian untuk loan ID: {$id}");
 
-    //     $duration = null;
-    //     if ($loan->return_date && $loan->loan_date) {
-    //         $diff = $loan->loan_date->diff($loan->return_date);
-    //         $duration = CarbonInterval::instance($diff)->cascade()->forHumans([
-    //             'parts' => 4, // tampilkan hingga 4 bagian waktu
-    //             'join' => true, // gabungkan dengan koma dan 'dan'
-    //             'short' => false, // gunakan nama waktu lengkap
-    //         ]);
-    //     }
+        $loan = Loan::with('book')->where('status', 'pending_return')->findOrFail($id);
+        
+        $now = Carbon::now();
+        $loanDate = Carbon::parse($loan->loan_date);
+        $expectedReturnDate = Carbon::parse($loan->return_date);
+        $maxReturnDate = $loanDate->copy()->addDays($loan->book->loan_duration);
 
-    //     return view('loan_detail', compact('loan', 'duration'));
-    // }
+        $statusNote = 'returned_on_time';
+        $lateDays = 0;
+        $fine = 0;
 
-    // public function show($id)
-    // {
-    //     $loan = Loan::with('book')->findOrFail($id);
+        if ($now->isSameDay($expectedReturnDate)) {
+            $statusNote = 'Returned On Time';
+        } elseif ($now->lt($expectedReturnDate)) {
+            $statusNote = 'Returned Earlier';
+        } elseif ($now->gt($expectedReturnDate)) {
+            if ($now->lte($maxReturnDate)) {
+                $statusNote = 'Late Within Allowed Duration';
+                $lateDays = $expectedReturnDate->diffInDays($now);
+            } else {
+                $statusNote = 'Overdue';
+                $lateDays = $maxReturnDate->diffInDays($now);
+                $fine = $lateDays * 1000; // Contoh denda per hari
+            }
+        }
+        
+        $loan->update([
+            'status' => 'returned',
+            'actual_returned_at' => $now,
+            'return_status_note' => $statusNote,
+            'late_days' => $lateDays,
+            'fine_amount' => $fine,
+        ]);
+        Log::info("Data peminjaman loan ID: {$id} telah dikonfirmasi dan diperbarui.");
+        
+        // 1. Tambah stok buku
+        $loan->book->increment('stock');
+        Log::info("Stok buku ID: {$loan->book_id} ditambah. Stok baru: " . $loan->book->fresh()->stock);
 
-    //     $duration = null;
-    //     if ($loan->actual_returned_at && $loan->loan_date) {
-    //         $diff = $loan->loan_date->diff($loan->actual_returned_at);
+        // 2. Proses antrian reservasi jika ada
+        $this->processReservationQueue($loan->book);
 
-    //         // Ambil komponen waktu secara manual
-    //         $days = $diff->d;
-    //         $hours = $diff->h;
-    //         $minutes = $diff->i;
-    //         // $seconds = $diff->s;
+        return redirect()->route('loans.index')->with('success', 'Pengembalian buku berhasil dikonfirmasi.');
+    }
 
-    //         // Format ke dalam Bahasa Indonesia
-    //         $parts = [];
-    //         if ($days > 0)
-    //             $parts[] = "$days hari";
-    //         if ($hours > 0)
-    //             $parts[] = "$hours jam";
-    //         if ($minutes > 0)
-    //             $parts[] = "$minutes menit";
-    //         // if ($seconds > 0)
-    //         //     $parts[] = "$seconds detik";
+    /**
+     * Method private untuk memproses antrian reservasi.
+     * Dipanggil setelah pengembalian dikonfirmasi.
+     */
+    private function processReservationQueue(Book $book)
+    {
+        $nextInQueue = Reservation::where('book_id', $book->id)
+            ->where('status', 'pending')
+            ->orderBy('queue_position', 'asc')
+            ->first();
 
-    //         if (count($parts) > 1) {
-    //             $last = array_pop($parts);
-    //             $duration = implode(' ', $parts) . ' dan ' . $last;
-    //         } else {
-    //             $duration = $parts[0] ?? '';
-    //         }
-
-    //         // $duration = implode(' ', $parts);
-    //     }
-
-    //     return view('loan_detail', compact('loan', 'duration'));
-    // }
-
-    // public function show($id)
-    // {
-    //     $loan = Loan::with('book')->findOrFail($id);
-
-    //     $duration = null;
-    //     if ($loan->actual_returned_at && $loan->loan_date) {
-    //         $diff = $loan->loan_date->diff($loan->actual_returned_at);
-
-    //         $years = $diff->y;
-    //         $months = $diff->m;
-    //         $days = $diff->d;
-    //         $hours = $diff->h;
-    //         $minutes = $diff->i;
-    //         $seconds = $diff->s;
-
-    //         $parts = [];
-    //         if ($years > 0)
-    //             $parts[] = "$years tahun";
-    //         if ($months > 0)
-    //             $parts[] = "$months bulan";
-    //         if ($days > 0)
-    //             $parts[] = "$days hari";
-    //         if ($hours > 0)
-    //             $parts[] = "$hours jam";
-    //         if ($minutes > 0)
-    //             $parts[] = "$minutes menit";
-    //         if ($seconds > 0)
-    //             $parts[] = "$seconds detik";
-
-    //         // Tambahkan "dan" sebelum bagian terakhir jika lebih dari 1 elemen
-    //         if (count($parts) > 1) {
-    //             $last = array_pop($parts);
-    //             $duration = implode(' ', $parts) . ' dan ' . $last;
-    //         } else {
-    //             $duration = $parts[0] ?? '';
-    //         }
-    //     }
-
-    //     return view('loan_detail', compact('loan', 'duration'));
-    // }
+        if ($nextInQueue) {
+            $nextInQueue->update([
+                'status' => 'available',
+                'notified_at' => now(),
+                'expires_at' => now()->addDay(),
+            ]);
+            Log::info("Reservasi {$nextInQueue->id} tersedia untuk user {$nextInQueue->user_id}");
+        }
+    }
 }

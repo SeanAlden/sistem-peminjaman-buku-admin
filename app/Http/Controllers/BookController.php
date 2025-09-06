@@ -17,6 +17,8 @@ class BookController extends Controller
 
         $query = Book::where('status', 'active')->with('category');
 
+        $view = $request->input('view', 'card'); // default ke card
+
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
                 $q
@@ -30,7 +32,7 @@ class BookController extends Controller
 
         $books = $query->paginate($perPage)->appends($request->except('page'));
 
-        return view('book', compact('books', 'search', 'perPage'));
+        return view('book', compact('books', 'search', 'perPage', 'view'));
     }
 
     public function create()

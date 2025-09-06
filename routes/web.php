@@ -3,7 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoanController;
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LostBookController;
 use App\Http\Controllers\ExitBookController;
 use App\Http\Controllers\PurchaseController;
@@ -51,6 +53,7 @@ Route::middleware('adminMiddleware')->group(function () {
 
     Route::get('/admin/loans', [LoanController::class, 'index'])->name('loans.index');
     Route::get('/admin/loans/{id}', [LoanController::class, 'show'])->name('loans.show');
+    Route::post('/admin/loans/{id}/confirm-return', [LoanController::class, 'confirmReturn'])->name('loans.confirmReturn');
 
     Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
 
@@ -99,6 +102,32 @@ Route::middleware('adminMiddleware')->group(function () {
     Route::delete('/reservations/{reservation}', [ReservationController::class, 'destroy'])->name('reservations.destroy');
 
     Route::get('/stock-management', [StockManagementController::class, 'index'])->name('stock.management');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Employee Routes
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/employees', [EmployeeController::class, 'index'])->name('employees.index');        // list
+    Route::get('/employees/create', [EmployeeController::class, 'create'])->name('employees.create'); // form tambah
+    Route::post('/employees/store', [EmployeeController::class, 'store'])->name('employees.store');   // simpan baru
+    Route::get('/employees/{id}', [EmployeeController::class, 'show'])->name('employees.show');       // detail
+    Route::get('/employees/{id}/edit', [EmployeeController::class, 'edit'])->name('employees.edit');  // form edit
+    Route::put('/employees/{id}', [EmployeeController::class, 'update'])->name('employees.update');   // update
+    Route::delete('/employees/{id}', [EmployeeController::class, 'destroy'])->name('employees.destroy'); // hapus
+
+    /*
+    |--------------------------------------------------------------------------
+    | Payroll Routes
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/payrolls', [PayrollController::class, 'index'])->name('payrolls.index');
+    Route::get('/payrolls/create', [PayrollController::class, 'create'])->name('payrolls.create');
+    Route::post('/payrolls/store', [PayrollController::class, 'store'])->name('payrolls.store');
+    Route::get('/payrolls/{id}', [PayrollController::class, 'show'])->name('payrolls.show');
+    Route::get('/payrolls/{id}/edit', [PayrollController::class, 'edit'])->name('payrolls.edit');
+    Route::put('/payrolls/{id}', [PayrollController::class, 'update'])->name('payrolls.update');
+    Route::delete('/payrolls/{id}', [PayrollController::class, 'destroy'])->name('payrolls.destroy');
 });
 
 Route::middleware('authenticatedAdminMiddleware')->group(function () {
@@ -115,3 +144,13 @@ Route::middleware('authenticatedAdminMiddleware')->group(function () {
     Route::get('/reset-password', [AdminAuthController::class, 'showResetPasswordForm'])->name('reset.password');
     Route::post('/reset-password', [AdminAuthController::class, 'submitResetPassword']);
 });
+
+// Route baru untuk registered students
+Route::get('admin/registered-students', [AdminAuthController::class, 'registeredStudents'])->name('admin.registered_students');
+
+Route::get('/chat/{user}', function($userId) {
+    $user = App\Models\User::findOrFail($userId);
+    return view('chat', compact('user'));
+})->name('chat.show');
+Route::get('/chat/messages/{user}', [App\Http\Controllers\ChatController::class, 'getMessages'])->name('chat.messages');
+Route::post('/chat/send/{user}', [App\Http\Controllers\ChatController::class, 'sendMessage'])->name('chat.send');

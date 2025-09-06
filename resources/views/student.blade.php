@@ -12,8 +12,14 @@
 
         <div class="mb-4">
             <button onclick="openModal('createModal')"
-                class="inline-block px-4 py-2 font-semibold text-white bg-blue-600 rounded shadow hover:bg-blue-700 cursor-pointer">
+                class="inline-block px-4 py-2 font-semibold text-white bg-blue-600 rounded shadow cursor-pointer hover:bg-blue-700">
                 + Add Student
+            </button>
+
+            <!-- NEW: tombol Registered Students -->
+            <button onclick="window.location='{{ route('admin.registered_students') }}'"
+                class="inline-block px-4 py-2 ml-2 font-semibold text-white bg-green-600 rounded shadow cursor-pointer hover:bg-green-700">
+                Registered Students
             </button>
         </div>
 
@@ -79,10 +85,10 @@
                                     </button>
                                 </form> --}}
                                 <button onclick='fillViewModal(@json($student))'
-                                    class="px-3 py-1 text-sm text-white bg-blue-500 rounded hover:bg-blue-600 cursor-pointer">View</button>
+                                    class="px-3 py-1 text-sm text-white bg-blue-500 rounded cursor-pointer hover:bg-blue-600">View</button>
 
                                 <button onclick='fillEditModal(@json($student))'
-                                    class="px-3 py-1 text-sm text-white bg-yellow-500 rounded hover:bg-yellow-600 cursor-pointer">Edit</button>
+                                    class="px-3 py-1 text-sm text-white bg-yellow-500 rounded cursor-pointer hover:bg-yellow-600">Edit</button>
                                 {{-- <form action="{{ route('students.destroy', $student->id) }}" method="POST"
                                     onsubmit="return confirm('Delete this student?');">
                                     @csrf
@@ -97,7 +103,7 @@
                                     @csrf
                                     @method('DELETE')
                                     <button type="button" onclick="openDeleteModal({{ $student->id }})"
-                                        class="px-3 py-1 text-sm text-white bg-red-500 rounded hover:bg-red-600 cursor-pointer">
+                                        class="px-3 py-1 text-sm text-white bg-red-500 rounded cursor-pointer hover:bg-red-600">
                                         Delete
                                     </button>
                                 </form>
@@ -272,24 +278,7 @@
         </div>
 
         <!-- View Modal -->
-        {{-- <div id="viewModal" class="fixed inset-0 z-50 hidden overflow-y-auto"
-            style="background-color: rgba(0, 0, 0, 0.5);">
-            <div class="relative w-full max-w-lg p-6 mx-auto mt-20 bg-white rounded shadow-lg">
-                <h2 class="mb-4 text-xl font-semibold text-gray-700">Student Details</h2>
-                <div class="mb-2"><strong>Name:</strong> <span id="viewName"></span></div>
-                <div class="mb-2"><strong>Major:</strong> <span id="viewMajor"></span></div>
-                <div class="mb-2"><strong>Email:</strong> <span id="viewEmail"></span></div>
-                <div class="mb-2"><strong>Phone:</strong> <span id="viewPhone"></span></div>
-                <div class="mb-2"><strong>Description:</strong> <span id="viewDescription"></span></div>
-                <div class="flex justify-end mt-4">
-                    <button onclick="closeModal('viewModal')"
-                        class="px-4 py-2 text-white bg-blue-600 rounded">Close</button>
-                </div>
-            </div>
-        </div> --}}
-
-        <!-- View Modal -->
-        <div id="viewModal" class="fixed inset-0 z-50 hidden flex items-center justify-center"
+        <div id="viewModal" class="fixed inset-0 z-50 flex items-center justify-center hidden"
             style="background-color: rgba(0, 0, 0, 0.5);">
             <div class="relative w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
                 <h2 class="mb-4 text-xl font-semibold text-gray-700">Student Details</h2>
@@ -301,7 +290,7 @@
                     <div>
                         <strong>Description:</strong>
                         <div id="viewDescription"
-                            class="mt-1 p-2 border rounded bg-gray-50 max-h-40 overflow-y-auto text-gray-700 text-sm">
+                            class="p-2 mt-1 overflow-y-auto text-sm text-gray-700 border rounded bg-gray-50 max-h-40">
                         </div>
                     </div>
                 </div>

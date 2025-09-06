@@ -94,11 +94,11 @@
                                 </td>
                                 <td class="px-5 py-5 text-sm">
                                     <span class="relative inline-block px-3 py-1 font-semibold leading-tight
-                                                                                                    @if($reservation->status == 'pending') text-yellow-900 bg-yellow-200
-                                                                                                    @elseif($reservation->status == 'available') text-green-900 bg-green-200
-                                                                                                    @elseif($reservation->status == 'completed') text-blue-900 bg-blue-200
-                                                                                                    @else text-red-900 bg-red-200 @endif
-                                                                                                    rounded-full">
+                                                @if($reservation->status == 'pending') text-yellow-900 bg-yellow-200
+                                                @elseif($reservation->status == 'available') text-green-900 bg-green-200
+                                                @elseif($reservation->status == 'completed') text-blue-900 bg-blue-200
+                                                @else text-red-900 bg-red-200 @endif
+                                                                rounded-full">
                                         {{ ucfirst($reservation->status) }}
                                     </span>
                                 </td>
@@ -107,30 +107,6 @@
                                         {{ $reservation->status == 'pending' ? $reservation->queue_position : '-' }}
                                     </p>
                                 </td>
-                                {{-- <td class="px-5 py-5 text-sm">
-                                    <p class="text-gray-900 whitespace-no-wrap">
-                                        @if ($reservation->status == 'available')
-                                        Ambil sebelum {{ $reservation->expires_at->format('d M Y, H:i') }}
-                                        @else
-                                        -
-                                        @endif
-                                    </p>
-                                </td> --}}
-                                {{-- <td class="px-5 py-5 text-sm">
-                                    PERUBAHAN: Hanya tampilkan tombol 'Batalkan' untuk pemilik reservasi
-                                    @if (Auth::id() === $reservation->user_id && in_array($reservation->status, ['pending',
-                                    'available']))
-                                    <form action="{{ route('reservations.destroy', $reservation->id) }}" method="POST"
-                                        onsubmit="return confirm('Apakah Anda yakin ingin membatalkan reservasi ini?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit"
-                                            class="font-semibold text-red-600 hover:text-red-900">Batalkan</button>
-                                    </form>
-                                    @else
-                                    <span>-</span>
-                                    @endif
-                                </td> --}}
                             </tr>
                         @empty
                             <tr>

@@ -217,4 +217,38 @@ class AdminAuthController extends Controller
         return redirect('/admin/login')->with('success', 'Password berhasil diubah.');
     }
 
+    /**
+     * Tampilkan daftar registered students (users dengan usertype = 'user')
+     */
+    public function registeredStudents(Request $request)
+    {
+        $user = Auth::user();
+        if (!$user || $user->usertype !== 'admin') {
+            abort(403);
+        }
+
+        // Ambil params untuk paging & search (mirip mahasiswa)
+        $perPage = (int) $request->get('per_page', 10);
+        $allowed = [5, 10, 25, 50, 100];
+        if (!in_array($perPage, $allowed)) {
+            $perPage = 10;
+        }
+
+        $search = $request->get('search', '');
+
+        $query = User::where('usertype', 'user')->orderBy('created_at', 'desc');
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('email', 'like', '%' . $search . '%')
+                    ->orWhere('phone', 'like', '%' . $search . '%');
+            });
+        }
+
+        $users = $query->paginate($perPage)->withQueryString();
+
+        return view('registered_students', compact('users', 'perPage', 'search'));
+    }
+
 }
