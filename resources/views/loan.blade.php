@@ -103,8 +103,96 @@
             </table>
         </div>
 
-        <div class="mt-4">
+        {{-- <div class="mt-4">
             {{ $loans->links() }}
+        </div> --}}
+
+                <!-- Fitur Pagination -->
+        <div class="flex items-center justify-between mt-4">
+            <div>
+                @if ($loans->total() > 0)
+                    <p class="text-sm text-gray-700 dark:text-white">
+                        Showing {{ $loans->firstItem() }} to {{ $loans->lastItem() }} of {{ $loans->total() }}
+                        entries
+                    </p>
+                @endif
+            </div>
+            <div>
+                @if ($loans->hasPages())
+                    <nav role="navigation" aria-label="Pagination Navigation" class="flex items-center">
+                        @if ($loans->onFirstPage())
+                            <span class="px-3 py-1 mr-1 text-gray-400 bg-white border rounded cursor-not-allowed">Prev</span>
+                        @else
+                            <a href="{{ $loans->previousPageUrl() }}" rel="prev"
+                                class="px-3 py-1 mr-1 text-gray-700 bg-white border rounded hover:bg-gray-50">Prev</a>
+                        @endif
+
+                        @php
+                            $currentPage = $loans->currentPage();
+                            $lastPage = $loans->lastPage();
+                            $links = [];
+
+                            // Logic untuk menampilkan link pagination
+                            if ($lastPage <= 7) {
+                                for ($i = 1; $i <= $lastPage; $i++) {
+                                    $links[] = $i;
+                                }
+                            } else {
+                                $links[] = 1;
+                                if ($currentPage > 4) {
+                                    $links[] = '...';
+                                }
+
+                                $start = max(2, $currentPage - 1);
+                                $end = min($lastPage - 1, $currentPage + 1);
+
+                                if ($currentPage <= 4) {
+                                    $start = 2;
+                                    $end = 5;
+                                }
+
+                                if ($currentPage >= $lastPage - 3) {
+                                    $start = $lastPage - 4;
+                                    $end = $lastPage - 1;
+                                }
+
+                                for ($i = $start; $i <= $end; $i++) {
+                                    $links[] = $i;
+                                }
+
+                                if ($currentPage < $lastPage - 3) {
+                                    $links[] = '...';
+                                }
+
+                                $links[] = $lastPage;
+                            } 
+                        @endphp
+
+                        @foreach ($links as $link)
+                            @if ($link === '...')
+                                <span class="px-3 py-1 mr-1 text-gray-500 bg-white border rounded">
+                                    {{ $link }}
+                                </span>
+                            @elseif ($link == $currentPage)
+                                <span class="px-3 py-1 mr-1 text-white bg-blue-500 border border-blue-500 rounded">{{ $link
+                                                                }}</span>
+                            @else
+                                <a href="{{ $loans->url($link) }}"
+                                    class="px-3 py-1 mr-1 text-gray-700 bg-white border rounded hover:bg-gray-50">{{ $link
+                                                                }}</a>
+                            @endif
+                        @endforeach
+
+                        @if ($loans->hasMorePages())
+                            <a href="{{ $loans->nextPageUrl() }}" rel="next"
+                                class="px-3 py-1 ml-1 text-gray-700 bg-white border rounded hover:bg-gray-50">Next</a>
+                        @else
+                            <span class="px-3 py-1 ml-1 text-gray-400 bg-white border rounded cursor-not-allowed">Next</span>
+                        @endif
+                    </nav>
+                @endif
+            </div>
         </div>
+        <!-- End Fitur Pagination -->
     </div>
 @endsection

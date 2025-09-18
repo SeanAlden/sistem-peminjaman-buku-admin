@@ -36,7 +36,7 @@
 
 @section('content')
 <div class="container px-6 py-8 mx-auto">
-    <h2 class="mb-6 text-3xl font-bold text-gray-800">Employee List</h2>
+    <h2 class="mb-6 text-3xl font-bold text-gray-800 dark:text-gray-200">Employee List</h2>
 
     <a href="{{ route('employees.create') }}" 
        class="inline-block px-5 py-2 mb-6 text-white transition bg-blue-600 rounded-lg shadow hover:bg-blue-700">
@@ -45,24 +45,24 @@
 
     <div class="overflow-x-auto bg-white rounded-lg shadow">
         <table class="min-w-full text-sm text-left text-gray-600">
-            <thead class="text-xs text-gray-700 uppercase bg-gray-100">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-300 dark:bg-gray-600">
                 <tr>
-                    <th class="px-6 py-3">ID</th>
-                    <th class="px-6 py-3">Name</th>
-                    <th class="px-6 py-3">Position</th>
-                    <th class="px-6 py-3">Base Salary</th>
-                    <th class="px-6 py-3">Email</th>
-                    <th class="px-6 py-3 text-center">Actions</th>
+                    <th class="px-6 py-3 text-black dark:text-white">ID</th>
+                    <th class="px-6 py-3 text-black dark:text-white">Name</th>
+                    <th class="px-6 py-3 text-black dark:text-white">Position</th>
+                    <th class="px-6 py-3 text-black dark:text-white">Base Salary</th>
+                    <th class="px-6 py-3 text-black dark:text-white">Email</th>
+                    <th class="px-6 py-3 text-center text-black dark:text-white">Actions</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-200">
+            <tbody class="bg-gray-200 divide-gray-200 dividbg-e-y dark:bg-gray-500 dark:divide-gray-800">
                 @foreach($employees as $emp)
-                <tr class="hover:bg-gray-50">
-                    <td class="px-6 py-4">{{ $emp->id }}</td>
-                    <td class="px-6 py-4 font-medium text-gray-800">{{ $emp->name }}</td>
-                    <td class="px-6 py-4">{{ $emp->position }}</td>
-                    <td class="px-6 py-4">Rp {{ number_format($emp->base_salary,0,',','.') }}</td>
-                    <td class="px-6 py-4">{{ $emp->email }}</td>
+                <tr class="hover:bg-gray-50 hover:dark:bg-gray-600">
+                    <td class="px-6 py-4 text-gray-800 dark:text-white">{{ $emp->id }}</td>
+                    <td class="px-6 py-4 font-medium text-gray-800 dark:text-white">{{ $emp->name }}</td>
+                    <td class="px-6 py-4 text-gray-800 dark:text-white">{{ $emp->position }}</td>
+                    <td class="px-6 py-4 text-gray-800 dark:text-white">Rp {{ number_format($emp->base_salary,0,',','.') }}</td>
+                    <td class="px-6 py-4 text-gray-800 dark:text-white">{{ $emp->email }}</td>
                     <td class="px-6 py-4 space-x-2 text-center">
                         <a href="{{ route('employees.show',$emp->id) }}" 
                            class="inline-block px-3 py-1 text-white transition bg-blue-500 rounded hover:bg-blue-600">

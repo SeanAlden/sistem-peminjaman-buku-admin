@@ -40,7 +40,7 @@
             <div
                 class="flex items-center justify-between p-6 shadow-md bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl">
                 <div>
-                    <h2 class="mb-1 text-lg font-semibold text-gray-100">Total Buku Dipinjam</h2>
+                    <h2 class="mb-1 text-lg font-semibold text-gray-100">Total Buku Sedang Dipinjam</h2>
                     <p class="text-3xl font-extrabold text-gray-100">{{ $totalBorrowedBooks }}</p>
                 </div>
                 <img src="{{ asset('assets/icons/borrowed_book.png') }}" alt="Borrowed Icon"

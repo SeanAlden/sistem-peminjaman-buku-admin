@@ -10,6 +10,7 @@
     <meta charset="UTF-8">
     <title>Sistem Peminjaman Buku</title>
     @vite('resources/css/app.css')
+    @vite(['resources/js/app.js'])
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     {{--
     <script src="//unpkg.com/alpinejs" defer></script> --}}
@@ -131,6 +132,27 @@
                                 <span x-show="sidebarExpanded" class="ml-3">Loan List</span>
                             </a>
 
+                            <!-- Account List Menu -->
+                            <a href="{{ route('accounts.index') }}"
+                                class="flex items-center px-4 py-3 transition-colors hover:bg-orange-700">
+                                <img src="{{ asset('assets/icons/account.png') }}" class="w-5 h-5" alt="Loan Icon">
+                                <span x-show="sidebarExpanded" class="ml-3">Account List</span>
+                            </a>
+
+                            <!-- Transaction List Menu -->
+                            <a href="{{ route('transactions.index') }}"
+                                class="flex items-center px-4 py-3 transition-colors hover:bg-orange-700">
+                                <img src="{{ asset('assets/icons/transaction.png') }}" class="w-5 h-5" alt="Loan Icon">
+                                <span x-show="sidebarExpanded" class="ml-3">Transaction List</span>
+                            </a>
+
+                            <!-- Payment List Menu -->
+                            <a href="{{ route('payments.index') }}"
+                                class="flex items-center px-4 py-3 transition-colors hover:bg-orange-700">
+                                <img src="{{ asset('assets/icons/payment.png') }}" class="w-5 h-5" alt="Loan Icon">
+                                <span x-show="sidebarExpanded" class="ml-3">Payment List</span>
+                            </a>
+
                             <!-- Prediction Menu -->
                             <a href="{{ route('predictions.index') }}"
                                 class="flex items-center px-4 py-3 transition-colors hover:bg-orange-700">
@@ -192,10 +214,117 @@
                                     <!-- You can add badge here later -->
                                 </div> --}}
 
-                                <div class="relative">
+                                {{-- <div class="relative">
                                     <img src="{{ asset('assets/icons/notification.png') }}" alt="Notification"
                                         class="w-6 h-6 transition cursor-pointer hover:scale-110">
                                     <!-- You can add badge here later -->
+                                </div> --}}
+
+                                <!-- Notification Icon -->
+                                {{-- <div class="relative" x-data="{ openNotif: false, notifications: [], count: 0 }"
+                                    x-init="
+                                    Echo.channel('notifications')
+                                        .listen('.new-notification', (e) => {
+                                            fetch('{{ route('notifications.fetch') }}')
+                                                .then(res => res.json())
+                                                .then(data => {
+                                                    notifications = data.notifications;
+                                                    count = data.count;
+                                                });
+                                        });
+
+                                    fetch('{{ route('notifications.fetch') }}')
+                                        .then(res => res.json())
+                                        .then(data => {
+                                            notifications = data.notifications;
+                                            count = data.count;
+                                        });
+                                ">
+                                    <button @click="openNotif = !openNotif" class="relative">
+                                        <img src="{{ asset('assets/icons/notification.png') }}" alt="Notification"
+                                            class="transition cursor-pointer h-7 w-7 hover:scale-110">
+                                        <!-- Badge -->
+                                        <span x-show="count > 0"
+                                            class="absolute -top-2 -right-2 text-xs font-bold text-white bg-red-600 rounded-full px-1.5">
+                                            <span x-text="count > 10 ? '10+' : count"></span>
+                                        </span>
+                                    </button>
+
+                                    <!-- Popup -->
+                                    <div x-show="openNotif" @click.away="openNotif = false"
+                                        class="absolute right-0 mt-2 bg-white rounded-lg shadow-lg w-80">
+                                        <div class="p-3 border-b">
+                                            <h3 class="text-sm font-semibold">Notifications</h3>
+                                        </div>
+                                        <ul>
+                                            <template x-for="notif in notifications" :key="notif.id">
+                                                <li class="px-4 py-2 border-b">
+                                                    <p class="text-sm font-medium" x-text="notif.title"></p>
+                                                    <p class="text-xs text-gray-600" x-text="notif.message"></p>
+                                                </li>
+                                            </template>
+                                        </ul>
+                                        <div class="p-2 text-center">
+                                            <a href="{{ route('notifications.index') }}"
+                                                class="text-sm text-blue-600 hover:underline">See All</a>
+                                        </div>
+                                    </div>
+                                </div> --}}
+
+                                <!-- Notification Icon -->
+                                <div class="relative" x-data="{
+                        openNotif: false,
+                        notifications: [],
+                        count: 0,
+                        fetchData() {
+                            fetch('{{ route('notifications.fetch') }}')
+                                .then(res => res.json())
+                                .then(data => {
+                                    this.notifications = data.notifications;
+                                    this.count = data.count;
+                                });
+                        }
+                     }" x-init="
+                        // Echo.channel('notifications')
+                        //     .listen('.new-notification', (e) => {
+                        //         fetchData();
+                        //     });
+                        // fetchData();
+                        window.Echo.channel('notifications')
+                                .listen('.new-notification', (e) => {
+                                    console.log('Notif Event Received:', e);
+                                    fetchData();
+                                });
+                        ">
+                                    <button @click="openNotif = !openNotif" class="relative">
+                                        <img src="{{ asset('assets/icons/notification.png') }}" alt="Notification"
+                                            class="w-6 h-6 transition cursor-pointer hover:scale-110">
+                                        <!-- Badge -->
+                                        <span x-show="count > 0"
+                                            class="absolute -top-2 -right-2 text-xs font-bold text-white bg-red-600 rounded-full px-1.5">
+                                            <span x-text="count > 10 ? '10+' : count"></span>
+                                        </span>
+                                    </button>
+
+                                    <!-- Popup -->
+                                    <div x-show="openNotif" @click.away="openNotif = false"
+                                        class="absolute right-0 mt-2 bg-white rounded-lg shadow-lg w-80">
+                                        <div class="p-3 border-b">
+                                            <h3 class="text-sm font-semibold">Notifications</h3>
+                                        </div>
+                                        <ul>
+                                            <template x-for="notif in notifications" :key="notif.id">
+                                                <li class="px-4 py-2 border-b">
+                                                    <p class="text-sm font-medium" x-text="notif.title"></p>
+                                                    <p class="text-xs text-gray-600" x-text="notif.message"></p>
+                                                </li>
+                                            </template>
+                                        </ul>
+                                        <div class="p-2 text-center">
+                                            <a href="{{ route('notifications.index') }}"
+                                                class="text-sm text-blue-600 hover:underline">See All</a>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <!-- Profile Dropdown -->

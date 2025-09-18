@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Models\Book;
 use App\Models\Loan;
+use App\Models\Reservation;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Foundation\Auth\User;
+use App\Events\NewNotificationEvent;
 use App\Http\Controllers\Controller;
 
 class LoanController extends Controller
@@ -52,6 +57,38 @@ class LoanController extends Controller
 
         $book->decrement('stock');
         Log::info("Stok buku ID {$book->id} dikurangi. Stok sekarang: " . $book->fresh()->stock);
+
+        // Notification::create([
+        //     'user_id' => $book->id, // bisa diarahkan ke admin / user sesuai kebutuhan
+        //     'title' => 'Buku Dipinjam',
+        //     'message' => auth()->user()->name . " meminjam buku {$book->title}",
+        // ]);
+
+        $message = auth()->user()->name . " meminjam buku {$book->title}";
+        $title = 'Buku Dipinjam';
+
+        $admins = User::where('usertype', 'admin')->get();
+
+        if ($admins->isEmpty()) {
+            // fallback: buat notifikasi global (user_id null)
+            $notif = Notification::create([
+                'user_id' => null,
+                'title' => $title,
+                'message' => $message,
+            ]);
+            event(new NewNotificationEvent($notif));
+        } else {
+            foreach ($admins as $admin) {
+                $notif = Notification::create([
+                    'user_id' => $admin->id,
+                    'title' => $title,
+                    'message' => $message,
+                ]);
+                event(new NewNotificationEvent($notif));
+            }
+        }
+
+        // event(new NewNotificationEvent(Notification::latest()->first()));
 
         return response()->json(['success' => true, 'message' => 'Peminjaman berhasil disimpan.', 'data' => $loan]);
     }
@@ -109,10 +146,30 @@ class LoanController extends Controller
         $loan = Loan::where('user_id', auth()->id())
             ->where('status', 'borrowed')
             ->findOrFail($id);
-        
+
         $loan->update(['status' => 'pending_return']);
 
         Log::info("Status loan ID: {$id} diubah menjadi 'pending_return'. Menunggu konfirmasi admin.");
+
+        // Notification::create([
+        //     'user_id' => $id,
+        //     'title' => 'Request Pengembalian',
+        //     'message' => auth()->user()->name . " meminta pengembalian buku {$loan->book->title}",
+        // ]);
+
+        // event(new NewNotificationEvent(Notification::latest()->first()));
+
+        $admins = User::where('usertype', 'admin')->get();
+
+        foreach ($admins as $admin) {
+            $notif = Notification::create([
+                'user_id' => $admin->id,   // ✅ admin id, valid di tabel users
+                'title' => 'Request Pengembalian',
+                'message' => auth()->user()->name . " meminta pengembalian buku {$loan->book->title}",
+            ]);
+
+            event(new NewNotificationEvent($notif));
+        }
 
         return response()->json([
             'success' => true,
@@ -121,7 +178,7 @@ class LoanController extends Controller
     }
 
     // ... method store(), index(), cancelLoan(), checkActiveLoan() Anda tetap sama ...
-    
+
     // Anda bisa menghapus method processReservationQueue() dari controller API ini
     // karena logikanya sudah dipindahkan ke LoanController web.
 }

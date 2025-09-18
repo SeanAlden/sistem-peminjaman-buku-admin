@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoanController;
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\EmployeeController;
@@ -16,7 +17,10 @@ use App\Http\Controllers\EntryBookController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\PredictionController;
+use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ChartOfAccountController;
 use App\Http\Controllers\StockManagementController;
 
 Route::get('/', function () {
@@ -62,6 +66,8 @@ Route::middleware('adminMiddleware')->group(function () {
 
     Route::get('/admin/password', [AdminAuthController::class, 'editPassword'])->name('admin.password');
     Route::post('/admin/password', [AdminAuthController::class, 'updatePassword'])->name('admin.password.update');
+    // Route baru untuk registered students
+    Route::get('admin/registered-students', [AdminAuthController::class, 'registeredStudents'])->name('admin.registered_students');
 
     Route::get('/admin/dashboard', [DashboardController::class, 'viewDashboard'])->name('admin.dashboard');
 
@@ -128,6 +134,46 @@ Route::middleware('adminMiddleware')->group(function () {
     Route::get('/payrolls/{id}/edit', [PayrollController::class, 'edit'])->name('payrolls.edit');
     Route::put('/payrolls/{id}', [PayrollController::class, 'update'])->name('payrolls.update');
     Route::delete('/payrolls/{id}', [PayrollController::class, 'destroy'])->name('payrolls.destroy');
+
+    // Accounts
+    Route::get('/accounts', [ChartOfAccountController::class, 'index'])->name('accounts.index');
+    Route::get('/accounts/create', [ChartOfAccountController::class, 'create'])->name('accounts.create');
+    Route::post('/accounts/store', [ChartOfAccountController::class, 'store'])->name('accounts.store');
+    Route::get('/accounts/{id}/edit', [ChartOfAccountController::class, 'edit'])->name('accounts.edit');
+    Route::put('/accounts/{id}', [ChartOfAccountController::class, 'update'])->name('accounts.update');
+    Route::delete('/accounts/{id}', [ChartOfAccountController::class, 'destroy'])->name('accounts.destroy');
+
+    // Transactions
+    // Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
+    // Route::get('/transactions/create', [TransactionController::class, 'create'])->name('transactions.create');
+    // Route::post('/transactions/store', [TransactionController::class, 'store'])->name('transactions.store');
+    // Route::get('/transactions/{id}', [TransactionController::class, 'show'])->name('transactions.show');
+    // Route::delete('/transactions/{id}', [TransactionController::class, 'destroy'])->name('transactions.destroy');
+
+    Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
+    Route::get('/transactions/create', [TransactionController::class, 'create'])->name('transactions.create');
+    Route::get('/transactions/{id}', [TransactionController::class, 'show'])->name('transactions.show');
+    Route::post('/transactions/store', [TransactionController::class, 'submit'])->name('transactions.store');
+    Route::post('/transactions/{id}/reverse', [TransactionController::class, 'reverse'])->name('transactions.reverse'); // reversal
+    Route::get('/hello/transactions/trialBalance', [TransactionController::class, 'trial_balance'])->name('transactions.trial_balance');
+    Route::delete('/transactions/{id}', [TransactionController::class, 'destroy'])->name('transactions.destroy');
+
+    // // Payments
+    // Route::get('/payments', [PaymentController::class, 'index'])->name('payments.index');
+    // Route::get('/payments/create', [PaymentController::class, 'create'])->name('payments.create');
+    // Route::post('/payments/store', [PaymentController::class, 'store'])->name('payments.store');
+    // Route::delete('/payments/{id}', [PaymentController::class, 'destroy'])->name('payments.destroy');
+
+    Route::get('/payments', [PaymentController::class, 'index'])->name('payments.index');
+    Route::get('/payments/create', [PaymentController::class, 'create'])->name('payments.create');
+    Route::post('/payments', [PaymentController::class, 'store'])->name('payments.store');
+    Route::get('/payments/{payment}/edit', [PaymentController::class, 'edit'])->name('payments.edit');
+    Route::put('/payments/{payment}', [PaymentController::class, 'update'])->name('payments.update');
+    Route::delete('/payments/{payment}', [PaymentController::class, 'destroy'])->name('payments.destroy');
+
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/read/{id}', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::get('/notifications/fetch', [NotificationController::class, 'fetchLatest'])->name('notifications.fetch');
 });
 
 Route::middleware('authenticatedAdminMiddleware')->group(function () {
@@ -145,10 +191,9 @@ Route::middleware('authenticatedAdminMiddleware')->group(function () {
     Route::post('/reset-password', [AdminAuthController::class, 'submitResetPassword']);
 });
 
-// Route baru untuk registered students
-Route::get('admin/registered-students', [AdminAuthController::class, 'registeredStudents'])->name('admin.registered_students');
 
-Route::get('/chat/{user}', function($userId) {
+
+Route::get('/chat/{user}', function ($userId) {
     $user = App\Models\User::findOrFail($userId);
     return view('chat', compact('user'));
 })->name('chat.show');
