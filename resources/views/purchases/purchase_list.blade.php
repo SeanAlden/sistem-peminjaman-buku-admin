@@ -1,14 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container mx-auto px-4">
-        <h1 class="text-3xl font-bold mb-6 text-gray-800">📦 Daftar Pengadaan</h1>
+    <div class="container px-4 mx-auto">
+        <h1 class="mb-6 text-3xl font-bold text-gray-800 dark:text-white">📦 Daftar Pengadaan</h1>
 
         {{-- Bagian Tombol Tambah, Notifikasi, dan Filter tidak berubah --}}
-        <div class="flex justify-between items-center mb-4">
+        <div class="flex items-center justify-between mb-4">
             <a href="{{ route('purchases.create') }}"
-                class="inline-flex items-center bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 transition">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                class="inline-flex items-center px-4 py-2 text-white transition bg-blue-600 rounded shadow hover:bg-blue-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd"
                         d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
                         clip-rule="evenodd" />
@@ -18,7 +18,7 @@
         </div>
 
         @if(session('success'))
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4 shadow-sm">
+            <div class="px-4 py-3 mb-4 text-green-700 bg-green-100 border border-green-400 rounded shadow-sm">
                 {{ session('success') }}
             </div>
         @endif
@@ -27,7 +27,7 @@
             {{-- Form Per Page --}}
             <div class="flex items-center">
                 <form action="{{ route('purchases.index') }}" method="GET" class="flex items-center">
-                    <label for="per_page" class="mr-2 text-sm text-gray-600">Show:</label>
+                    <label for="per_page" class="mr-2 text-sm text-gray-600 dark:text-white">Show:</label>
                     <select name="per_page" id="per_page"
                         class="block w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                         onchange="this.form.submit()">
@@ -43,7 +43,7 @@
             {{-- Form Search --}}
             <div class="flex items-center">
                 <form action="{{ route('purchases.index') }}" method="GET" class="flex items-center">
-                    <label for="search" class="mr-2 text-sm text-gray-600">Search:</label>
+                    <label for="search" class="mr-2 text-sm text-gray-600 dark:text-gray-300">Search:</label>
                     <input type="text" name="search" id="search"
                         class="block w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                         value="{{ $search }}" placeholder="Search...">
@@ -53,20 +53,20 @@
         </div>
 
         <div class="overflow-x-auto">
-            <table class="w-full table-auto border-collapse bg-white shadow-md rounded-lg overflow-hidden">
+            <table class="w-full overflow-hidden bg-white border-collapse rounded-lg shadow-md table-auto">
                 <thead>
-                    <tr class="bg-gray-200 text-gray-700 text-sm uppercase tracking-wider">
-                        <th class="px-4 py-3 border">Buku</th>
-                        <th class="px-4 py-3 border">Supplier</th>
-                        <th class="px-4 py-3 border">Tanggal</th>
-                        <th class="px-4 py-3 border">Jumlah (Sisa / Awal)</th>
+                    <tr class="text-sm tracking-wider text-gray-700 uppercase bg-gray-200 dark:bg-gray-600">
+                        <th class="px-4 py-3 border dark:text-white">Buku</th>
+                        <th class="px-4 py-3 border dark:text-white">Supplier</th>
+                        <th class="px-4 py-3 border dark:text-white">Tanggal</th>
+                        <th class="px-4 py-3 border dark:text-white">Jumlah (Sisa / Awal)</th>
                         {{-- PERUBAHAN 1: Menambahkan kolom baru untuk total --}}
-                        <th class="px-4 py-3 border text-center bg-gray-300">Total Pengadaan (Buku Ini)</th>
-                        <th class="px-4 py-3 border">Total Harga</th>
-                        <th class="px-4 py-3 border">Aksi</th>
+                        <th class="px-4 py-3 text-center bg-gray-300 border dark:bg-gray-700 dark:text-white">Total Pengadaan (Buku Ini)</th>
+                        <th class="px-4 py-3 border dark:text-white">Total Harga</th>
+                        <th class="px-4 py-3 border dark:text-white">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="text-gray-700 text-sm">
+                <tbody class="text-sm text-gray-700">
                     {{-- PERUBAHAN 2: Inisialisasi variabel untuk melacak grup buku --}}
                     @php $currentBookId = null; @endphp
 
@@ -78,44 +78,44 @@
                             </tr>
                         @endif
 
-                        <tr class="hover:bg-gray-100 transition">
-                            <td class="border px-4 py-2 font-semibold">{{ $purchase->book->title }}</td>
-                            <td class="border px-4 py-2">{{ $purchase->supplier->name }}</td>
-                            <td class="border px-4 py-2 text-center">
+                        <tr class="transition hover:bg-gray-100 dark:hover:bg-gray-700 dark:bg-gray-500">
+                            <td class="px-4 py-2 font-semibold border dark:text-white">{{ $purchase->book->title }}</td>
+                            <td class="px-4 py-2 border dark:text-white">{{ $purchase->supplier->name }}</td>
+                            <td class="px-4 py-2 text-center border dark:text-white">
                                 {{ \Carbon\Carbon::parse($purchase->purchase_date)->format('d M Y') }}</td>
-                            <td class="border px-4 py-2 text-center">
-                                <div class="text-sm font-semibold">
+                            <td class="px-4 py-2 text-center border">
+                                <div class="text-sm font-semibold dark:text-white">
                                     {{ $purchase->quantity }} / {{ $purchase->initial_quantity }}
                                 </div>
                                 @php
                                     $percentage = ($purchase->initial_quantity > 0) ? ($purchase->quantity / $purchase->initial_quantity) * 100 : 0;
                                 @endphp
-                                <div class="w-full bg-gray-200 rounded-full h-2 mt-1">
-                                    <div class="bg-blue-600 h-2 rounded-full" style="width: {{ $percentage }}%;"></div>
+                                <div class="w-full h-2 mt-1 bg-gray-200 rounded-full">
+                                    <div class="h-2 bg-blue-600 rounded-full" style="width: {{ $percentage }}%;"></div>
                                 </div>
                             </td>
 
                             {{-- PERUBAHAN 3: Logika untuk menampilkan total hanya sekali per grup --}}
                             @if ($purchase->book_id !== $currentBookId)
-                                <td class="border px-4 py-2 text-center align-middle font-bold text-lg bg-gray-50"
+                                <td class="px-4 py-2 text-lg font-bold text-center align-middle border bg-gray-50 dark:bg-gray-400 dark:text-white"
                                     rowspan="{{ $purchases->where('book_id', $purchase->book_id)->count() }}">
                                     {{ $bookTotalQuantities[$purchase->book_id] ?? 'N/A' }}
                                 </td>
                             @endif
 
-                            <td class="border px-4 py-2 text-right">Rp{{ number_format($purchase->total_price, 0, ',', '.') }}
+                            <td class="px-4 py-2 text-right border dark:text-white">Rp{{ number_format($purchase->total_price, 0, ',', '.') }}
                             </td>
-                            <td class="border px-4 py-2 text-center">
+                            <td class="px-4 py-2 text-center border">
                                 <div class="flex justify-center gap-2">
                                     <a href="{{ route('purchases.edit', $purchase->id) }}"
-                                        class="inline-flex items-center bg-yellow-400 text-white px-3 py-1 rounded hover:bg-yellow-500 transition">✏️
+                                        class="inline-flex items-center px-3 py-1 text-white transition bg-yellow-400 rounded hover:bg-yellow-500">✏️
                                         Edit</a>
                                     <form action="{{ route('purchases.destroy', $purchase->id) }}" method="POST"
                                         onsubmit="return confirm('Yakin ingin menghapus data ini?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"
-                                            class="inline-flex items-center bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition">🗑️
+                                            class="inline-flex items-center px-3 py-1 text-white transition bg-red-500 rounded hover:bg-red-600">🗑️
                                             Delete</button>
                                     </form>
                                 </div>
@@ -125,7 +125,7 @@
                         @php $currentBookId = $purchase->book_id; @endphp
                     @empty
                         <tr>
-                            <td colspan="7" class="text-center py-4 text-gray-500">Belum ada data pengadaan.</td>
+                            <td colspan="7" class="py-4 text-center text-gray-500">Belum ada data pengadaan.</td>
                         </tr>
                     @endforelse
                 </tbody>

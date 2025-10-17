@@ -4,7 +4,7 @@
     x-init="$watch('darkMode', value => localStorage.setItem('darkMode', JSON.stringify(value)))"
     :class="{ 'dark': darkMode }"> --}}
 
-<html lang="en" x-data :class="{ 'dark': $store.theme.dark }"> {{-- 2. Baca state dari store --}}
+<html lang="en" x-data="{}" :class="{ 'dark': $store.theme.dark }">
 
 <head>
     <meta charset="UTF-8">
@@ -12,8 +12,6 @@
     @vite('resources/css/app.css')
     @vite(['resources/js/app.js'])
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    {{--
-    <script src="//unpkg.com/alpinejs" defer></script> --}}
 </head>
 
 <body class="bg-gray-100 dark:bg-gray-900">
@@ -174,55 +172,38 @@
 
             <div :class="sidebarExpanded ? 'ml-64' : 'ml-16'" class="min-h-screen transition-all duration-300">
                 <!-- HEADER -->
-                {{-- <header
-                    class="fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-6 py-4 text-white bg-gray-300 border-b border-gray-700 shadow-sm dark:bg-gray-600">
-                    --}}
-                    <header
-                        class="fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-6 py-4 text-gray-800 shadow-md dark:text-white bg-gradient-to-r from-blue-300 to-blue-400 dark:from-blue-300 dark:to-blue-400">
-                        <div class="flex items-center space-x-4">
-                            <a href="#" class="text-lg font-bold hover:underline">FAQ</a>
-                        </div>
-                        <div class="flex items-center space-x-6">
-                            <!-- Dark Mode Toggle -->
-                            {{-- <button @click="darkMode = !darkMode; window.darkMode = darkMode"
-                                class="flex items-center justify-center w-8 h-8 transition rounded-full cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700">
-                                --}}
+                <header
+                    class="fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-6 py-4 text-gray-800 shadow-md dark:text-white bg-gradient-to-r from-gray-300 to-gray-400 dark:from-gray-300 dark:to-gray-400">
+                    <div class="flex items-center space-x-4">
+                        <a href="#" class="text-lg font-bold hover:underline">FAQ</a>
+                    </div>
+                    <div class="flex items-center space-x-6">
+                        <!-- Dark Mode Toggle -->
+                        <button @click="$store.theme.toggle()"
+                            class="flex items-center justify-center w-8 h-8 transition rounded-full cursor-pointer hover:bg-blue-200 dark:hover:bg-blue-700">
 
-                                <button @click="$store.theme.toggle()"
-                                    class="flex items-center justify-center w-8 h-8 transition rounded-full cursor-pointer hover:bg-blue-200 dark:hover:bg-blue-700">
+                            {{-- Ganti x-if menjadi x-show dan baca dari store --}}
+                            <img x-show="!$store.theme.dark" src="/assets/icons/moon.png" alt="Moon Icon"
+                                class="w-5 h-5">
+                            <img x-show="$store.theme.dark" src="/assets/icons/sun.png" alt="Sun Icon" class="w-5 h-5"
+                                style="display: none;">
+                        </button>
 
-                                    {{-- <template x-if="!darkMode">
-                                        <img src="/assets/icons/moon.png" alt="Moon Icon" class="w-5 h-5">
-                                    </template>
+                        <!-- Notification Icon -->
+                        {{-- <div class="relative">
+                            <img :src="darkMode ? '{{ asset('assets/icons/notification_white.png') }}' : '{{ asset('assets/icons/notification.png') }}'"
+                                alt="Notification" class="w-6 h-6 transition cursor-pointer hover:scale-110">
+                            <!-- You can add badge here later -->
+                        </div> --}}
 
-                                    <template x-if="darkMode">
-                                        <img src="/assets/icons/sun.png" alt="Sun Icon" class="w-5 h-5">
-                                    </template> --}}
+                        {{-- <div class="relative">
+                            <img src="{{ asset('assets/icons/notification.png') }}" alt="Notification"
+                                class="w-6 h-6 transition cursor-pointer hover:scale-110">
+                            <!-- You can add badge here later -->
+                        </div> --}}
 
-                                    {{-- Ganti x-if menjadi x-show dan baca dari store --}}
-                                    <img x-show="!$store.theme.dark" src="/assets/icons/moon.png" alt="Moon Icon"
-                                        class="w-5 h-5">
-                                    <img x-show="$store.theme.dark" src="/assets/icons/sun.png" alt="Sun Icon"
-                                        class="w-5 h-5" style="display: none;">
-
-                                </button>
-
-                                <!-- Notification Icon -->
-                                {{-- <div class="relative">
-                                    <img :src="darkMode ? '{{ asset('assets/icons/notification_white.png') }}' : '{{ asset('assets/icons/notification.png') }}'"
-                                        alt="Notification" class="w-6 h-6 transition cursor-pointer hover:scale-110">
-                                    <!-- You can add badge here later -->
-                                </div> --}}
-
-                                {{-- <div class="relative">
-                                    <img src="{{ asset('assets/icons/notification.png') }}" alt="Notification"
-                                        class="w-6 h-6 transition cursor-pointer hover:scale-110">
-                                    <!-- You can add badge here later -->
-                                </div> --}}
-
-                                <!-- Notification Icon -->
-                                {{-- <div class="relative" x-data="{ openNotif: false, notifications: [], count: 0 }"
-                                    x-init="
+                        <!-- Notification Icon -->
+                        {{-- <div class="relative" x-data="{ openNotif: false, notifications: [], count: 0 }" x-init="
                                     Echo.channel('notifications')
                                         .listen('.new-notification', (e) => {
                                             fetch('{{ route('notifications.fetch') }}')
@@ -240,39 +221,39 @@
                                             count = data.count;
                                         });
                                 ">
-                                    <button @click="openNotif = !openNotif" class="relative">
-                                        <img src="{{ asset('assets/icons/notification.png') }}" alt="Notification"
-                                            class="transition cursor-pointer h-7 w-7 hover:scale-110">
-                                        <!-- Badge -->
-                                        <span x-show="count > 0"
-                                            class="absolute -top-2 -right-2 text-xs font-bold text-white bg-red-600 rounded-full px-1.5">
-                                            <span x-text="count > 10 ? '10+' : count"></span>
-                                        </span>
-                                    </button>
+                            <button @click="openNotif = !openNotif" class="relative">
+                                <img src="{{ asset('assets/icons/notification.png') }}" alt="Notification"
+                                    class="transition cursor-pointer h-7 w-7 hover:scale-110">
+                                <!-- Badge -->
+                                <span x-show="count > 0"
+                                    class="absolute -top-2 -right-2 text-xs font-bold text-white bg-red-600 rounded-full px-1.5">
+                                    <span x-text="count > 10 ? '10+' : count"></span>
+                                </span>
+                            </button>
 
-                                    <!-- Popup -->
-                                    <div x-show="openNotif" @click.away="openNotif = false"
-                                        class="absolute right-0 mt-2 bg-white rounded-lg shadow-lg w-80">
-                                        <div class="p-3 border-b">
-                                            <h3 class="text-sm font-semibold">Notifications</h3>
-                                        </div>
-                                        <ul>
-                                            <template x-for="notif in notifications" :key="notif.id">
-                                                <li class="px-4 py-2 border-b">
-                                                    <p class="text-sm font-medium" x-text="notif.title"></p>
-                                                    <p class="text-xs text-gray-600" x-text="notif.message"></p>
-                                                </li>
-                                            </template>
-                                        </ul>
-                                        <div class="p-2 text-center">
-                                            <a href="{{ route('notifications.index') }}"
-                                                class="text-sm text-blue-600 hover:underline">See All</a>
-                                        </div>
-                                    </div>
-                                </div> --}}
+                            <!-- Popup -->
+                            <div x-show="openNotif" @click.away="openNotif = false"
+                                class="absolute right-0 mt-2 bg-white rounded-lg shadow-lg w-80">
+                                <div class="p-3 border-b">
+                                    <h3 class="text-sm font-semibold">Notifications</h3>
+                                </div>
+                                <ul>
+                                    <template x-for="notif in notifications" :key="notif.id">
+                                        <li class="px-4 py-2 border-b">
+                                            <p class="text-sm font-medium" x-text="notif.title"></p>
+                                            <p class="text-xs text-gray-600" x-text="notif.message"></p>
+                                        </li>
+                                    </template>
+                                </ul>
+                                <div class="p-2 text-center">
+                                    <a href="{{ route('notifications.index') }}"
+                                        class="text-sm text-blue-600 hover:underline">See All</a>
+                                </div>
+                            </div>
+                        </div> --}}
 
-                                <!-- Notification Icon -->
-                                <div class="relative" x-data="{
+                        <!-- Notification Icon -->
+                        <div class="relative" x-data="{
                         openNotif: false,
                         notifications: [],
                         count: 0,
@@ -290,90 +271,93 @@
                         //         fetchData();
                         //     });
                         // fetchData();
+                        fetchData();
                         window.Echo.channel('notifications')
                                 .listen('.new-notification', (e) => {
                                     console.log('Notif Event Received:', e);
                                     fetchData();
                                 });
                         ">
-                                    <button @click="openNotif = !openNotif" class="relative">
-                                        <img src="{{ asset('assets/icons/notification.png') }}" alt="Notification"
-                                            class="w-6 h-6 transition cursor-pointer hover:scale-110">
-                                        <!-- Badge -->
-                                        <span x-show="count > 0"
-                                            class="absolute -top-2 -right-2 text-xs font-bold text-white bg-red-600 rounded-full px-1.5">
-                                            <span x-text="count > 10 ? '10+' : count"></span>
-                                        </span>
-                                    </button>
+                            <button @click="openNotif = !openNotif" class="relative">
+                                {{-- <img src="{{ asset('assets/icons/notification.png') }}" alt="Notification"
+                                    class="w-6 h-6 transition cursor-pointer hover:scale-110"> --}}
+                                <img :src="$store.theme.dark ? '{{ asset('assets/icons/notification_white.png') }}' : '{{ asset('assets/icons/notification.png') }}'"
+                                    alt="Notification" class="w-6 h-6 transition cursor-pointer hover:scale-110">
+                                <!-- Badge -->
+                                <span x-show="count > 0"
+                                    class="absolute -top-2 -right-2 text-xs font-bold text-white bg-red-600 rounded-full px-1.5">
+                                    <span x-text="count > 10 ? '10+' : count"></span>
+                                </span>
+                            </button>
 
-                                    <!-- Popup -->
-                                    <div x-show="openNotif" @click.away="openNotif = false"
-                                        class="absolute right-0 mt-2 bg-white rounded-lg shadow-lg w-80">
-                                        <div class="p-3 border-b">
-                                            <h3 class="text-sm font-semibold">Notifications</h3>
-                                        </div>
-                                        <ul>
-                                            <template x-for="notif in notifications" :key="notif.id">
-                                                <li class="px-4 py-2 border-b">
-                                                    <p class="text-sm font-medium" x-text="notif.title"></p>
-                                                    <p class="text-xs text-gray-600" x-text="notif.message"></p>
-                                                </li>
-                                            </template>
-                                        </ul>
-                                        <div class="p-2 text-center">
-                                            <a href="{{ route('notifications.index') }}"
-                                                class="text-sm text-blue-600 hover:underline">See All</a>
-                                        </div>
-                                    </div>
+                            <!-- Popup -->
+                            <div x-show="openNotif" @click.away="openNotif = false"
+                                class="absolute right-0 mt-2 bg-white rounded-lg shadow-lg w-80">
+                                <div class="p-3 border-b dark:border-black">
+                                    <h3 class="text-sm font-semibold dark:text-black">Notifications</h3>
                                 </div>
-
-                                <!-- Profile Dropdown -->
-                                <div class="relative" x-data="{ openDropdown: false }">
-                                    <img @click="openDropdown = !openDropdown"
-                                        src="{{ Auth::user()->profile_image ? asset('storage/profile_images/' . Auth::user()->profile_image) : asset('assets/images/profile.png') }}"
-                                        alt="Profile"
-                                        class="w-10 h-10 transition duration-200 border-2 border-white rounded-full cursor-pointer hover:scale-105">
-
-                                    <!-- Dropdown -->
-                                    <div x-show="openDropdown" @click.away="openDropdown = false"
-                                        x-transition:enter="transition ease-out duration-200"
-                                        x-transition:enter-start="opacity-0 translate-y-1"
-                                        x-transition:enter-end="opacity-100 translate-y-0"
-                                        x-transition:leave="transition ease-in duration-150"
-                                        x-transition:leave-start="opacity-100 translate-y-0"
-                                        x-transition:leave-end="opacity-0 translate-y-1"
-                                        class="absolute right-0 z-50 w-64 mt-2 overflow-hidden bg-white rounded-lg shadow-xl">
-                                        <!-- Profile Section -->
-                                        <div class="px-5 py-4 text-center border-b bg-gray-50">
-                                            <img src="{{ Auth::user()->profile_image ? asset('storage/profile_images/' . Auth::user()->profile_image) : asset('assets/images/profile.png') }}"
-                                                alt="Profile Image" class="mx-auto mb-2 border rounded-full w-14 h-14">
-                                            <p class="text-base font-semibold text-gray-800">{{ Auth::user()->name }}
-                                            </p>
-                                            <p class="text-sm text-gray-500">{{ Auth::user()->email }}</p>
-                                        </div>
-
-                                        <!-- Menu Items -->
-                                        <a href="{{ route('admin.profile') }}"
-                                            class="flex items-center px-4 py-3 text-sm text-gray-700 transition hover:bg-gray-100">
-                                            <img src="{{ asset('assets/icons/user-edit.png') }}" class="w-4 h-4 mr-2"
-                                                alt="Edit Icon">
-                                            Edit Profil
-                                        </a>
-                                        <a href="{{ route('admin.password') }}"
-                                            class="flex items-center px-4 py-3 text-sm text-gray-700 transition hover:bg-gray-100">
-                                            <img src="{{ asset('assets/icons/lock.png') }}" class="w-4 h-4 mr-2"
-                                                alt="Password Icon">
-                                            Ubah Password
-                                        </a>
-                                    </div>
+                                <ul>
+                                    <template x-for="notif in notifications" :key="notif.id">
+                                        <li class="px-4 py-2 border-b dark:border-black">
+                                            <p class="text-sm font-medium dark:text-black" x-text="notif.title"></p>
+                                            <p class="text-xs text-gray-600 dark:text-black" x-text="notif.message"></p>
+                                        </li>
+                                    </template>
+                                </ul>
+                                <div class="p-2 text-center">
+                                    <a href="{{ route('notifications.index') }}"
+                                        class="text-sm text-blue-600 hover:underline">See All</a>
                                 </div>
+                            </div>
                         </div>
-                    </header>
 
-                    <!-- MAIN CONTENT -->
-                    <main class="p-6 pt-20">
-                        @yield('content')
-                    </main>
+                        <!-- Profile Dropdown -->
+                        <div class="relative" x-data="{ openDropdown: false }">
+                            <img @click="openDropdown = !openDropdown"
+                                src="{{ Auth::user()->profile_image ? asset('storage/profile_images/' . Auth::user()->profile_image) : asset('assets/images/profile.png') }}"
+                                alt="Profile"
+                                class="w-10 h-10 transition duration-200 border-2 border-white rounded-full cursor-pointer hover:scale-105">
+
+                            <!-- Dropdown -->
+                            <div x-show="openDropdown" @click.away="openDropdown = false"
+                                x-transition:enter="transition ease-out duration-200"
+                                x-transition:enter-start="opacity-0 translate-y-1"
+                                x-transition:enter-end="opacity-100 translate-y-0"
+                                x-transition:leave="transition ease-in duration-150"
+                                x-transition:leave-start="opacity-100 translate-y-0"
+                                x-transition:leave-end="opacity-0 translate-y-1"
+                                class="absolute right-0 z-50 w-64 mt-2 overflow-hidden bg-white rounded-lg shadow-xl">
+                                <!-- Profile Section -->
+                                <div class="px-5 py-4 text-center border-b bg-gray-50">
+                                    <img src="{{ Auth::user()->profile_image ? asset('storage/profile_images/' . Auth::user()->profile_image) : asset('assets/images/profile.png') }}"
+                                        alt="Profile Image" class="mx-auto mb-2 border rounded-full w-14 h-14">
+                                    <p class="text-base font-semibold text-gray-800">{{ Auth::user()->name }}
+                                    </p>
+                                    <p class="text-sm text-gray-500">{{ Auth::user()->email }}</p>
+                                </div>
+
+                                <!-- Menu Items -->
+                                <a href="{{ route('admin.profile') }}"
+                                    class="flex items-center px-4 py-3 text-sm text-gray-700 transition hover:bg-gray-100">
+                                    <img src="{{ asset('assets/icons/user-edit.png') }}" class="w-4 h-4 mr-2"
+                                        alt="Edit Icon">
+                                    Edit Profil
+                                </a>
+                                <a href="{{ route('admin.password') }}"
+                                    class="flex items-center px-4 py-3 text-sm text-gray-700 transition hover:bg-gray-100">
+                                    <img src="{{ asset('assets/icons/lock.png') }}" class="w-4 h-4 mr-2"
+                                        alt="Password Icon">
+                                    Ubah Password
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- MAIN CONTENT -->
+                <main class="p-6 pt-20">
+                    @yield('content')
+                </main>
             </div>
             <div x-show="showLogoutConfirm" class="fixed inset-0 z-50 flex items-center justify-center"
                 style="display: none; background-color: rgba(0, 0, 0, 0.5);">

@@ -3,7 +3,7 @@
 @section('content')
     <div class="container px-4 py-6 mx-auto">
         <div class="flex items-center justify-between mb-6">
-            <h1 class="mb-4 text-2xl font-bold">Barang Keluar</h1>
+            <h1 class="mb-4 text-2xl font-bold dark:text-white">Barang Keluar</h1>
             <!-- Tombol untuk memunculkan modal tambah -->
             <button onclick="openAddModal()"
                 class="px-4 py-2 text-white bg-blue-600 rounded cursor-pointer hover:bg-blue-700">+ Tambah Barang
@@ -133,20 +133,20 @@
         <!-- Tabel Data -->
         <table class="min-w-full bg-white border">
             <thead>
-                <tr class="text-left bg-gray-200">
-                    <th class="px-4 py-2 border">Gambar</th> <!-- Tambahkan ini -->
-                    <th class="px-4 py-2 border">Buku</th>
-                    <th class="px-4 py-2 border">Supplier</th>
-                    <th class="px-4 py-2 border">Stok Sebelum</th>
-                    <th class="px-4 py-2 border">Jumlah Keluar</th>
-                    <th class="px-4 py-2 border">Stok Setelah</th>
-                    <th class="px-4 py-2 border">Alasan</th>
-                    <th class="px-4 py-2 border">Aksi</th>
+                <tr class="text-left bg-gray-200 dark:bg-gray-600">
+                    <th class="px-4 py-2 border dark:text-white">Gambar</th> <!-- Tambahkan ini -->
+                    <th class="px-4 py-2 border dark:text-white">Buku</th>
+                    <th class="px-4 py-2 border dark:text-white">Supplier</th>
+                    <th class="px-4 py-2 border dark:text-white">Stok Sebelum</th>
+                    <th class="px-4 py-2 border dark:text-white">Jumlah Keluar</th>
+                    <th class="px-4 py-2 border dark:text-white">Stok Setelah</th>
+                    <th class="px-4 py-2 border dark:text-white">Alasan</th>
+                    <th class="px-4 py-2 border dark:text-white">Aksi</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($exits as $exit)
-                    <tr class="border-b hover:bg-gray-50">
+                    <tr class="border-b dark:border-white hover:bg-gray-50 dark:hover:bg-gray-600 dark:bg-gray-500">
                         {{-- <td class="px-4 py-2 border">
                             @if($exit->book->image_url)
                             <img src="{{ asset('storage/' . $exit->book->image_url) }}" alt="Gambar Buku"
@@ -155,28 +155,29 @@
                             <span class="text-gray-500">Tidak ada gambar</span>
                             @endif
                         </td> --}}
-                        <td class="px-4 py-2 text-center border">
+                        <td class="px-4 py-2 text-center border dark:border-white">
                             @if($exit->book->image_url)
                                 <img src="{{ asset('storage/' . $exit->book->image_url) }}" alt="Gambar Buku"
                                     class="object-cover w-16 h-20 mx-auto rounded" />
                             @else
-                                <span class="text-gray-500">Tidak ada gambar</span>
+                                <img src="{{ asset('assets/images/avatar.png') }}" alt="Gambar Buku"
+                                    class="object-cover w-16 h-20 mx-auto rounded" />
                             @endif
                         </td>
-                        <td class="px-4 py-2 border">{{ $exit->book->title }}</td>
-                        <td class="px-4 py-2 border">{{ $exit->supplier->name }}</td>
-                        <td class="px-4 py-2 border">{{ $exit->stock_before }}</td>
+                        <td class="px-4 py-2 border dark:border-white dark:text-white">{{ $exit->book->title }}</td>
+                        <td class="px-4 py-2 border dark:border-white dark:text-white">{{ $exit->supplier->name }}</td>
+                        <td class="px-4 py-2 border dark:border-white dark:text-white">{{ $exit->stock_before }}</td>
                         <td class="px-4 py-2 font-bold text-red-500">- {{ $exit->stock_out }}</td>
-                        <td class="px-4 py-2 border">{{ $exit->stock_after }}</td>
-                        <td class="px-4 py-2 border">{{ $exit->reason }}</td>
-                        <td class="px-4 py-2 border">
+                        <td class="px-4 py-2 border dark:border-white dark:text-white">{{ $exit->stock_after }}</td>
+                        <td class="px-4 py-2 border dark:border-white dark:text-white">{{ $exit->reason }}</td>
+                        <td class="px-4 py-2 border dark:border-white dark:text-white">
                             <button onclick="openEditModal({{ $exit }})"
-                                class="mr-2 text-blue-500 hover:underline">Edit</button>
+                                class="mr-2 text-blue-500 hover:underline dark:text-blue-300">Edit</button>
                             <form action="{{ route('exit_books.destroy', $exit->id) }}" method="POST"
                                 onsubmit="return confirm('Yakin hapus?')" class="inline-block">
                                 @csrf
                                 @method('DELETE')
-                                <button class="text-red-500 hover:underline">Hapus</button>
+                                <button class="text-red-500 dark:text-red-300 hover:underline">Hapus</button>
                             </form>
                         </td>
                     </tr>

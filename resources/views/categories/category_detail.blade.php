@@ -1,37 +1,36 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="container px-4 py-8 mx-auto sm:px-6 lg:px-8">
     <div class="mb-6">
-        <h1 class="text-3xl font-bold text-gray-800">📂 Detail Kategori</h1>
-        <p class="text-gray-600 mt-2"><strong>Nama:</strong> {{ $category->name }}</p>
-        <p class="text-gray-600"><strong>Deskripsi:</strong> {{ $category->description }}</p>
+        <h1 class="text-3xl font-bold text-gray-800 dark:text-white">📂 Detail Kategori</h1>
+        <p class="mt-2 text-gray-600 dark:text-white"><strong>Nama:</strong> {{ $category->name }}</p>
+        <p class="text-gray-600 dark:text-white"><strong>Deskripsi:</strong> {{ $category->description }}</p>
     </div>
 
-    <h2 class="text-2xl font-semibold text-gray-800 mb-4">📚 Buku dalam Kategori Ini</h2>
+    <h2 class="mb-4 text-2xl font-semibold text-gray-800 dark:text-white">📚 Buku dalam Kategori Ini</h2>
 
     @if ($category->books->count())
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             @foreach ($category->books as $book)
-                <div class="bg-white rounded-lg shadow p-4">
+                <div class="p-4 bg-white rounded-lg shadow dark:bg-gray-500">
                     @if ($book->image_url)
                         <img src="{{ asset('storage/' . $book->image_url) }}" alt="{{ $book->title }}"
-                            class="h-40 w-full object-contain rounded mb-3">
+                            class="object-contain w-full h-40 mb-3 rounded">
                     @else
-                        <div class="h-40 w-full bg-gray-200 flex items-center justify-center rounded mb-3">
-                            <span class="text-gray-500 text-sm">Tidak ada gambar</span>
-                        </div>
+                        <img src="{{ asset('assets/images/avatar.png') }}" alt="{{ $book->title }}"
+                            class="object-contain w-full h-40 mb-3 rounded">
                     @endif
 
-                    <h3 class="text-lg font-bold text-gray-800 mb-1">{{ $book->title }}</h3>
-                    <p class="text-sm text-gray-600"><strong>Penulis:</strong> {{ $book->author }}</p>
-                    <p class="text-sm text-gray-600"><strong>Durasi Pinjam:</strong> {{ $book->loan_duration }} hari</p>
-                    <p class="text-sm text-gray-600"><strong>Stok:</strong> {{ $book->stock }}</p>
+                    <h3 class="mb-1 text-lg font-bold text-gray-800 dark:text-white">{{ $book->title }}</h3>
+                    <p class="text-sm text-gray-600 dark:text-white"><strong>Penulis:</strong> {{ $book->author }}</p>
+                    <p class="text-sm text-gray-600 dark:text-white"><strong>Durasi Pinjam:</strong> {{ $book->loan_duration }} hari</p>
+                    <p class="text-sm text-gray-600 dark:text-white"><strong>Stok:</strong> {{ $book->stock }}</p>
                 </div>
             @endforeach
         </div>
     @else
-        <p class="text-gray-500 italic">Kategori ini belum memiliki buku.</p>
+        <p class="italic text-gray-500">Kategori ini belum memiliki buku.</p>
     @endif
 </div>
 @endsection

@@ -108,8 +108,8 @@
                         </thead>
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
                             @foreach($logs as $log)
-                                <tr class="transition-colors hover:bg-gray-50 dark:hover:bg-gray-700">
-                                    <td class="px-4 py-3 border dark:border-gray-600">
+                                <tr class="transition-colors border-black dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                    <td class="px-4 py-3 border dark:border-gray-600 dark:text-white">
                                         {{ $log['created_at'] ? $log['created_at']->format('d M Y H:i') : '-' }}
                                     </td>
                                     <td class="px-4 py-3 border dark:border-gray-600">
@@ -118,14 +118,14 @@
                                             {{ $log['type'] }}
                                         </span>
                                     </td>
-                                    <td class="px-4 py-3 text-center border dark:border-gray-600">
+                                    <td class="px-4 py-3 text-center border dark:border-gray-600 dark:text-white">
                                         {{ $log['stock_before'] }}
                                     </td>
-                                    <td class="px-4 py-3 text-center border font-bold 
+                                    <td class="px-4 py-3 text-center border-black dark:border-gray-600 font-bold 
                                         {{ $log['type'] === 'Masuk' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400' }}">
                                         {{ $log['type'] === 'Masuk' ? '+' : '-' }}{{ $log['amount'] }}
                                     </td>
-                                    <td class="px-4 py-3 text-center border dark:border-gray-600">
+                                    <td class="px-4 py-3 text-center border dark:border-gray-600 dark:text-white">
                                         {{ $log['stock_after'] }}
                                     </td>
                                 </tr>

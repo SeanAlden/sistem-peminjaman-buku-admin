@@ -32,13 +32,13 @@ class BookController extends Controller
 
         $books = $query->paginate($perPage)->appends($request->except('page'));
 
-        return view('book', compact('books', 'search', 'perPage', 'view'));
+        return view('books.book', compact('books', 'search', 'perPage', 'view'));
     }
 
     public function create()
     {
         $categories = Category::all();
-        return view('add_book', compact('categories'));
+        return view('books.add_book', compact('categories'));
     }
 
     public function store(Request $request)
@@ -74,14 +74,14 @@ class BookController extends Controller
     public function show($id)
     {
         $book = Book::with('category')->findOrFail($id);
-        return view('book_detail', compact('book'));
+        return view('books.book_detail', compact('book'));
     }
 
     public function edit($id)
     {
         $book = Book::findOrFail($id);
         $categories = Category::all();
-        return view('edit_book', compact('book', 'categories'));
+        return view('books.edit_book', compact('book', 'categories'));
     }
 
     public function update(Request $request, $id)
@@ -133,7 +133,7 @@ class BookController extends Controller
     public function inactive()
     {
         $books = Book::where('status', 'inactive')->with('category')->get();
-        return view('inactive_book', compact('books'));
+        return view('books.inactive_book', compact('books'));
     }
 
     public function restore($id)

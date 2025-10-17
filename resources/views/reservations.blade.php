@@ -3,7 +3,7 @@
 @section('content')
     <div class="container px-4 py-8 mx-auto">
         {{-- Judul dinamis berdasarkan peran --}}
-        <h1 class="mb-6 text-3xl font-bold text-gray-800">
+        <h1 class="mb-6 text-3xl font-bold text-gray-800 dark:text-white">
             @if(Auth::user()->usertype === 'admin')
                 Daftar Reservasi Pengguna
             @else
@@ -57,38 +57,38 @@
                 <table class="min-w-full leading-normal">
                     <thead>
                         <tr
-                            class="text-xs font-semibold tracking-wider text-left text-gray-600 uppercase border-b-2 border-gray-200 bg-gray-50">
+                            class="text-xs font-semibold tracking-wider text-left text-gray-600 uppercase border-b-2 border-gray-200 bg-gray-50 dark:bg-gray-500">
                             {{-- PERUBAHAN: Tampilkan kolom 'Pengguna' hanya untuk admin --}}
                             @if(Auth::user()->usertype === 'admin')
-                                <th class="px-5 py-3">Pengguna</th>
+                                <th class="px-5 py-3 dark:text-white">Pengguna</th>
                             @endif
-                            <th class="px-5 py-3">Judul Buku</th>
-                            <th class="px-5 py-3">Email Buku</th>
-                            <th class="px-5 py-3">Tanggal Reservasi</th>
-                            <th class="px-5 py-3">Status</th>
-                            <th class="px-5 py-3">Posisi Antrian</th>
+                            <th class="px-5 py-3 dark:text-white">Email Pengguna</th>
+                            <th class="px-5 py-3 dark:text-white">Judul Buku</th>
+                            <th class="px-5 py-3 dark:text-white">Tanggal Reservasi</th>
+                            <th class="px-5 py-3 dark:text-white">Status</th>
+                            <th class="px-5 py-3 dark:text-white">Posisi Antrian</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($reservations as $reservation)
-                            <tr class="border-b border-gray-200 hover:bg-gray-50">
+                            <tr class="border-b border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-500 dark:bg-gray-400">
                                 {{-- PERUBAHAN: Tampilkan nama pengguna hanya untuk admin --}}
                                 @if(Auth::user()->usertype === 'admin')
                                     <td class="px-5 py-5 text-sm">
                                         {{-- Pastikan relasi 'user' sudah di-eager load di controller --}}
-                                        <p class="text-gray-900 whitespace-no-wrap">{{ $reservation->user->name }}</p>
+                                        <p class="text-gray-900 whitespace-no-wrap dark:text-white">{{ $reservation->user->name }}</p>
                                     </td>
                                     <td class="px-5 py-5 text-sm">
                                         {{-- Pastikan relasi 'user' sudah di-eager load di controller --}}
-                                        <p class="text-gray-900 whitespace-no-wrap">{{ $reservation->user->email }}</p>
+                                        <p class="text-gray-900 whitespace-no-wrap dark:text-white">{{ $reservation->user->email }}</p>
                                     </td>
                                 @endif
                                 <td class="px-5 py-5 text-sm">
-                                    <p class="text-gray-900 whitespace-no-wrap">{{ $reservation->book->title }}</p>
-                                    <p class="text-xs text-gray-600 whitespace-no-wrap">{{ $reservation->book->author }}</p>
+                                    <p class="text-gray-900 whitespace-no-wrap dark:text-white">{{ $reservation->book->title }}</p>
+                                    <p class="text-xs text-gray-600 whitespace-no-wrap dark:text-gray-300">{{ $reservation->book->author }}</p>
                                 </td>
                                 <td class="px-5 py-5 text-sm">
-                                    <p class="text-gray-900 whitespace-no-wrap">
+                                    <p class="text-gray-900 whitespace-no-wrap dark:text-white">
                                         {{ $reservation->created_at->format('d M Y, H:i') }}
                                     </p>
                                 </td>

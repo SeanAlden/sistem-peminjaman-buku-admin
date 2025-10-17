@@ -420,27 +420,27 @@
                 <table class="min-w-full border border-gray-200 dark:border-gray-600">
                     <thead class="bg-gray-100 dark:bg-gray-600">
                         <tr>
-                            <th class="px-4 py-2 border">Cover</th>
-                            <th class="px-4 py-2 border">Judul</th>
-                            <th class="px-4 py-2 border">Penulis</th>
-                            <th class="px-4 py-2 border">Stok</th>
-                            <th class="px-4 py-2 border">Kategori</th>
-                            <th class="px-4 py-2 border">Aksi</th>
+                            <th class="px-4 py-2 border dark:text-white">Cover</th>
+                            <th class="px-4 py-2 border dark:text-white">Judul</th>
+                            <th class="px-4 py-2 border dark:text-white">Penulis</th>
+                            <th class="px-4 py-2 border dark:text-white">Stok</th>
+                            <th class="px-4 py-2 border dark:text-white">Kategori</th>
+                            <th class="px-4 py-2 border dark:text-white">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($books as $book)
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-600">
-                                <td class="px-4 py-2 text-center border">
+                                <td class="px-4 py-2 text-center border dark:border-white">
                                     <img src="{{ asset('storage/' . $book->image_url) }}" alt="book image"
                                         class="object-contain w-16 h-20 mx-auto"
                                         onerror="this.onerror=null;this.src='{{ asset('assets/images/avatar.png') }}';">
                                 </td>
-                                <td class="px-4 py-2 border">{{ $book->title }}</td>
-                                <td class="px-4 py-2 border">{{ $book->author }}</td>
-                                <td class="px-4 py-2 text-center border">{{ $book->stock }}</td>
-                                <td class="px-4 py-2 border">{{ $book->category->name }}</td>
-                                <td class="px-4 py-2 text-center border">
+                                <td class="px-4 py-2 border dark:text-white">{{ $book->title }}</td>
+                                <td class="px-4 py-2 border dark:text-white">{{ $book->author }}</td>
+                                <td class="px-4 py-2 text-center border dark:text-white">{{ $book->stock }}</td>
+                                <td class="px-4 py-2 border dark:text-white">{{ $book->category->name }}</td>
+                                <td class="px-4 py-2 text-center border dark:border-white">
                                     <a href="{{ route('books.show', $book->id) }}"
                                         class="px-3 py-1 text-sm text-white rounded bg-cyan-600 hover:bg-cyan-700">🔍</a>
                                     <a href="{{ route('books.edit', $book->id) }}"

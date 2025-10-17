@@ -248,7 +248,7 @@ class AdminAuthController extends Controller
 
         $users = $query->paginate($perPage)->withQueryString();
 
-        return view('registered_students', compact('users', 'perPage', 'search'));
+        return view('students.registered_students', compact('users', 'perPage', 'search'));
     }
 
 }

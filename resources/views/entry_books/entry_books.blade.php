@@ -3,8 +3,9 @@
 @section('content')
     <div class="container px-4 py-6 mx-auto" x-data="entryBookApp()">
         <div class="flex items-center justify-between mb-6">
-            <h2 class="text-2xl font-bold">Barang Masuk</h2>
-            <button @click="openAddModal()" class="px-4 py-2 text-white bg-blue-600 rounded cursor-pointer hover:bg-blue-700">+ Tambah
+            <h2 class="text-2xl font-bold dark:text-white">Barang Masuk</h2>
+            <button @click="openAddModal()"
+                class="px-4 py-2 text-white bg-blue-600 rounded cursor-pointer hover:bg-blue-700">+ Tambah
                 Barang Masuk</button>
         </div>
 
@@ -46,35 +47,45 @@
         {{-- <div class="overflow-x-auto"> --}}
             <table class="min-w-full bg-white border">
                 <thead class="bg-gray-100">
-                    <tr class="text-left bg-gray-200">
-                        <th class="px-4 py-2 border">Gambar</th>
-                        <th class="px-4 py-2 border">Nama Buku</th>
-                        <th class="px-4 py-2 border">Kategori</th>
-                        <th class="px-4 py-2 border">Stok Sebelum</th>
-                        <th class="px-4 py-2 border">Jumlah Masuk</th>
-                        <th class="px-4 py-2 border">Stok Setelah</th>
-                        <th class="px-4 py-2 border">Aksi</th>
+                    <tr class="text-left bg-gray-200 dark:bg-gray-600">
+                        <th class="px-4 py-2 border dark:text-white">Gambar</th>
+                        <th class="px-4 py-2 border dark:text-white">Nama Buku</th>
+                        <th class="px-4 py-2 border dark:text-white">Kategori</th>
+                        <th class="px-4 py-2 border dark:text-white">Stok Sebelum</th>
+                        <th class="px-4 py-2 border dark:text-white">Jumlah Masuk</th>
+                        <th class="px-4 py-2 border dark:text-white">Stok Setelah</th>
+                        <th class="px-4 py-2 border dark:text-white">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($entries as $entry)
-                        <tr class="border-b hover:bg-gray-50">
-                            <td class="p-3">
+                        <tr class="border-b dark:border-white hover:bg-gray-50 dark:hover:bg-gray-600 dark:bg-gray-500">
+                            {{-- <td class="p-3">
                                 <img src="{{ asset('storage/' . $entry->book->image_url) }}" alt="{{ $entry->book->title }}"
                                     class="object-cover h-20 w-14">
+                            </td> --}}
+                            <td class="px-4 py-2 text-center border dark:border-white">
+                                @if($entry->book->image_url)
+                                    <img src="{{ asset('storage/' . $entry->book->image_url) }}" alt="Gambar Buku"
+                                        class="object-cover w-16 h-20 mx-auto rounded" />
+                                @else
+                                    <img src="{{ asset('assets/images/avatar.png') }}" alt="Gambar Buku"
+                                        class="object-cover w-16 h-20 mx-auto rounded" />
+                                @endif
                             </td>
-                            <td class="px-4 py-2 border">{{ $entry->book->title }}</td>
-                            <td class="px-4 py-2 border">{{ $entry->book->category->name ?? '-' }}</td>
-                            <td class="px-4 py-2 border">{{ $entry->stock_before }}</td>
+                            <td class="px-4 py-2 border dark:border-white dark:text-white">{{ $entry->book->title }}</td>
+                            <td class="px-4 py-2 border dark:border-white dark:text-white">
+                                {{ $entry->book->category->name ?? '-' }}</td>
+                            <td class="px-4 py-2 border dark:border-white dark:text-white">{{ $entry->stock_before }}</td>
                             <td class="px-4 py-2 font-bold text-green-500">+ {{ $entry->stock_in }}</td>
-                            <td class="px-4 py-2 border">{{ $entry->stock_after }}</td>
-                            <td class="px-4 py-2 border">
+                            <td class="px-4 py-2 border dark:border-white dark:text-white">{{ $entry->stock_after }}</td>
+                            <td class="px-4 py-2 border dark:border-white">
                                 <button @click="openEditModal({{ $entry->id }}, {{ $entry->book_id }}, {{ $entry->stock_in }})"
-                                    class="mr-2 text-blue-500 hover:underline">Ubah</button>
+                                    class="mr-2 text-blue-500 dark:text-blue-300 hover:underline">Edit</button>
                                 <form action="{{ route('entry_books.destroy', $entry->id) }}" method="POST" class="inline"
                                     onsubmit="return confirm('Yakin ingin menghapus?')">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="text-red-500 hover:underline">Hapus</button>
+                                    <button type="submit" class="text-red-500 dark:text-red-300 hover:underline">Hapus</button>
                                 </form>
                             </td>
                         </tr>
@@ -85,7 +96,8 @@
                     @endforelse
                 </tbody>
             </table>
-        {{-- </div> --}}
+            {{--
+        </div> --}}
         <!-- Fitur Pagination -->
         <div class="flex items-center justify-between mt-4">
             <div>

@@ -2,13 +2,13 @@
 
 @section('content')
     <div class="container mx-auto flex flex-col h-[80vh]">
-        <h2 class="mb-4 text-xl font-bold">Chat with {{ $user->name }}</h2>
+        <h2 class="mb-4 text-xl font-bold dark:text-white">Chat with {{ $user->name }}</h2>
 
-        <div id="messages" class="flex-1 p-4 mb-4 overflow-y-auto bg-gray-100 rounded"></div>
+        <div id="messages" class="flex-1 p-4 mb-4 overflow-y-auto bg-gray-100 rounded dark:bg-gray-500"></div>
 
         <form id="chatForm" class="flex">
             @csrf
-            <input type="text" id="message" name="message" class="flex-1 px-4 py-2 border rounded-l"
+            <input type="text" id="message" name="message" class="flex-1 px-4 py-2 border rounded-l dark:text-white"
                 placeholder="Type your message...">
             <button type="submit" class="px-4 py-2 text-white bg-blue-600 rounded-r">Send</button>
         </form>
@@ -107,7 +107,7 @@
             bubble.textContent = (payload.from ? payload.from + ': ' : '') + payload.body;
 
             const time = document.createElement('div');
-            time.className = 'text-xs text-gray-500 mt-1';
+            time.className = 'text-xs text-gray-500 dark:text-gray-200 mt-1';
             time.textContent = payload.created_at;
 
             wrapper.appendChild(bubble);

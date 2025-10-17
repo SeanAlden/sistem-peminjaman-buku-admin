@@ -16,21 +16,44 @@ class NotificationController extends Controller
     //     return view('notification', compact('notifications'));
     // }
 
-    public function index()
+    public function index(Request $request)
     {
-        $user = auth()->user();
+        // $user = auth()->user();
 
-        if ($user->usertype === 'admin') {
-            // Admin lihat semua notifikasi
-            $notifications = Notification::latest()->paginate(10);
-        } else {
-            // User biasa lihat notifikasi miliknya saja
-            $notifications = Notification::where('user_id', $user->id)
-                ->latest()
-                ->paginate(10);
+        // if ($user->usertype === 'admin') {
+        //     // Admin lihat semua notifikasi
+        //     $notifications = Notification::latest()->paginate(10);
+        // } else {
+        //     // User biasa lihat notifikasi miliknya saja
+        //     $notifications = Notification::where('user_id', $user->id)
+        //         ->latest()
+        //         ->paginate(10);
+        // }
+
+        // return view('notification', compact('notifications'));
+
+        $search = $request->input('search', '');
+
+        $perPage = (int) $request->input('per_page', 5);
+
+        $query = Notification::latest();
+
+        // $view = $request->input('view', 'card'); // default ke card
+
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q
+                    ->where('title', 'like', "%{$search}%")
+                    ->orWhere('message', 'like', "%{$search}%")
+                    ->orWhereHas('user', function ($q2) use ($search) {
+                        $q2->where('name', 'like', "%{$search}%");
+                    });
+            });
         }
 
-        return view('notification', compact('notifications'));
+        $notifications = $query->paginate($perPage)->appends($request->except('page'));
+
+        return view('notification', compact('notifications', 'search', 'perPage'));
     }
 
     // public function markAsRead($id)

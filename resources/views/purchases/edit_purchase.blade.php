@@ -2,52 +2,56 @@
 
 @section('content')
     <div class="container mx-auto">
-        <h1 class="text-2xl font-bold mb-4">Edit Pengadaan</h1>
+        <h1 class="mb-4 text-2xl font-bold dark:text-white">Edit Pengadaan</h1>
 
         <form action="{{ route('purchases.update', $purchase->id) }}" method="POST" class="space-y-4">
             @csrf
             @method('PUT')
             <div>
-                <label class="block">Supplier</label>
-                <select name="supplier_id" class="border p-2 w-full" required>
+                <label class="block dark:text-white">Supplier</label>
+                <select name="supplier_id" class="w-full p-2 border dark:text-white" required>
                     @foreach($suppliers as $supplier)
-                        <option value="{{ $supplier->id }}" {{ $purchase->supplier_id == $supplier->id ? 'selected' : '' }}>
+                        <option value="{{ $supplier->id }}" {{ $purchase->supplier_id == $supplier->id ? 'selected' : '' }}
+                            class="dark:text-white dark:bg-gray-500">
                             {{ $supplier->name }}
                         </option>
                     @endforeach
                 </select>
             </div>
             <div>
-                <label class="block">Buku</label>
-                <select name="book_id" class="border p-2 w-full" required>
+                <label class="block dark:text-white">Buku</label>
+                <select name="book_id" class="w-full p-2 border dark:text-white" required>
                     @foreach($books as $book)
-                        <option value="{{ $book->id }}" {{ $purchase->book_id == $book->id ? 'selected' : '' }}>
+                        <option value="{{ $book->id }}" {{ $purchase->book_id == $book->id ? 'selected' : '' }}
+                            class=" dark:text-white dark:bg-gray-500">
                             {{ $book->title }}
                         </option>
                     @endforeach
                 </select>
             </div>
             <div>
-                <label class="block">Jumlah</label>
-                <input type="number" name="quantity" min="1" class="border p-2 w-full" value="{{ $purchase->quantity }}"
-                    required>
+                <label class="block dark:text-white">Jumlah</label>
+                <input type="number" name="quantity" min="1" class="w-full p-2 border dark:text-white"
+                    value="{{ $purchase->quantity }}" required>
             </div>
             <div>
-                <label class="block">Tanggal Pengadaan</label>
-                <input type="date" name="purchase_date" class="border p-2 w-full" value="{{ $purchase->purchase_date }}"
-                    required>
+                <label class="block dark:text-white">Tanggal Pengadaan</label>
+                {{-- <input type="date" name="purchase_date" class="w-full p-2 border dark:text-white"
+                    value="{{ $purchase->purchase_date }}" required> --}}
+                <input type="date" name="purchase_date" value="{{ $purchase->purchase_date }}" required
+                    class="w-full border px-2 py-1 rounded dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 dark:[color-scheme:dark] dark:invert-[0.9] focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
             <div>
-                <label class="block">Total Harga</label>
-                <input type="number" step="0.01" name="total_price" class="border p-2 w-full"
+                <label class="block dark:text-white">Total Harga</label>
+                <input type="number" step="0.01" name="total_price" class="w-full p-2 border dark:text-white"
                     value="{{ $purchase->total_price }}" required>
             </div>
             <div>
-                <label class="block">Catatan</label>
-                <input type="text" step="0.01" name="notes" class="border p-2 w-full" value="{{ $purchase->notes }}"
-                    required>
+                <label class="block dark:text-white">Catatan</label>
+                <input type="text" step="0.01" name="notes" class="w-full p-2 border dark:text-white"
+                    value="{{ $purchase->notes }}" required>
             </div>
-            <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Update</button>
+            <button type="submit" class="px-4 py-2 text-white bg-green-500 rounded">Update</button>
         </form>
     </div>
 @endsection

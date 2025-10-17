@@ -33,12 +33,12 @@ class StudentController extends Controller
 
         $students = $query->paginate($perPage)->appends($request->except('page'));
 
-        return view('student', compact('students', 'search', 'perPage'));
+        return view('students.student', compact('students', 'search', 'perPage'));
     }
 
     public function create()
     {
-        return view('student_create');
+        return view('students.student_create');
     }
 
     public function store(Request $request)
@@ -59,13 +59,13 @@ class StudentController extends Controller
     public function show($id)
     {
         $student = Student::findOrFail($id);
-        return view('student_show', compact('student'));
+        return view('students.student_show', compact('student'));
     }
 
     public function edit($id)
     {
         $student = Student::findOrFail($id);
-        return view('student_edit', compact('student'));
+        return view('students.student_edit', compact('student'));
     }
 
     public function update(Request $request, $id)
