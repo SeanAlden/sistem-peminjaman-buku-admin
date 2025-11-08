@@ -7,7 +7,8 @@
         { "src": "/api/(.*)", "dest": "/api/index.php" },
         { "src": "/build/(.*)", "dest": "/public/build/$1" },
         { "src": "/assets/(.*)", "dest": "/public/assets/$1" },
-        { "src": "/storage/(.*)", "dest": "/public/storage/$1" },
+        { "src": "/storage/book_images/(.*)", "dest": "/public/storage/book_images/$1" },
+        { "src": "/storage/profile_images/(.*)", "dest": "/public/storage/profile_images/$1" },
         { "src": "/(.*)", "dest": "/api/index.php" }
     ],
     "env": {
