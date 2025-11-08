@@ -36,7 +36,7 @@ class AdminAuthController extends Controller
         }
 
         Auth::login($user);
-        return redirect()->intended('/admin/dashboard');
+        return redirect()->intended('/');
     }
 
     public function showRegisterForm()

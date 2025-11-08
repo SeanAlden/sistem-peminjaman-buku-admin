@@ -69,7 +69,8 @@ Route::middleware('adminMiddleware')->group(function () {
     // Route baru untuk registered students
     Route::get('admin/registered-students', [AdminAuthController::class, 'registeredStudents'])->name('admin.registered_students');
 
-    Route::get('/admin/dashboard', [DashboardController::class, 'viewDashboard'])->name('admin.dashboard');
+    // Route::get('/admin/dashboard', [DashboardController::class, 'viewDashboard'])->name('admin.dashboard');
+    Route::get('/', [DashboardController::class, 'viewDashboard'])->name('admin.dashboard');
 
     Route::get('/predictions', [PredictionController::class, 'index'])->name('predictions.index');
     Route::post('/predictions/refresh', [PredictionController::class, 'refresh'])->name('predictions.refresh');

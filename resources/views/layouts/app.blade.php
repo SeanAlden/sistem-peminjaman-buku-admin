@@ -21,7 +21,11 @@
             <aside :class="sidebarExpanded ? 'w-64' : 'w-16'"
                 class="fixed top-0 z-50 flex flex-col h-full text-white transition-all duration-300 shadow-lg bg-gradient-to-b from-orange-700 to-orange-900">
                 <div class="flex items-center justify-between px-4 py-4 border-b border-orange-700">
-                    <span x-show="sidebarExpanded" class="text-lg font-semibold text-yellow-300">ᒪIᗷᖇᗩᖇY ᗩᗪᗰIᑎ</span>
+                    <div class="flex items-center space-x-4">
+                        <img x-show="sidebarExpanded" src="{{ asset('assets/icons/book_logo.png') }}" class="w-14 h-14"
+                            alt="Library Icon">
+                        <span x-show="sidebarExpanded" class="text-lg font-semibold text-yellow-300">ᒪIᗷᖇᗩᖇY</span>
+                    </div>
                     <button @click="sidebarExpanded = !sidebarExpanded"
                         class="text-white cursor-pointer focus:outline-none">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
@@ -284,8 +288,8 @@
                                 <img :src="$store.theme.dark ? '{{ asset('assets/icons/notification_white.png') }}' : '{{ asset('assets/icons/notification.png') }}'"
                                     alt="Notification" class="w-6 h-6 transition cursor-pointer hover:scale-110">
                                 <!-- Badge -->
-                                <span x-show="count > 0"
-                                    class="absolute -top-2 -right-2 text-xs font-bold text-white bg-red-600 rounded-full px-1.5">
+                                <span x-show="count > 0" class="absolute -top-3 -right-3 min-w-[26px] h-[26px] flex items-center justify-center 
+       text-sm font-bold text-white bg-red-600 rounded-full px-2 shadow-xl shadow-red-500/50 border border-white">
                                     <span x-text="count > 10 ? '10+' : count"></span>
                                 </span>
                             </button>
