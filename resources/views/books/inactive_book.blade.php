@@ -16,7 +16,7 @@
             @foreach ($books as $book)
                 <div class="flex flex-col transition duration-300 bg-white border shadow-md border-rgray-200 dark:border-white dark:bg-gray-500 rounded-xl hover:shadow-lg">
 
-                    <img src="{{ asset('storage/' . $book->image_url) }}" alt="book image"
+                    <img src="{{ $book->image_url ? Storage::disk('s3')->url($book->image_url) : asset('assets/images/avatar.png') }}" alt="book image"
                         class="object-contain w-full h-48 rounded-t-xl"
                         onerror="this.onerror=null;this.src='{{ asset('assets/images/avatar.png') }}';">
 

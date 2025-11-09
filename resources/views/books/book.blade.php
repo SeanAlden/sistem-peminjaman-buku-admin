@@ -384,8 +384,8 @@
                             class="object-contain w-full h-48 rounded-t-xl"
                             onerror="this.onerror=null;this.src='{{ asset('assets/images/avatar.png') }}';"> --}}
 
-                        <img src="{{ Storage::disk('s3')->url($book->image_url) }}" alt="book image"
-                            class="object-contain w-full h-48 rounded-t-xl"
+                        <img src="{{ $book->image_url ? Storage::disk('s3')->url($book->image_url) : asset('assets/images/avatar.png') }}"
+                            alt="book image" class="object-contain w-full h-48 rounded-t-xl"
                             onerror="this.onerror=null;this.src='{{ asset('assets/images/avatar.png') }}';">
 
                         <div class="flex flex-col justify-between flex-grow p-4">
@@ -535,11 +535,11 @@
                                 </span>
                             @elseif ($link == $currentPage)
                                 <span class="px-3 py-1 mr-1 text-white bg-blue-500 border border-blue-500 rounded">{{ $link
-                                                                                }}</span>
+                                                                                                }}</span>
                             @else
                                 <a href="{{ $books->url($link) }}"
                                     class="px-3 py-1 mr-1 text-gray-700 bg-white border rounded hover:bg-gray-50">{{ $link
-                                                                                }}</a>
+                                                                                                }}</a>
                             @endif
                         @endforeach
 
