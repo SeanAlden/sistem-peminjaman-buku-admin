@@ -138,7 +138,7 @@ class MigrateBooksImagesToCloudinary extends Command
 
             try {
                 // 7) Upload ke Cloudinary, taruh di folder book_images
-                $uploaded = Cloudinary::uploadFile($absolutePath, [
+                $uploaded = Cloudinary::upload($absolutePath, [
                     'folder' => 'book_images'
                 ]);
 
