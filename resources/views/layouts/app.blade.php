@@ -45,7 +45,7 @@
                                 class="flex items-center px-4 py-3 transition-colors hover:bg-orange-700">
                                 <img src="{{ asset('assets/icons/dashboard.png') }}" class="w-5 h-5"
                                     alt="Dashboard Icon">
-                                <span x-show="sidebarExpanded" class="ml-3">Dashboard</span>
+                                <span x-show="sidebarExpanded" class="ml-3">Dash</span>
                             </a>
 
                             <!-- Student List Menu -->
