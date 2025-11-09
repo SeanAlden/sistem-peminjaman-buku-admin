@@ -206,12 +206,42 @@ class AuthController extends Controller
     }
 
     // Fungsi untuk mengupdate gambar profil
+    // public function updateProfileImage(Request $request)
+    // {
+    //     // /**
+    //     //  * @var \App\Models\User $user
+    //     //  */
+    //     // // $user = auth()->user();
+    //     $user = Auth::user();
+
+    //     $request->validate([
+    //         'profile_image' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+    //     ]);
+
+    //     if ($request->hasFile('profile_image')) {
+    //         // Hapus gambar lama jika ada
+    //         if ($user->profile_image) {
+    //             Storage::disk('public')->delete('profile_images/' . $user->profile_image);
+    //         }
+
+    //         $image = $request->file('profile_image');
+    //         $filename = time() . '_' . \Illuminate\Support\Str::random(10) . '.' . $image->getClientOriginalExtension();
+    //         $image->storeAs('profile_images', $filename, 'public');
+
+    //         $user->profile_image = $filename;
+    //         $user->save();
+
+    //         return response()->json([
+    //             'message' => 'Profile image updated successfully',
+    //             'profile_image' => $filename,
+    //         ]);
+    //     }
+
+    //     return response()->json(['message' => 'No image uploaded'], 400);
+    // }
+
     public function updateProfileImage(Request $request)
     {
-        // /**
-        //  * @var \App\Models\User $user
-        //  */
-        // // $user = auth()->user();
         $user = Auth::user();
 
         $request->validate([
@@ -219,21 +249,34 @@ class AuthController extends Controller
         ]);
 
         if ($request->hasFile('profile_image')) {
-            // Hapus gambar lama jika ada
+
+            // Hapus gambar lama di S3
             if ($user->profile_image) {
-                Storage::disk('public')->delete('profile_images/' . $user->profile_image);
+                Storage::disk('s3')->delete('profile_images/' . $user->profile_image);
             }
 
+            // Upload baru ke S3
             $image = $request->file('profile_image');
             $filename = time() . '_' . \Illuminate\Support\Str::random(10) . '.' . $image->getClientOriginalExtension();
-            $image->storeAs('profile_images', $filename, 'public');
 
+            // Upload ke folder profile_images dengan visibility public
+            Storage::disk('s3')->put(
+                'profile_images/' . $filename,
+                file_get_contents($image),
+                'public'
+            );
+
+            // Simpan nama file ke database
             $user->profile_image = $filename;
             $user->save();
+
+            // Generate URL publik dari S3
+            $imageUrl = Storage::disk('s3')->url('profile_images/' . $filename);
 
             return response()->json([
                 'message' => 'Profile image updated successfully',
                 'profile_image' => $filename,
+                'profile_image_url' => $imageUrl,
             ]);
         }
 
