@@ -212,7 +212,7 @@
                     class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200 focus:outline-none dark:text-white">
                 <div class="mt-4">
                     <img id="imagePreview"
-                        src="{{ $book->image_url ? asset('storage/' . $book->image_url) : asset('assets/images/avatar.png') }}"
+                        src="{{ $book->image_url ? Storage::disk('s3')->url($book->image_url) : asset('assets/images/avatar.png') }}"
                         alt="Preview Gambar" class="object-contain w-40 rounded-md shadow-md h-52" />
                 </div>
             </div>
