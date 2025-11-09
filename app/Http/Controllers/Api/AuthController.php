@@ -293,12 +293,23 @@ class AuthController extends Controller
     //     ], 200);
     // }
 
+    // public function getProfileImage(Request $request)
+    // {
+    //     $user = Auth::user();
+
+    //     return response()->json([
+    //         'profile_image' => $user->profile_image ? Storage::disk('s3')->url($user->profile_image) : null,
+    //     ], 200);
+    // }
+
     public function getProfileImage(Request $request)
     {
         $user = Auth::user();
 
         return response()->json([
-            'profile_image' => $user->profile_image ? Storage::disk('s3')->url($user->profile_image) : null,
+            'profile_image' => $user->profile_image
+                ? Storage::disk('s3')->url('profile_images/' . $user->profile_image)
+                : null,
         ], 200);
     }
 
