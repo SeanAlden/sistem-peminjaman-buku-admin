@@ -82,7 +82,7 @@
 
                 @if($user->profile_image)
                     <div class="mt-4">
-                        <img src="{{ asset('storage/profile_images/' . $user->profile_image) }}" 
+                        <img src="{{ Storage::disk('s3')->url(Auth::user()->profile_image) }}" 
                              class="w-24 h-24 border-2 border-gray-300 rounded-full shadow-md dark:border-gray-600">
                     </div>
                 @endif

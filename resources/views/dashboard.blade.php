@@ -112,7 +112,7 @@
                     @forelse ($mostActiveUsers as $user)
                         <li class="flex items-center justify-between text-gray-700 dark:text-gray-200">
                             <div class="flex items-center space-x-3">
-                                <img src="{{ $user->profile_image ? asset('storage/profile_images/' . $user->profile_image) : asset('assets/images/profile.png') }}"
+                                <img src="{{ $user->profile_image ? Storage::disk('s3')->url(Auth::user()->profile_image) : asset('assets/images/profile.png') }}"
                                     alt="User Photo" class="object-cover w-10 h-10 rounded-full">
                                 <span>{{ $user->name }}</span>
                             </div>

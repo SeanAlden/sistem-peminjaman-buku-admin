@@ -45,7 +45,7 @@
                                 class="flex items-center px-4 py-3 transition-colors hover:bg-orange-700">
                                 <img src="{{ asset('assets/icons/dashboard.png') }}" class="w-5 h-5"
                                     alt="Dashboard Icon">
-                                <span x-show="sidebarExpanded" class="ml-3">Dash</span>
+                                <span x-show="sidebarExpanded" class="ml-3">Dashboard</span>
                             </a>
 
                             <!-- Student List Menu -->
@@ -317,8 +317,13 @@
 
                         <!-- Profile Dropdown -->
                         <div class="relative" x-data="{ openDropdown: false }">
-                            <img @click="openDropdown = !openDropdown"
+                            {{-- <img @click="openDropdown = !openDropdown"
                                 src="{{ Auth::user()->profile_image ? asset('storage/profile_images/' . Auth::user()->profile_image) : asset('assets/images/profile.png') }}"
+                                alt="Profile"
+                                class="w-10 h-10 transition duration-200 border-2 border-white rounded-full cursor-pointer hover:scale-105"> --}}
+
+                                <img @click="openDropdown = !openDropdown"
+                                src="{{ Auth::user()->profile_image ? Storage::disk('s3')->url(Auth::user()->profile_image) : asset('assets/images/profile.png') }}"
                                 alt="Profile"
                                 class="w-10 h-10 transition duration-200 border-2 border-white rounded-full cursor-pointer hover:scale-105">
 
@@ -333,7 +338,7 @@
                                 class="absolute right-0 z-50 w-64 mt-2 overflow-hidden bg-white rounded-lg shadow-xl">
                                 <!-- Profile Section -->
                                 <div class="px-5 py-4 text-center border-b bg-gray-50">
-                                    <img src="{{ Auth::user()->profile_image ? asset('storage/profile_images/' . Auth::user()->profile_image) : asset('assets/images/profile.png') }}"
+                                    <img src="{{ Auth::user()->profile_image ? Storage::disk('s3')->url(Auth::user()->profile_image) : asset('assets/images/profile.png') }}"
                                         alt="Profile Image" class="mx-auto mb-2 border rounded-full w-14 h-14">
                                     <p class="text-base font-semibold text-gray-800">{{ Auth::user()->name }}
                                     </p>

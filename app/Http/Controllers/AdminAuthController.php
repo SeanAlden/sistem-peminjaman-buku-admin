@@ -77,6 +77,38 @@ class AdminAuthController extends Controller
         return view('auth.profile_page', compact('user'));
     }
 
+    // public function updateProfile(Request $request)
+    // {
+    //     $user = Auth::user();
+
+    //     $request->validate([
+    //         'name' => 'required|string|max:255',
+    //         'email' => [
+    //             'required',
+    //             'email',
+    //             Rule::unique('users')->ignore($user->id),
+    //         ],
+    //         'profile_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+    //     ]);
+
+    //     if ($request->hasFile('profile_image')) {
+    //         if ($user->profile_image) {
+    //             Storage::disk('public')->delete('profile_images/' . $user->profile_image);
+    //         }
+
+    //         $image = $request->file('profile_image');
+    //         $filename = time() . '_' . Str::random(10) . '.' . $image->getClientOriginalExtension();
+    //         $image->storeAs('profile_images', $filename, 'public');
+    //         $user->profile_image = $filename;
+    //     }
+
+    //     $user->name = $request->name;
+    //     $user->email = $request->email;
+    //     $user->save();
+
+    //     return redirect()->route('admin.profile')->with('success', 'Profil berhasil diperbarui.');
+    // }
+
     public function updateProfile(Request $request)
     {
         $user = Auth::user();
@@ -91,14 +123,21 @@ class AdminAuthController extends Controller
             'profile_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
+        // Jika upload baru
         if ($request->hasFile('profile_image')) {
+
+            // Hapus foto lama di S3
             if ($user->profile_image) {
-                Storage::disk('public')->delete('profile_images/' . $user->profile_image);
+                Storage::disk('s3')->delete($user->profile_image);
             }
 
+            // Upload baru
             $image = $request->file('profile_image');
-            $filename = time() . '_' . Str::random(10) . '.' . $image->getClientOriginalExtension();
-            $image->storeAs('profile_images', $filename, 'public');
+            $filename = 'profile_images/' . time() . '_' . Str::random(10) . '.' . $image->getClientOriginalExtension();
+
+            Storage::disk('s3')->put($filename, file_get_contents($image), 'public');
+
+            // Simpan PATH S3 (bukan URL)
             $user->profile_image = $filename;
         }
 
