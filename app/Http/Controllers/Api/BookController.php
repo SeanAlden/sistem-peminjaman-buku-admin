@@ -174,7 +174,8 @@ class BookController extends Controller
 
         // Ambil data dasar buku
         $bookData = $book->load('category');
-        $bookData->image_url = asset('storage/' . $bookData->image_url);
+        // $bookData->image_url = asset('storage/' . $bookData->image_url);
+        $bookData->image_url = Storage::disk('s3')->url($bookData->image_url);
 
         if ($user) {
             // Cek pinjaman aktif
