@@ -87,7 +87,8 @@ class BookController extends Controller
         // Tambahkan atribut custom ke setiap buku
         $books->map(function ($book) use ($user, $reservedBookIds) {
             // Menambahkan URL gambar yang lengkap
-            $book->image_url = $book->image_url ? asset('storage/' . $book->image_url) : null;
+            // $book->image_url = $book->image_url ? asset('storage/' . $book->image_url) : null;
+            $book->image_url = $book->image_url ? Storage::disk('s3')->url('book_images/' . $book->image_url) : null;
 
             // Tambahkan flag is_reserved_by_user
             $book->is_reserved_by_user = in_array($book->id, $reservedBookIds);
