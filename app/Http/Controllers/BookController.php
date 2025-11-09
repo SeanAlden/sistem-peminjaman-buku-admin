@@ -55,7 +55,8 @@ class BookController extends Controller
 
         $imagePath = null;
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('book_images', 'public');
+            // $imagePath = $request->file('image')->store('book_images', 'public');
+            $imagePath = $request->file('image')->store('book_images', 's3');
         }
 
         Book::create([
@@ -100,12 +101,22 @@ class BookController extends Controller
 
         $imagePath = $book->image_url;
 
+        // if ($request->hasFile('image')) {
+        //     if ($book->image_url && Storage::disk('public')->exists($book->image_url)) {
+        //         Storage::disk('public')->delete($book->image_url);
+        //     }
+
+        //     $imagePath = $request->file('image')->store('book_images', 'public');
+        // }
+
         if ($request->hasFile('image')) {
-            if ($book->image_url && Storage::disk('public')->exists($book->image_url)) {
-                Storage::disk('public')->delete($book->image_url);
+
+            // Delete old image in S3
+            if ($book->image_url) {
+                Storage::disk('s3')->delete($book->image_url);
             }
 
-            $imagePath = $request->file('image')->store('book_images', 'public');
+            $imagePath = $request->file('image')->store('book_images', 's3');
         }
 
         $book->update([

@@ -380,7 +380,11 @@
                     <div
                         class="flex flex-col transition duration-300 bg-white border border-gray-200 shadow-md dark:bg-gray-500 rounded-xl dark:border-gray-700 hover:shadow-lg">
 
-                        <img src="{{ asset('storage/' . $book->image_url) }}" alt="book image"
+                        {{-- <img src="{{ asset('storage/' . $book->image_url) }}" alt="book image"
+                            class="object-contain w-full h-48 rounded-t-xl"
+                            onerror="this.onerror=null;this.src='{{ asset('assets/images/avatar.png') }}';"> --}}
+
+                        <img src="{{ Storage::disk('s3')->url($book->image_url) }}" alt="book image"
                             class="object-contain w-full h-48 rounded-t-xl"
                             onerror="this.onerror=null;this.src='{{ asset('assets/images/avatar.png') }}';">
 
@@ -432,7 +436,10 @@
                         @foreach ($books as $book)
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-600">
                                 <td class="px-4 py-2 text-center border dark:border-white">
-                                    <img src="{{ asset('storage/' . $book->image_url) }}" alt="book image"
+                                    {{-- <img src="{{ asset('storage/' . $book->image_url) }}" alt="book image"
+                                        class="object-contain w-16 h-20 mx-auto"
+                                        onerror="this.onerror=null;this.src='{{ asset('assets/images/avatar.png') }}';"> --}}
+                                    <img src="{{ Storage::disk('s3')->url($book->image_url) }}" alt="book image"
                                         class="object-contain w-16 h-20 mx-auto"
                                         onerror="this.onerror=null;this.src='{{ asset('assets/images/avatar.png') }}';">
                                 </td>
@@ -528,11 +535,11 @@
                                 </span>
                             @elseif ($link == $currentPage)
                                 <span class="px-3 py-1 mr-1 text-white bg-blue-500 border border-blue-500 rounded">{{ $link
-                                                                }}</span>
+                                                                                }}</span>
                             @else
                                 <a href="{{ $books->url($link) }}"
                                     class="px-3 py-1 mr-1 text-gray-700 bg-white border rounded hover:bg-gray-50">{{ $link
-                                                                }}</a>
+                                                                                }}</a>
                             @endif
                         @endforeach
 
