@@ -26,8 +26,8 @@
         <div class="overflow-hidden bg-white border border-gray-200 rounded-lg shadow-md">
             {{-- <img src="{{ asset('storage/' . $book->image_url) }}" alt="book image"
                 class="object-contain object-center w-full h-100"> --}}
-            <img src="{{ $book->image_url && file_exists(Storage::disk('s3')->url($book->image_url))
-        ? asset(Storage::disk('s3')->url($book->image_url))
+            <img src="{{ $book->image_url
+        ? Storage::disk('s3')->url($book->image_url)
         : asset('assets/images/avatar.png') }}"
                 onerror="this.onerror=null; this.src='{{ asset('assets/images/avatar.png') }}';" alt="book image"
                 class="object-contain object-center w-full h-100 dark:bg-gray-500">
