@@ -54,8 +54,26 @@ class BookController extends Controller
         ]);
 
         $imagePath = null;
+        // if ($request->hasFile('image')) {
+        //     $imagePath = $request->file('image')->store('book_images', 'public');
+        // }
+
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('book_images', 'public');
+            $file = $request->file('image');
+
+            $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+
+            $destination = public_path('assets/images/book_images');
+
+            // Pastikan folder sudah ada
+            if (!file_exists($destination)) {
+                mkdir($destination, 0777, true);
+            }
+
+            $file->move($destination, $fileName);
+
+            // Simpan relative path untuk asset()
+            $imagePath = 'assets/images/book_images/' . $fileName;
         }
 
         Book::create([
@@ -100,12 +118,38 @@ class BookController extends Controller
 
         $imagePath = $book->image_url;
 
+        // if ($request->hasFile('image')) {
+        //     if ($book->image_url && Storage::disk('public')->exists($book->image_url)) {
+        //         Storage::disk('public')->delete($book->image_url);
+        //     }
+
+        //     $imagePath = $request->file('image')->store('book_images', 'public');
+        // }
+
         if ($request->hasFile('image')) {
-            if ($book->image_url && Storage::disk('public')->exists($book->image_url)) {
-                Storage::disk('public')->delete($book->image_url);
+
+            // Hapus file lama jika ada
+            if ($book->image_url) {
+                $oldPath = public_path($book->image_url);
+
+                if (file_exists($oldPath)) {
+                    unlink($oldPath);
+                }
             }
 
-            $imagePath = $request->file('image')->store('book_images', 'public');
+            $file = $request->file('image');
+
+            $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+
+            $destination = public_path('assets/images/book_images');
+
+            if (!file_exists($destination)) {
+                mkdir($destination, 0777, true);
+            }
+
+            $file->move($destination, $fileName);
+
+            $imagePath = 'assets/images/book_images/' . $fileName;
         }
 
         $book->update([

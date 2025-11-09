@@ -380,7 +380,8 @@
                     <div
                         class="flex flex-col transition duration-300 bg-white border border-gray-200 shadow-md dark:bg-gray-500 rounded-xl dark:border-gray-700 hover:shadow-lg">
 
-                        <img src="{{ asset('storage/' . $book->image_url) }}" alt="book image"
+                        {{-- <img src="{{ asset('storage/' . $book->image_url) }}" alt="book image" --}}
+                        <img src="{{ asset( book->image_url) }}" alt="book image"
                             class="object-contain w-full h-48 rounded-t-xl"
                             onerror="this.onerror=null;this.src='{{ asset('assets/images/avatar.png') }}';">
 

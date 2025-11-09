@@ -26,8 +26,11 @@
         <div class="overflow-hidden bg-white border border-gray-200 rounded-lg shadow-md">
             {{-- <img src="{{ asset('storage/' . $book->image_url) }}" alt="book image"
                 class="object-contain object-center w-full h-100"> --}}
-            <img src="{{ $book->image_url && file_exists(public_path('storage/' . $book->image_url))
-        ? asset('storage/' . $book->image_url)
+            <img src="{{ $book->image_url && 
+            // file_exists(public_path('storage/' . $book->image_url))
+            file_exists(public_path($book->image_url))
+        // ? asset('storage/' . $book->image_url)
+        ? asset($book->image_url)
         : asset('assets/images/avatar.png') }}"
                 onerror="this.onerror=null; this.src='{{ asset('assets/images/avatar.png') }}';" alt="book image"
                 class="object-contain object-center w-full h-100 dark:bg-gray-500">
