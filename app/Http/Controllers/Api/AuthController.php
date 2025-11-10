@@ -485,16 +485,37 @@ class AuthController extends Controller
     }
 
     // Menampilkan user dengan usertype selain 'user' (misalnya admin)
+    // public function showNonUser()
+    // {
+    //     $users = User::where('usertype', '!=', 'user')->get();
+
+    //     if ($users->isEmpty()) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'No non-user accounts found'
+    //         ], 404);
+    //     }
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'message' => 'Non-user accounts retrieved successfully',
+    //         'data' => $users
+    //     ]);
+    // }
+
     public function showNonUser()
     {
         $users = User::where('usertype', '!=', 'user')->get();
 
-        if ($users->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No non-user accounts found'
-            ], 404);
-        }
+        $users->transform(function ($user) {
+            if ($user->profile_image) {
+                // Jika sudah S3
+                $user->profile_image_url = Storage::disk('s3')->url($user->profile_image);
+            } else {
+                $user->profile_image_url = null;
+            }
+            return $user;
+        });
 
         return response()->json([
             'success' => true,
@@ -502,6 +523,7 @@ class AuthController extends Controller
             'data' => $users
         ]);
     }
+
 
 }
 
