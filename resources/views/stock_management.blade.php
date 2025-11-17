@@ -74,7 +74,7 @@
         <!-- Fitur Search dan Items per Page -->
         <div class="flex items-center justify-between mb-4">
             <div class="flex items-center">
-                <form action="{{ route('transactions.index') }}" method="GET" class="flex items-center">
+                <form action="{{ route('stock.management') }}" method="GET" class="flex items-center">
                     <label for="per_page" class="mr-2 text-sm text-gray-600 dark:text-white">Show:</label>
                     <select name="per_page" id="per_page"
                         class="block w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
@@ -89,7 +89,7 @@
                 </form>
             </div>
             <div class="flex items-center">
-                <form action="{{ route('transactions.index') }}" method="GET" class="flex items-center">
+                <form action="{{ route('stock.management') }}" method="GET" class="flex items-center">
                     <label for="search" class="mr-2 text-sm text-gray-600 dark:text-white">Search:</label>
                     <input type="text" name="search" id="search"
                         class="block w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
