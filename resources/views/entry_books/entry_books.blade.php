@@ -65,8 +65,16 @@
                                     class="object-cover h-20 w-14">
                             </td> --}}
                             <td class="px-4 py-2 text-center border dark:border-white">
-                                @if($entry->book->image_url)
+                                {{-- @if($entry->book->image_url)
                                     <img src="{{ asset('storage/' . $entry->book->image_url) }}" alt="Gambar Buku"
+                                        class="object-cover w-16 h-20 mx-auto rounded" />
+                                @else
+                                    <img src="{{ asset('assets/images/avatar.png') }}" alt="Gambar Buku"
+                                        class="object-cover w-16 h-20 mx-auto rounded" />
+                                @endif --}}
+                                
+                                @if($entry->book->image_url)
+                                    <img src="{{ $entry->$book->image_url ? Storage::disk('s3')->url($entry->$book->image_url) : asset('assets/images/avatar.png') }}" alt="Gambar Buku"
                                         class="object-cover w-16 h-20 mx-auto rounded" />
                                 @else
                                     <img src="{{ asset('assets/images/avatar.png') }}" alt="Gambar Buku"

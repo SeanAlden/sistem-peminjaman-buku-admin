@@ -138,7 +138,7 @@
                     @foreach ($predictions as $prediction)
                         <tr class="transition hover:bg-gray-50 dark:hover:bg-gray-400">
                             <td class="px-6 py-4">
-                                <img src="{{ asset('storage/' . ($prediction->book->image_url ?? 'images/default_book.png')) }}"
+                                <img src="{{ $prediction->book->image_url ? Storage::disk('s3')->url($prediction->book->image_url) : asset('assets/images/avatar.png') }}"
                                     alt="Cover Buku" class="object-contain w-16 h-24 rounded shadow-sm">
                             </td>
                             <td class="px-6 py-4 font-medium text-gray-800 dark:text-white">
@@ -161,7 +161,7 @@
                 </tbody>
             </table>
         </div>
-                <!-- Fitur Pagination -->
+        <!-- Fitur Pagination -->
         <div class="flex items-center justify-between mt-4">
             <div>
                 @if ($predictions->total() > 0)

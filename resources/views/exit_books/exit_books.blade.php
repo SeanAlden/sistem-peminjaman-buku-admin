@@ -156,9 +156,20 @@
                             @endif
                         </td> --}}
                         <td class="px-4 py-2 text-center border dark:border-white">
+                            {{-- @if($exit->book->image_url)
+                            <img src="{{ asset('storage/' . $exit->book->image_url) }}" alt="Gambar Buku"
+                                class="object-cover w-16 h-20 mx-auto rounded" />
+                            @else
+                            <img src="{{ asset('assets/images/avatar.png') }}" alt="Gambar Buku"
+                                class="object-cover w-16 h-20 mx-auto rounded" />
+                            @endif --}}
+
                             @if($exit->book->image_url)
-                                <img src="{{ asset('storage/' . $exit->book->image_url) }}" alt="Gambar Buku"
-                                    class="object-cover w-16 h-20 mx-auto rounded" />
+                                {{-- <img
+                                    src="{{ $exit->$book->image_url ? Storage::disk('s3')->url($exit->$book->image_url) : asset('assets/images/avatar.png') }}"
+                                    alt="Gambar Buku" class="object-cover w-16 h-20 mx-auto rounded" /> --}}
+                                <img src="{{ Storage::disk('s3')->url($logs->first()['book']->image_url) }}" alt="Gambar Buku"
+                                    class="object-cover w-20 h-24 mr-5 rounded-md shadow-sm" />
                             @else
                                 <img src="{{ asset('assets/images/avatar.png') }}" alt="Gambar Buku"
                                     class="object-cover w-16 h-20 mx-auto rounded" />
