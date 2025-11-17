@@ -74,7 +74,7 @@
                                 @endif --}}
                                 
                                 @if($entry->book->image_url)
-                                    <img src="{{ $entry->$book->image_url ? Storage::disk('s3')->url($entry->$book->image_url) : asset('assets/images/avatar.png') }}" alt="Gambar Buku"
+                                    <img src="{{ $entry->book->image_url ? Storage::disk('s3')->url($entry->book->image_url) : asset('assets/images/avatar.png') }}" alt="Gambar Buku"
                                         class="object-cover w-16 h-20 mx-auto rounded" />
                                 @else
                                     <img src="{{ asset('assets/images/avatar.png') }}" alt="Gambar Buku"
