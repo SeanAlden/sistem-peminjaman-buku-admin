@@ -13,7 +13,7 @@ class EmployeeController extends Controller
         // return view('employees.index', compact('employees'));
 
         // // Mengambil nilai 'search' dari request, defaultnya string kosong
-        // $search = $request->input('search', '');
+        $search = $request->input('search', '');
 
         // Mengambil nilai 'per_page' dari request, defaultnya 10
         // dan memastikan nilainya adalah integer
