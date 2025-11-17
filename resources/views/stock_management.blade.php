@@ -105,13 +105,12 @@
                 {{-- Header Buku --}}
                 <div class="flex items-center px-6 py-4 bg-gray-50 dark:bg-gray-700">
                     @if($logs->first()['book']->image_url)
-                        <img src="{{ asset('storage/' . $logs->first()['book']->image_url) }}" alt="Gambar Buku"
+                        <img src="{{ $logs->first()['book']->image_url ? Storage::disk('s3')->url($logs->first()['book']->image_url) : asset('assets/images/avatar.png') }}" alt="Gambar Buku"
                             class="object-cover w-20 h-24 mr-5 rounded-md shadow-sm" />
                     @else
-                        <div
-                            class="flex items-center justify-center w-20 h-24 mr-5 text-sm text-gray-500 bg-gray-200 rounded-md dark:bg-gray-600 dark:text-gray-300">
-                            Tidak ada gambar
-                        </div>
+                        <img src="{{ asset('assets/images/avatar.png') }}"
+                            class="flex items-center justify-center w-20 h-24 mr-5 text-sm text-gray-500 bg-gray-200 rounded-md dark:bg-gray-600 dark:text-gray-300"/>
+                        
                     @endif
                     <div>
                         <p class="text-xl font-semibold text-gray-900 dark:text-gray-100">
