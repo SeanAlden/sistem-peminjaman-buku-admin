@@ -8,10 +8,43 @@ use Illuminate\Http\Request;
 
 class PayrollController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $payrolls = Payroll::with('employee')->latest()->get();
-        return view('payrolls.index', compact('payrolls'));
+        // $payrolls = Payroll::with('employee')->latest()->get();
+        // return view('payrolls.index', compact('payrolls'));
+
+        // // Mengambil nilai 'search' dari request, defaultnya string kosong
+        $search = $request->input('search', '');
+
+        // Mengambil nilai 'per_page' dari request, defaultnya 10
+        // dan memastikan nilainya adalah integer
+        $perPage = (int) $request->input('per_page', 5);
+
+        // Memulai query pada model Supplier
+        // $query = Book::query();
+        $query = Payroll::query();
+
+        // Jika ada keyword pencarian, tambahkan kondisi where
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->
+                    where('basic_salary', 'like', "%{$search}%")
+                    ->orWhere('bonus', 'like', "%{$search}%")
+                    ->orWhere('deduction', 'like', "%{$search}%")
+                    ->orWhere('net_salary', 'like', "%{$search}%")
+                    ->orWhere('payment_date', 'like', "%{$search}%")
+                    ->orWhereHas('employee', function ($q2) use ($search) {
+                        $q2->where('name', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        // Lakukan pagination pada hasil query
+        // 'appends' digunakan agar parameter 'search' dan 'per_page' tetap ada di URL pagination
+        $payrolls = $query->paginate($perPage)->appends($request->except('page'));
+
+        // Kembalikan view 'suppliers.supplier_list' dengan data suppliers, search, dan perPage
+        return view('payrolls.index', compact('payrolls', 'search', 'perPage'));
     }
 
     public function create()
