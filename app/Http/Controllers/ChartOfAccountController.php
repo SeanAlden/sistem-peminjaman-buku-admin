@@ -7,10 +7,39 @@ use App\Models\ChartOfAccount;
 
 class ChartOfAccountController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $accounts = ChartOfAccount::all();
-        return view('accounts.index', compact('accounts'));
+        // $accounts = ChartOfAccount::all();
+        // return view('accounts.index', compact('accounts'));
+
+        // // Mengambil nilai 'search' dari request, defaultnya string kosong
+        $search = $request->input('search', '');
+
+        // Mengambil nilai 'per_page' dari request, defaultnya 10
+        // dan memastikan nilainya adalah integer
+        $perPage = (int) $request->input('per_page', 5);
+
+        // Memulai query pada model Supplier
+        // $query = Book::query();
+        $query = ChartOfAccount::query();
+
+        // Jika ada keyword pencarian, tambahkan kondisi where
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->
+                    where('code', 'like', "%{$search}%")
+                    ->orWhere('name', 'like', "%{$search}%")
+                    ->orWhere('type', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        // Lakukan pagination pada hasil query
+        // 'appends' digunakan agar parameter 'search' dan 'per_page' tetap ada di URL pagination
+        $payrolls = $query->paginate($perPage)->appends($request->except('page'));
+
+        // Kembalikan view 'suppliers.supplier_list' dengan data suppliers, search, dan perPage
+        return view('accounts.index', compact('accounts', 'search', 'perPage'));
     }
 
     public function create()
