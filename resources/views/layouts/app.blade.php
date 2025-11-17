@@ -270,11 +270,6 @@
                                 });
                         }
                      }" x-init="
-                        // Echo.channel('notifications')
-                        //     .listen('.new-notification', (e) => {
-                        //         fetchData();
-                        //     });
-                        // fetchData();
                         fetchData();
                         window.Echo.channel('notifications')
                                 .listen('.new-notification', (e) => {
