@@ -36,7 +36,7 @@ class ChartOfAccountController extends Controller
 
         // Lakukan pagination pada hasil query
         // 'appends' digunakan agar parameter 'search' dan 'per_page' tetap ada di URL pagination
-        $payrolls = $query->paginate($perPage)->appends($request->except('page'));
+        $accounts = $query->paginate($perPage)->appends($request->except('page'));
 
         // Kembalikan view 'suppliers.supplier_list' dengan data suppliers, search, dan perPage
         return view('accounts.index', compact('accounts', 'search', 'perPage'));
