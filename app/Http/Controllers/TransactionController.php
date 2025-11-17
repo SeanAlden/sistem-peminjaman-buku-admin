@@ -72,11 +72,44 @@ class TransactionController extends Controller
 {
     public function index(Request $request)
     {
-        $transactions = Transaction::with('journalEntries.account')
-            ->orderByDesc('transaction_date')
-            ->paginate(15);
+        // $transactions = Transaction::with('journalEntries.account')
+        //     ->orderByDesc('transaction_date')
+        //     ->paginate(15);
 
-        return view('transactions.index', compact('transactions'));
+        // return view('transactions.index', compact('transactions'));
+
+        // // Mengambil nilai 'search' dari request, defaultnya string kosong
+        $search = $request->input('search', '');
+
+        // Mengambil nilai 'per_page' dari request, defaultnya 10
+        // dan memastikan nilainya adalah integer
+        $perPage = (int) $request->input('per_page', 5);
+
+        // Memulai query pada model Supplier
+        // $query = Book::query();
+        $query = Transaction::with('journalEntries.account')
+            ->orderByDesc('transaction_date');
+
+        // Jika ada keyword pencarian, tambahkan kondisi where
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->
+                    where('reference', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%")
+                    ->orWhere('transaction_date', 'like', "%{$search}%")
+                    ->orWhere('status', 'like', "%{$search}%")
+                    ->orWhere('created_by', 'like', "%{$search}%")
+                    ->orWhere('is_reversal', 'like', "%{$search}%")
+                    ->orWhere('reversal_of_id', 'like', "%{$search}%");
+            });
+        }
+
+        // Lakukan pagination pada hasil query
+        // 'appends' digunakan agar parameter 'search' dan 'per_page' tetap ada di URL pagination
+        $transactions = $query->paginate($perPage)->appends($request->except('page'));
+
+        // Kembalikan view 'suppliers.supplier_list' dengan data suppliers, search, dan perPage
+        return view('transactions.index', compact('transactions', 'search', 'perPage'));
     }
 
     public function create()
@@ -91,7 +124,7 @@ class TransactionController extends Controller
         $totalDebit = $transaction->journalEntries->sum('debit');
         $totalCredit = $transaction->journalEntries->sum('credit');
 
-        return view('transactions.show', compact('transaction','totalDebit','totalCredit'));
+        return view('transactions.show', compact('transaction', 'totalDebit', 'totalCredit'));
     }
 
     public function submit(StoreTransactionRequest $request)
@@ -142,9 +175,9 @@ class TransactionController extends Controller
             JournalEntry::insert($rows);
         });
 
-        return redirect()->route('transactions.index')->with('success','Transaction recorded.');
+        return redirect()->route('transactions.index')->with('success', 'Transaction recorded.');
     }
-    
+
     /**
      * Reverse (create reversal transaction) instead of hard delete
      */
@@ -180,7 +213,7 @@ class TransactionController extends Controller
             $orig->update(['status' => 'reversed']);
         });
 
-        return redirect()->route('transactions.index')->with('success','Transaction reversed.');
+        return redirect()->route('transactions.index')->with('success', 'Transaction reversed.');
     }
 
     /**
@@ -196,7 +229,7 @@ class TransactionController extends Controller
             ->toArray();
 
         // simpler: build array of accounts with totals
-        $accounts = ChartOfAccount::with([])->get()->map(function($acc) {
+        $accounts = ChartOfAccount::with([])->get()->map(function ($acc) {
             $totals = \DB::table('journal_entries')
                 ->where('coa_id', $acc->id)
                 ->selectRaw('COALESCE(SUM(debit),0) as debit, COALESCE(SUM(credit),0) as credit')
@@ -221,7 +254,7 @@ class TransactionController extends Controller
             $trx->journalEntries()->delete();
             $trx->delete();
         });
-        return redirect()->route('transactions.index')->with('success','Transaction deleted.');
+        return redirect()->route('transactions.index')->with('success', 'Transaction deleted.');
     }
 
 }
