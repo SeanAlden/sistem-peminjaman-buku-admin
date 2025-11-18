@@ -84,7 +84,10 @@ class PaymentController extends Controller
 
         $payments = $query->paginate($perPage)->appends($request->except('page'));
 
-        return view('payments.index', compact('payments', 'search', 'perPage'));
+        $employees = Employee::all();
+        $suppliers = Supplier::all();
+
+        return view('payments.index', compact('payments', 'employees', 'suppliers', 'search', 'perPage'));
     }
 
     public function create()
