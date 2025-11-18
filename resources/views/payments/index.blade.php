@@ -292,7 +292,7 @@
 
     <!-- Modal Background -->
     <div id="paymentModal"
-        class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black bg-opacity-50 backdrop-blur-sm">
+        class="fixed inset-0 z-50 flex items-center justify-center hidden backdrop-blur-sm" style="background-color: rgba(0, 0, 0, 0.5);">
 
         <!-- Modal Box -->
         <div class="w-full max-w-lg p-5 bg-white rounded shadow-lg dark:bg-gray-900 dark:text-gray-100">
