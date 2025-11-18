@@ -158,10 +158,6 @@
                             <td class="px-6 py-4">Rp {{ number_format($emp->base_salary, 0, ',', '.') }}</td>
                             <td class="px-6 py-4">{{ $emp->email }}</td>
                             <td class="px-6 py-4 space-x-2 text-center">
-                                <button @click="openShow({{ $emp }})"
-                                    class="px-3 py-1 text-white transition bg-blue-500 rounded hover:bg-blue-600">
-                                    Detail
-                                </button>
                                 <button @click="openEdit({{ $emp }})"
                                     class="px-3 py-1 text-white transition bg-yellow-500 rounded hover:bg-yellow-600">
                                     Edit
@@ -267,8 +263,8 @@
 
         {{-- ====== MODAL POPUPS ====== --}}
         <!-- Overlay -->
-        <div x-show="showModal" class="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50"
-            x-transition.opacity>
+        <div x-show="showModal" class="fixed inset-0 z-40 flex items-center justify-center"
+            style="background-color: rgba(0, 0, 0, 0.5);" x-transition.opacity>
             <div @click.outside="closeModal()" class="w-full max-w-lg p-6 bg-white shadow-lg rounded-2xl dark:bg-gray-800"
                 x-transition.scale>
 
