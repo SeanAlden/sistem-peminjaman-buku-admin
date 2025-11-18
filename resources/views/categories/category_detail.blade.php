@@ -15,7 +15,7 @@
             @foreach ($category->books as $book)
                 <div class="p-4 bg-white rounded-lg shadow dark:bg-gray-500">
                     @if ($book->image_url)
-                        <img src="{{ asset('storage/' . $book->image_url) }}" alt="{{ $book->title }}"
+                        <img src="{{ $book->image_url ? Storage::disk('s3')->url($book->image_url) : asset('assets/images/avatar.png') }}" alt="{{ $book->title }}"
                             class="object-contain w-full h-40 mb-3 rounded">
                     @else
                         <img src="{{ asset('assets/images/avatar.png') }}" alt="{{ $book->title }}"
