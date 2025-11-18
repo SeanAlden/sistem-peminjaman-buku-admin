@@ -114,10 +114,15 @@
     <div class="container">
         <h2 class="mb-4 text-xl font-bold text-gray-800 dark:text-gray-200">Payments</h2>
 
-        <a href="{{ route('payments.create') }}"
+        {{-- <a href="{{ route('payments.create') }}"
             class="inline-block px-4 py-2 mb-3 text-white bg-blue-600 rounded-md hover:bg-blue-700">
             + New Payment
-        </a>
+        </a> --}}
+
+        <button onclick="openCreateModal()"
+            class="inline-block px-4 py-2 mb-3 text-white bg-blue-600 rounded-md hover:bg-blue-700">
+            + New Payment
+        </button>
 
         @if(session('success'))
             <div class="p-3 mb-4 text-green-800 bg-green-100 rounded">{{ session('success') }}</div>
@@ -175,8 +180,12 @@
                         <td class="px-3 py-2 text-gray-900 dark:text-gray-100">{{ ucfirst($pay->method) }}</td>
                         <td class="px-3 py-2 text-gray-900 dark:text-gray-100">{{ $pay->notes ?? '-' }}</td>
                         <td class="px-3 py-2">
-                            <a href="{{ route('payments.edit', $pay) }}"
-                                class="px-2 py-1 text-white bg-yellow-500 rounded">Edit</a>
+                            {{-- <a href="{{ route('payments.edit', $pay) }}"
+                                class="px-2 py-1 text-white bg-yellow-500 rounded">Edit</a> --}}
+                            <button type="button" onclick='openEditModal(@json($pay))'
+                                class="px-2 py-1 text-white bg-yellow-500 rounded">
+                                Edit
+                            </button>
                             <form action="{{ route('payments.destroy', $pay) }}" method="POST" class="inline"
                                 onsubmit="return confirm('Delete this payment?')">
                                 @csrf @method('DELETE')
@@ -259,12 +268,13 @@
                                 {{ $link }}
                             </span>
                         @elseif ($link == $currentPage)
-                            <span class="px-3 py-1 mr-1 text-white bg-blue-500 border border-blue-500 rounded">{{ $link
-                                                                                }}</span>
+                            <span
+                                class="px-3 py-1 mr-1 text-white bg-blue-500 border border-blue-500 rounded">{{ $link
+                                                                                                                                                                }}</span>
                         @else
                             <a href="{{ $payments->url($link) }}"
                                 class="px-3 py-1 mr-1 text-gray-700 bg-white border rounded hover:bg-gray-50">{{ $link
-                                                                                }}</a>
+                                                                                                                                                                }}</a>
                         @endif
                     @endforeach
 
@@ -279,4 +289,131 @@
         </div>
     </div>
     <!-- End Fitur Pagination -->
+
+    <!-- Modal Background -->
+    <div id="paymentModal"
+        class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black bg-opacity-50 backdrop-blur-sm">
+
+        <!-- Modal Box -->
+        <div class="w-full max-w-lg p-5 bg-white rounded shadow-lg dark:bg-gray-900 dark:text-gray-100">
+
+            <h2 id="modalTitle" class="mb-4 text-xl font-bold">Create Payment</h2>
+
+            <form id="paymentForm" method="POST" class="space-y-3">
+                @csrf
+
+                <!-- Tempat inject PUT ketika edit -->
+                <div id="methodField"></div>
+
+                <div>
+                    <label class="block dark:text-gray-200">Employee</label>
+                    <select id="employee_id" name="employee_id"
+                        class="w-full px-2 py-1 border rounded dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100">
+                        <option value="">-- Optional --</option>
+                        @foreach($employees as $emp)
+                            <option value="{{ $emp->id }}">{{ $emp->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block dark:text-gray-200">Supplier</label>
+                    <select id="supplier_id" name="supplier_id"
+                        class="w-full px-2 py-1 border rounded dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100">
+                        <option value="">-- Optional --</option>
+                        @foreach($suppliers as $sup)
+                            <option value="{{ $sup->id }}">{{ $sup->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block dark:text-gray-200">Amount</label>
+                    <input id="amount" type="number" step="0.01" name="amount"
+                        class="w-full px-2 py-1 border rounded dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100">
+                </div>
+
+                <div>
+                    <label class="block dark:text-gray-200">Payment Date</label>
+                    <input id="payment_date" type="date" name="payment_date"
+                        class="w-full px-2 py-1 border rounded dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 dark:[color-scheme:dark] dark:invert-[0.9]">
+                </div>
+
+                <div>
+                    <label class="block dark:text-gray-200">Method</label>
+                    <select id="method" name="method"
+                        class="w-full px-2 py-1 border rounded dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100">
+                        <option value="cash">Cash</option>
+                        <option value="transfer">Transfer</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block dark:text-gray-200">Notes</label>
+                    <textarea id="notes" name="notes" rows="3"
+                        class="w-full px-2 py-1 border rounded dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"></textarea>
+                </div>
+
+                <div class="flex justify-end mt-4 space-x-2">
+                    <button type="button" onclick="closePaymentModal()"
+                        class="px-4 py-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300">
+                        Cancel
+                    </button>
+
+                    <button id="submitBtn" class="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700">
+                        Save
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+@endsection
+@section('scripts')
+    <script>
+        function openCreateModal() {
+            document.getElementById('modalTitle').innerText = "Create Payment";
+            document.getElementById('submitBtn').innerText = "Save";
+
+            document.getElementById('paymentForm').action = "{{ route('payments.store') }}";
+            document.getElementById('methodField').innerHTML = "";
+
+            // Clear fields
+            document.getElementById('employee_id').value = "";
+            document.getElementById('supplier_id').value = "";
+            document.getElementById('amount').value = "";
+            document.getElementById('payment_date').value = "";
+            document.getElementById('method').value = "cash";
+            document.getElementById('notes').value = "";
+
+            document.getElementById('paymentModal').classList.remove('hidden');
+        }
+
+        function openEditModal(payment) {
+            document.getElementById('modalTitle').innerText = "Edit Payment #" + payment.id;
+            document.getElementById('submitBtn').innerText = "Update";
+
+            document.getElementById('paymentForm').action = "/payments/" + payment.id;
+
+            document.getElementById('methodField').innerHTML = `
+                        @method('PUT')
+                    `;
+
+            // Fill form
+            document.getElementById('employee_id').value = payment.employee_id ?? "";
+            document.getElementById('supplier_id').value = payment.supplier_id ?? "";
+            document.getElementById('amount').value = payment.amount;
+            document.getElementById('payment_date').value = payment.payment_date;
+            document.getElementById('method').value = payment.method;
+            document.getElementById('notes').value = payment.notes ?? "";
+
+            document.getElementById('paymentModal').classList.remove('hidden');
+        }
+
+        function closePaymentModal() {
+            document.getElementById('paymentModal').classList.add('hidden');
+        }
+    </script>
+
 @endsection
