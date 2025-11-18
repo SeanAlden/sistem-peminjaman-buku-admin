@@ -62,8 +62,11 @@
     <div class="flex flex-col items-center mb-4">
       <img src="{{ asset('assets/icons/book_logo.png') }}" 
            class="w-16 h-16 mb-2" alt="Logo">
-      <h1 class="text-xl font-semibold text-gray-700">
+      {{-- <h1 class="text-xl font-semibold text-gray-700">
         Welcome to <span class="font-bold">Library Management System</span>
+      </h1> --}}
+      <h1 class="text-xl font-semibold text-gray-700">
+        <span class="font-bold">Library Management System</span>
       </h1>
     </div>
 
