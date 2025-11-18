@@ -35,7 +35,7 @@
         <div class="flex flex-col gap-6 md:flex-row md:items-start">
             {{-- Gambar Buku --}}
             <div class="flex-shrink-0">
-                <img src="{{ asset('storage/' . $loan->book->image_url) }}" 
+                <img src="{{ $loan->book->image_url ? Storage::disk('s3')->url($loan->book->image_url) : asset('assets/images/avatar.png') }}" 
                      alt="Cover" 
                      class="object-contain w-40 h-56 rounded-md shadow-md bg-gray-50 dark:bg-gray-700" />
             </div>
