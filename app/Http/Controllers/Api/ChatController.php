@@ -71,7 +71,8 @@ class ChatController extends Controller
             'from' => Auth::user()->name,
             'to_id' => $other->id,
             'body' => $message->message,
-            'created_at' => $message->created_at->toDateTimeString(),
+            // 'created_at' => $message->created_at->toDateTimeString(),
+            'created_at' => $message->created_at->DateTime.now().toUtc().toIso8601String(),
         ];
 
         // broadcast ke channel penerima (sesuai Event MessageSent::broadcastOn)
