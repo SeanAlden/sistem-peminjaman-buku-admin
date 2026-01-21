@@ -109,6 +109,38 @@ class AuthController extends Controller
     //     return response($response, 201);
     // }
 
+    // public function signin(Request $request)
+    // {
+    //     $request->validate([
+    //         'email' => 'required|email',
+    //         'password' => 'required|string',
+    //     ]);
+
+    //     $user = User::where('email', $request->email)->first();
+
+    //     // Cek apakah user ditemukan dan password sesuai
+    //     if (!$user || !Hash::check($request->password, $user->password)) {
+    //         return response([
+    //             'message' => 'Kredensial login salah'
+    //         ], 401);
+    //     }
+
+    //     // Cek apakah usertype adalah 'admin'
+    //     if ($user->usertype === 'admin') {
+    //         return response([
+    //             'message' => 'Login hanya diizinkan untuk user biasa'
+    //         ], 403);
+    //     }
+
+    //     // Jika lolos, generate token dan return response
+    //     $token = $user->createToken('auth_token')->plainTextToken;
+    //     $response = [
+    //         'user' => $user,
+    //         'token' => $token
+    //     ];
+    //     return response($response, 201);
+    // }
+
     public function signin(Request $request)
     {
         $request->validate([
@@ -118,27 +150,27 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        // Cek apakah user ditemukan dan password sesuai
         if (!$user || !Hash::check($request->password, $user->password)) {
-            return response([
-                'message' => 'Kredensial login salah'
-            ], 401);
+            return response(['message' => 'Kredensial login salah'], 401);
         }
 
-        // Cek apakah usertype adalah 'admin'
         if ($user->usertype === 'admin') {
-            return response([
-                'message' => 'Login hanya diizinkan untuk user biasa'
-            ], 403);
+            return response(['message' => 'Login hanya diizinkan untuk user biasa'], 403);
         }
 
-        // Jika lolos, generate token dan return response
         $token = $user->createToken('auth_token')->plainTextToken;
-        $response = [
-            'user' => $user,
-            'token' => $token
-        ];
-        return response($response, 201);
+
+        return response([
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'profile_image' => $user->profile_image
+                    ? Storage::disk('s3')->url('profile_images/' . $user->profile_image)
+                    : null,
+            ],
+            'token' => $token,
+        ], 201);
     }
 
     // Fungsi untuk melakukan logout
@@ -526,7 +558,3 @@ class AuthController extends Controller
 
 
 }
-
-
-
-
