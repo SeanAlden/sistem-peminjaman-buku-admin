@@ -165,9 +165,15 @@ class AuthController extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
+                'phone' => $user->phone,
+                'usertype' => $user->usertype,
                 'profile_image' => $user->profile_image
                     ? Storage::disk('s3')->url('profile_images/' . $user->profile_image)
                     : null,
+                'email_verified_at' => $user->email_verified_at,
+                'password' => $user->password,
+                'created_at' => $user->created_at,
+                'updated_at' => $user->updated_at,
             ],
             'token' => $token,
         ], 201);
