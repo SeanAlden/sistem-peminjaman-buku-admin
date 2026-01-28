@@ -748,4 +748,3 @@ class EntryBookController extends Controller
         }
     }
 }
-

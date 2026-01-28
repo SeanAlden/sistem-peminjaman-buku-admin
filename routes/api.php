@@ -2,13 +2,13 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\LoanController;
 use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BookController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\FavoriteController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\API\LoanController;
 // use App\Http\Controllers\Api\BookDetailController;
 use App\Http\Controllers\Api\ReservationController;
 
@@ -38,13 +38,12 @@ Route::middleware('auth:sanctum')->group(function () {
     // Route::get('/loans/check-active', [LoanController::class, 'checkActiveLoan']);
 
     // Routes Peminjaman (Existing)
-    Route::post('/loans', [LoanController::class, 'store']);
+    Route::post('/loans', [LoanController::class, 'create']);
     Route::get('/loans', [LoanController::class, 'index']);
     // Route::post('/loans/{id}/return', [LoanController::class, 'returnLoan']);
     Route::delete('/loans/{id}', [LoanController::class, 'cancelLoan']);
     Route::get('/loans/check-active', [LoanController::class, 'checkActiveLoan']);
     Route::post('/loans/{id}/request-return', [LoanController::class, 'requestReturn']); // <-- ROUTE BARU
-
     // Perubahan: Routes Reservasi (Baru)
     Route::get('/my-reservations', [ReservationController::class, 'index']);
     Route::get('/reservations/books/{id}', [ReservationController::class, 'show']);
@@ -79,4 +78,3 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/chat/messages/{user}', [ChatController::class, 'getMessages']);
     Route::post('/chat/send/{user}', [ChatController::class, 'sendMessage']);
 });
-

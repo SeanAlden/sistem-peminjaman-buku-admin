@@ -7,7 +7,7 @@ use App\Models\ExitBook;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 
-class ExitBookController extends Controller
+class ExitBookController extends Controller 
 {
     public function index(Request $request)
     {
@@ -51,7 +51,7 @@ class ExitBookController extends Controller
         $books = Book::all();
         $suppliers = Supplier::all();
 
-        // Kembalikan view 
+        // Kembalikan view
         return view('exit_books.exit_books', compact('exits', 'books', 'suppliers', 'search', 'perPage'));
     }
 

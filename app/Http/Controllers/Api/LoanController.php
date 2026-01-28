@@ -11,16 +11,30 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Foundation\Auth\User;
 use App\Events\NewNotificationEvent;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
 
 class LoanController extends Controller
 {
     // ... method store() dan index() tetap sama ...
-    public function store(Request $request)
+    public function create(Request $request)
     {
-        $request->validate([
+        // $request->validate([
+        //     'book_id' => 'required|exists:books,id',
+        //     'return_date' => 'required|date|after_or_equal:today',
+        // ]);
+
+        $validator = Validator::make($request->all(), [
             'book_id' => 'required|exists:books,id',
-            'return_date' => 'required|date|after_or_equal:today',
+            // 'return_date' => 'required|date|after_or_equal:today',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal',
+                'errors' => $validator->errors()
+            ], 422);
+        }
 
         $book = Book::findOrFail($request->book_id);
         $userId = auth()->id();
@@ -38,13 +52,14 @@ class LoanController extends Controller
         $now = now();
         $returnDate = \Carbon\Carbon::parse($request->return_date)->setTime(16, 59, 59);
         $loanDuration = $book->loan_duration;
-        $maxReturnedAt = $now->copy()->addDays($loanDuration)->setTime(16, 59, 59);
+        // $maxReturnedAt = $now->copy()->addDays($loanDuration)->setTime(16, 59, 59);
+        $maxReturnedAt = $now->copy()->addDays($loanDuration);
 
         $loan = Loan::create([
             'book_id' => $book->id,
             'user_id' => $userId,
             'loan_date' => $now,
-            'return_date' => $returnDate,
+            // 'return_date' => $returnDate,
             'status' => 'borrowed',
             'loan_duration' => $loanDuration,
             'max_returned_at' => $maxReturnedAt,
@@ -147,9 +162,12 @@ class LoanController extends Controller
             ->where('status', 'borrowed')
             ->findOrFail($id);
 
-        $loan->update(['status' => 'pending_return']);
+        $loan->update([
+            'status' => 'pending_return',
+            'return_date' => now(),
+        ]);
 
-        Log::info("Status loan ID: {$id} diubah menjadi 'pending_return'. Menunggu konfirmasi admin.");
+        Log::info("Status loan ID: {$id} diubah menjadi 'pending_return' dan return_date diisi. Menunggu konfirmasi admin.");
 
         // Notification::create([
         //     'user_id' => $id,

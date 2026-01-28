@@ -30,7 +30,7 @@ class LoanController extends Controller
                     })
                     ->orWhereHas('user', function ($q2) use ($search) {
                         $q2->where('name', 'like', "%{$search}%")
-                           ->orWhere('email', 'like', "%{$search}%");
+                            ->orWhere('email', 'like', "%{$search}%");
                     });
             });
         }
@@ -58,20 +58,20 @@ class LoanController extends Controller
         Log::info("Admin memulai konfirmasi pengembalian untuk loan ID: {$id}");
 
         $loan = Loan::with('book')->where('status', 'pending_return')->findOrFail($id);
-        
+
         $now = Carbon::now();
         $loanDate = Carbon::parse($loan->loan_date);
-        $expectedReturnDate = Carbon::parse($loan->return_date);
+        $expectedReturnDate = Carbon::parse($loan->max_returned_at);
         $maxReturnDate = $loanDate->copy()->addDays($loan->book->loan_duration);
 
         $statusNote = 'returned_on_time';
         $lateDays = 0;
         $fine = 0;
 
-        if ($now->isSameDay($expectedReturnDate)) {
-            $statusNote = 'Returned On Time';
-        } elseif ($now->lt($expectedReturnDate)) {
+        if ($now->lt($expectedReturnDate)) {
             $statusNote = 'Returned Earlier';
+        } elseif ($now->isSameDay($expectedReturnDate)) {
+            $statusNote = 'Returned On Time';
         } elseif ($now->gt($expectedReturnDate)) {
             if ($now->lte($maxReturnDate)) {
                 $statusNote = 'Late Within Allowed Duration';
@@ -82,7 +82,7 @@ class LoanController extends Controller
                 $fine = $lateDays * 1000; // Contoh denda per hari
             }
         }
-        
+
         $loan->update([
             'status' => 'returned',
             'actual_returned_at' => $now,
@@ -91,7 +91,7 @@ class LoanController extends Controller
             'fine_amount' => $fine,
         ]);
         Log::info("Data peminjaman loan ID: {$id} telah dikonfirmasi dan diperbarui.");
-        
+
         // 1. Tambah stok buku
         $loan->book->increment('stock');
         Log::info("Stok buku ID: {$loan->book_id} ditambah. Stok baru: " . $loan->book->fresh()->stock);
