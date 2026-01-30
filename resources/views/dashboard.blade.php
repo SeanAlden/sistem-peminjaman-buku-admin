@@ -172,9 +172,15 @@
                 },
                 options: {
                     responsive: true,
+                    animation: {
+                        duration: 2000, // Durasi 2 detik
+                        easing: 'easeInOutQuart', // Efek halus saat mulai dan selesai
+                    },
                     plugins: {
                         legend: {
-                            labels: { color: colors.text }
+                            labels: {
+                                color: colors.text
+                            }
                         },
                         tooltip: {
                             backgroundColor: colors.tooltipBg,
@@ -187,12 +193,21 @@
                     scales: {
                         y: {
                             beginAtZero: true,
-                            ticks: { stepSize: 1, color: colors.text },
-                            grid: { color: colors.grid }
+                            ticks: {
+                                stepSize: 1,
+                                color: colors.text
+                            },
+                            grid: {
+                                color: colors.grid
+                            }
                         },
                         x: {
-                            ticks: { color: colors.text },
-                            grid: { display: false }
+                            ticks: {
+                                color: colors.text
+                            },
+                            grid: {
+                                display: false
+                            }
                         }
                     }
                 }
@@ -214,10 +229,18 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    animation: {
+                        animateRotate: true, // Animasi berputar saat muncul
+                        animateScale: true, // Animasi mengembang dari tengah
+                        duration: 2000,
+                        easing: 'easeOutBounce' // Memberikan sedikit efek "membal" di akhir
+                    },
                     plugins: {
                         legend: {
                             position: 'right',
-                            labels: { color: colors.text }
+                            labels: {
+                                color: colors.text
+                            }
                         },
                         tooltip: {
                             backgroundColor: colors.tooltipBg,
@@ -230,7 +253,10 @@
                                 const percentage = {!! json_encode($categoryPercentages) !!}[context.dataIndex];
                                 return percentage + '%';
                             },
-                            font: { weight: 'bold', size: 14 }
+                            font: {
+                                weight: 'bold',
+                                size: 14
+                            }
                         }
                     }
                 },
@@ -294,8 +320,8 @@
                             if (scale.grid) scale.grid.color = newColors.grid;
                         });
                     }
-                    
-                    chart.update(); // Terapkan perubahan ke grafik
+
+                    chart.update('none');
                 });
             });
         });
