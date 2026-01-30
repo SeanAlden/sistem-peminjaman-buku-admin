@@ -479,144 +479,139 @@
                 };
             }
 
-            const initialDarkMode = document.documentElement.classList.contains('dark');
-            let colors = getChartColors(initialDarkMode);
+            // Kita definisikan variabel di luar agar bisa diakses oleh Alpine effect
+            let loanChart, categoryChart;
+            const isDark = document.documentElement.classList.contains('dark');
+            const colors = getChartColors(isDark);
 
-            // --- 1. Konfigurasi Loan Chart ---
-            const ctxLoan = document.getElementById('loanChart').getContext('2d');
-            const loanChart = new Chart(ctxLoan, {
-                type: 'line',
-                data: {
-                    labels: {!! json_encode($chartLabels) !!},
-                    datasets: [{
-                        label: 'Jumlah Peminjaman',
-                        data: {!! json_encode($chartData) !!},
-                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
-                        borderColor: 'rgba(59, 130, 246, 1)',
-                        pointBackgroundColor: 'rgba(59, 130, 246, 1)',
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.3,
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    // Pastikan animasi aktif
-                    animation: {
-                        duration: 1500,
-                        easing: 'easeOutQuart'
-                    },
-                    plugins: {
-                        legend: {
-                            labels: {
-                                color: colors.text
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                color: colors.text,
-                                stepSize: 1
-                            },
-                            grid: {
-                                color: colors.grid
-                            }
+            // --- FUNGSI UNTUK MEMBUAT CHART ---
+            // Dibungkus fungsi agar bisa kita panggil dengan sedikit delay
+            const initCharts = () => {
+                // 1. Loan Chart
+                const ctxLoan = document.getElementById('loanChart');
+                if (ctxLoan) {
+                    loanChart = new Chart(ctxLoan.getContext('2d'), {
+                        type: 'line',
+                        data: {
+                            labels: {!! json_encode($chartLabels) !!},
+                            datasets: [{
+                                label: 'Jumlah Peminjaman',
+                                data: {!! json_encode($chartData) !!},
+                                backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                                borderColor: 'rgba(59, 130, 246, 1)',
+                                pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+                                borderWidth: 2,
+                                fill: true,
+                                tension: 0.3,
+                            }]
                         },
-                        x: {
-                            ticks: {
-                                color: colors.text
+                        options: {
+                            responsive: true,
+                            animation: {
+                                duration: 1500,
+                                easing: 'easeInOutQuart'
                             },
-                            grid: {
-                                display: false
+                            plugins: {
+                                legend: {
+                                    labels: {
+                                        color: colors.text
+                                    }
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        color: colors.text
+                                    },
+                                    grid: {
+                                        color: colors.grid
+                                    }
+                                },
+                                x: {
+                                    ticks: {
+                                        color: colors.text
+                                    },
+                                    grid: {
+                                        display: false
+                                    }
+                                }
                             }
                         }
-                    }
+                    });
                 }
-            });
 
-            // --- 2. Konfigurasi Category Chart ---
-            const ctxCategory = document.getElementById('categoryChart').getContext('2d');
-            const categoryChart = new Chart(ctxCategory, {
-                type: 'pie',
-                data: {
-                    labels: {!! json_encode($categoryLabels) !!},
-                    datasets: [{
-                        data: {!! json_encode($categoryData) !!},
-                        backgroundColor: {!! json_encode($categoryBgColors) !!},
-                        borderColor: {!! json_encode($categoryBorderColors) !!},
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    animation: {
-                        animateRotate: true,
-                        animateScale: true,
-                        duration: 1500,
-                        easing: 'easeOutBack'
-                    },
-                    plugins: {
-                        legend: {
-                            position: 'right',
-                            labels: {
-                                color: colors.text
+                // 2. Category Chart
+                const ctxCategory = document.getElementById('categoryChart');
+                if (ctxCategory) {
+                    categoryChart = new Chart(ctxCategory.getContext('2d'), {
+                        type: 'pie',
+                        data: {
+                            labels: {!! json_encode($categoryLabels) !!},
+                            datasets: [{
+                                data: {!! json_encode($categoryData) !!},
+                                backgroundColor: {!! json_encode($categoryBgColors) !!},
+                                borderColor: {!! json_encode($categoryBorderColors) !!},
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            animation: {
+                                animateRotate: true,
+                                animateScale: true,
+                                duration: 1500,
+                                easing: 'easeOutBack'
+                            },
+                            plugins: {
+                                legend: {
+                                    position: 'right',
+                                    labels: {
+                                        color: colors.text
+                                    }
+                                },
+                                datalabels: {
+                                    color: colors.datalabelText,
+                                    formatter: (val, ctx) => {
+                                        return {!! json_encode($categoryPercentages) !!}[ctx.dataIndex] + '%';
+                                    },
+                                    font: {
+                                        weight: 'bold',
+                                        size: 12
+                                    }
+                                }
                             }
                         },
-                        datalabels: {
-                            color: colors.datalabelText,
-                            formatter: (value, context) => {
-                                const percentage = {!! json_encode($categoryPercentages) !!}[context.dataIndex];
-                                return percentage + '%';
-                            },
-                            font: {
-                                weight: 'bold',
-                                size: 12
-                            }
-                        }
-                    }
-                },
-                plugins: [ChartDataLabels]
-            });
+                        plugins: [ChartDataLabels]
+                    });
+                }
+            };
 
-            // --- 3. Logika Update Tema Tanpa Merusak Animasi ---
-            let skipFirstEffect = true; // Kunci utama: Abaikan jalannya effect saat pertama kali load
+            // --- EKSEKUSI DENGAN DELAY ---
+            // Delay 100ms memberikan waktu bagi browser untuk merender Canvas sepenuhnya
+            setTimeout(initCharts, 100);
 
+            // --- LOGIKA UPDATE TEMA ---
             Alpine.effect(() => {
-                const isDark = Alpine.store('theme').dark;
-                const newColors = getChartColors(isDark);
+                const darkModeActive = Alpine.store('theme').dark;
+                const newColors = getChartColors(darkModeActive);
 
-                // Jika ini baru pertama kali load halaman, jangan lakukan .update()
-                if (skipFirstEffect) {
-                    // Gunakan setTimeout agar flag berubah setelah render awal selesai
-                    setTimeout(() => {
-                        skipFirstEffect = false;
-                    }, 2000);
-                    return;
+                // Pastikan chart sudah terinisialisasi sebelum diupdate
+                if (loanChart && categoryChart) {
+                    [loanChart, categoryChart].forEach(chart => {
+                        chart.options.plugins.legend.labels.color = newColors.text;
+                        if (chart.options.plugins.datalabels) chart.options.plugins.datalabels
+                            .color = newColors.datalabelText;
+                        if (chart.options.scales) {
+                            Object.values(chart.options.scales).forEach(s => {
+                                if (s.ticks) s.ticks.color = newColors.text;
+                                if (s.grid) s.grid.color = newColors.grid;
+                            });
+                        }
+                        chart.update('none'); // Update instan tanpa trigger animasi ulang
+                    });
                 }
-
-                [loanChart, categoryChart].forEach(chart => {
-                    // Update Legend
-                    chart.options.plugins.legend.labels.color = newColors.text;
-
-                    // Update Datalabels jika ada
-                    if (chart.options.plugins.datalabels) {
-                        chart.options.plugins.datalabels.color = newColors.datalabelText;
-                    }
-
-                    // Update Scales (untuk line chart)
-                    if (chart.options.scales) {
-                        Object.values(chart.options.scales).forEach(scale => {
-                            if (scale.ticks) scale.ticks.color = newColors.text;
-                            if (scale.grid) scale.grid.color = newColors.grid;
-                        });
-                    }
-
-                    // Update secara instan (tanpa animasi) saat ganti tema
-                    chart.update('none');
-                });
             });
         });
     </script>
