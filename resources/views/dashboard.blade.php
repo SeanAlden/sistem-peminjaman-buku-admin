@@ -128,344 +128,9 @@
     </div>
 @endsection
 
-@section('scripts')
+{{-- @section('scripts')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
-
-    {{-- <script>
-        // document.addEventListener('DOMContentLoaded', function() {
-        // document.addEventListener('alpine:init', () => {
-        //     // --- PERBAIKAN UTAMA: Seluruh logika grafik dimasukkan ke dalam event listener Alpine ---
-
-        //     function getChartColors(darkMode) {
-        //         return {
-        //             text: darkMode ? '#E5E7EB' : '#374151',
-        //             grid: darkMode ? '#4B5563' : '#E5E7EB',
-        //             tooltipBg: darkMode ? '#1F2937' : '#FFFFFF',
-        //             // --- PERBAIKAN 1: Membuat warna tooltip dinamis ---
-        //             tooltipText: darkMode ? '#F3F4F6' : '#111827', // Terang saat dark, Gelap saat light
-        //             datalabelText: darkMode ? '#F9FAFB' : '#111827',
-        //         };
-        //     }
-
-        //     const initialDarkMode = document.documentElement.classList.contains('dark');
-        //     let colors = getChartColors(initialDarkMode);
-
-        //     // --- Chart Peminjaman (Loan Chart) ---
-        //     const ctxLoan = document.getElementById('loanChart').getContext('2d');
-        //     const loanChart = new Chart(ctxLoan, {
-        //         type: 'line',
-        //         data: {
-        //             labels: {!! json_encode($chartLabels) !!},
-        //             datasets: [{
-        //                 label: 'Jumlah Peminjaman',
-        //                 data: {!! json_encode($chartData) !!},
-        //                 backgroundColor: 'rgba(59, 130, 246, 0.2)',
-        //                 borderColor: 'rgba(59, 130, 246, 1)',
-        //                 pointBackgroundColor: 'rgba(59, 130, 246, 1)',
-        //                 borderWidth: 2,
-        //                 fill: true,
-        //                 tension: 0.3,
-        //                 pointRadius: 5,
-        //                 pointHoverRadius: 7
-        //             }]
-        //         },
-        //         options: {
-        //             responsive: true,
-        //             animation: {
-        //                 duration: 2000, // Durasi 2 detik
-        //                 easing: 'easeInOutQuart', // Efek halus saat mulai dan selesai
-        //             },
-        //             plugins: {
-        //                 legend: {
-        //                     labels: {
-        //                         color: colors.text
-        //                     }
-        //                 },
-        //                 tooltip: {
-        //                     backgroundColor: colors.tooltipBg,
-        //                     titleColor: colors.tooltipText,
-        //                     bodyColor: colors.tooltipText,
-        //                     borderColor: colors.grid,
-        //                     borderWidth: 1,
-        //                 }
-        //             },
-        //             scales: {
-        //                 y: {
-        //                     beginAtZero: true,
-        //                     ticks: {
-        //                         stepSize: 1,
-        //                         color: colors.text
-        //                     },
-        //                     grid: {
-        //                         color: colors.grid
-        //                     }
-        //                 },
-        //                 x: {
-        //                     ticks: {
-        //                         color: colors.text
-        //                     },
-        //                     grid: {
-        //                         display: false
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     });
-
-        //     // --- Chart Kategori (Category Chart) ---
-        //     const ctxCategory = document.getElementById('categoryChart').getContext('2d');
-        //     const categoryChart = new Chart(ctxCategory, {
-        //         type: 'pie',
-        //         data: {
-        //             labels: {!! json_encode($categoryLabels) !!},
-        //             datasets: [{
-        //                 data: {!! json_encode($categoryData) !!},
-        //                 backgroundColor: {!! json_encode($categoryBgColors) !!},
-        //                 borderColor: {!! json_encode($categoryBorderColors) !!},
-        //                 borderWidth: 1
-        //             }]
-        //         },
-        //         options: {
-        //             responsive: true,
-        //             maintainAspectRatio: false,
-        //             animation: {
-        //                 animateRotate: true, // Animasi berputar saat muncul
-        //                 animateScale: true, // Animasi mengembang dari tengah
-        //                 duration: 2000,
-        //                 easing: 'easeOutBounce' // Memberikan sedikit efek "membal" di akhir
-        //             },
-        //             plugins: {
-        //                 legend: {
-        //                     position: 'right',
-        //                     labels: {
-        //                         color: colors.text
-        //                     }
-        //                 },
-        //                 tooltip: {
-        //                     backgroundColor: colors.tooltipBg,
-        //                     titleColor: colors.tooltipText,
-        //                     bodyColor: colors.tooltipText,
-        //                 },
-        //                 datalabels: {
-        //                     color: colors.datalabelText,
-        //                     formatter: (value, context) => {
-        //                         const percentage = {!! json_encode($categoryPercentages) !!}[context.dataIndex];
-        //                         return percentage + '%';
-        //                     },
-        //                     font: {
-        //                         weight: 'bold',
-        //                         size: 14
-        //                     }
-        //                 }
-        //             }
-        //         },
-        //         plugins: [ChartDataLabels]
-        //     });
-
-        //     // --- Event Listener untuk Dark Mode Toggle ---
-        //     // document.addEventListener('alpine:init', () => {
-        //     //     Alpine.effect(() => {
-        //     //         const newDarkMode = document.documentElement.classList.contains('dark');
-        //     //         const newColors = getChartColors(newDarkMode);
-
-        //     //         [loanChart, categoryChart].forEach(chart => {
-        //     //             // Update warna umum
-        //     //             chart.options.plugins.legend.labels.color = newColors.text;
-        //     //             chart.options.plugins.tooltip.backgroundColor = newColors.tooltipBg;
-        //     //             chart.options.plugins.tooltip.titleColor = newColors.tooltipText;
-        //     //             chart.options.plugins.tooltip.bodyColor = newColors.tooltipText;
-
-        //     //             // --- PERBAIKAN 2: Tambahkan update untuk Datalabels ---
-        //     //             if (chart.options.plugins.datalabels) {
-        //     //                 chart.options.plugins.datalabels.color = newColors.datalabelText;
-        //     //             }
-
-        //     //             // Update warna sumbu (hanya untuk line chart)
-        //     //             if (chart.options.scales) {
-        //     //                 Object.values(chart.options.scales).forEach(scale => {
-        //     //                     if (scale.ticks) scale.ticks.color = newColors.text;
-        //     //                     if (scale.grid) scale.grid.color = newColors.grid;
-        //     //                 });
-        //     //             }
-
-        //     //             chart.update();
-        //     //         });
-        //     //     });
-        //     // });
-
-        //     // Ini adalah bagian kuncinya:
-        //     // Alpine.effect() akan secara otomatis berjalan setiap kali
-        //     // state di dalam store ('theme.dark') berubah.
-        //     Alpine.effect(() => {
-        //         const newDarkMode = Alpine.store('theme').dark;
-        //         const newColors = getChartColors(newDarkMode);
-
-        //         console.log('Dark mode changed, updating charts...');
-
-        //         [loanChart, categoryChart].forEach(chart => {
-        //             // Update semua warna yang diperlukan
-        //             chart.options.plugins.legend.labels.color = newColors.text;
-        //             chart.options.plugins.tooltip.backgroundColor = newColors.tooltipBg;
-        //             chart.options.plugins.tooltip.titleColor = newColors.tooltipText;
-        //             chart.options.plugins.tooltip.bodyColor = newColors.tooltipText;
-
-        //             if (chart.options.plugins.datalabels) {
-        //                 chart.options.plugins.datalabels.color = newColors.datalabelText;
-        //             }
-
-        //             if (chart.options.scales) {
-        //                 Object.values(chart.options.scales).forEach(scale => {
-        //                     if (scale.ticks) scale.ticks.color = newColors.text;
-        //                     if (scale.grid) scale.grid.color = newColors.grid;
-        //                 });
-        //             }
-
-        //             chart.update('none');
-        //         });
-        //     });
-        // });
-
-        document.addEventListener('alpine:init', () => {
-            function getChartColors(darkMode) {
-                return {
-                    text: darkMode ? '#E5E7EB' : '#374151',
-                    grid: darkMode ? '#4B5563' : '#E5E7EB',
-                    tooltipBg: darkMode ? '#1F2937' : '#FFFFFF',
-                    tooltipText: darkMode ? '#F3F4F6' : '#111827',
-                    datalabelText: darkMode ? '#F9FAFB' : '#111827',
-                };
-            }
-
-            const initialDarkMode = document.documentElement.classList.contains('dark');
-            let colors = getChartColors(initialDarkMode);
-
-            // --- 1. Konfigurasi Loan Chart ---
-            const ctxLoan = document.getElementById('loanChart').getContext('2d');
-            const loanChart = new Chart(ctxLoan, {
-                type: 'line',
-                data: {
-                    labels: {!! json_encode($chartLabels) !!},
-                    datasets: [{
-                        label: 'Jumlah Peminjaman',
-                        data: {!! json_encode($chartData) !!},
-                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
-                        borderColor: 'rgba(59, 130, 246, 1)',
-                        fill: true,
-                        tension: 0.3,
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    // Animasi masuk
-                    animation: {
-                        duration: 2000,
-                        easing: 'easeInOutQuart'
-                    },
-                    plugins: {
-                        legend: {
-                            labels: {
-                                color: colors.text
-                            }
-                        },
-                    },
-                    scales: {
-                        y: {
-                            ticks: {
-                                color: colors.text
-                            },
-                            grid: {
-                                color: colors.grid
-                            }
-                        },
-                        x: {
-                            ticks: {
-                                color: colors.text
-                            },
-                            grid: {
-                                display: false
-                            }
-                        }
-                    }
-                }
-            });
-
-            // --- 2. Konfigurasi Category Chart ---
-            const ctxCategory = document.getElementById('categoryChart').getContext('2d');
-            const categoryChart = new Chart(ctxCategory, {
-                type: 'pie',
-                data: {
-                    labels: {!! json_encode($categoryLabels) !!},
-                    datasets: [{
-                        data: {!! json_encode($categoryData) !!},
-                        backgroundColor: {!! json_encode($categoryBgColors) !!},
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    // Animasi masuk khusus Pie
-                    animation: {
-                        animateRotate: true,
-                        animateScale: true,
-                        duration: 2000,
-                        easing: 'easeOutBounce'
-                    },
-                    plugins: {
-                        legend: {
-                            position: 'right',
-                            labels: {
-                                color: colors.text
-                            }
-                        },
-                        datalabels: {
-                            color: colors.datalabelText,
-                            formatter: (value, context) => {
-                                const percentage = {!! json_encode($categoryPercentages) !!}[context.dataIndex];
-                                return percentage + '%';
-                            },
-                            font: {
-                                weight: 'bold',
-                                size: 14
-                            }
-                        }
-                    }
-                },
-                plugins: [ChartDataLabels]
-            });
-
-            // --- 3. Logika Update Tema (Alpine Effect) ---
-            let isInitialLoad = true;
-
-            Alpine.effect(() => {
-                const newDarkMode = Alpine.store('theme').dark;
-                const newColors = getChartColors(newDarkMode);
-
-                // Jangan update warna di milidetik pertama agar animasi initial tidak terputus
-                const updateMode = isInitialLoad ? 'default' : 'none';
-
-                [loanChart, categoryChart].forEach(chart => {
-                    chart.options.plugins.legend.labels.color = newColors.text;
-                    if (chart.options.plugins.datalabels) chart.options.plugins.datalabels.color =
-                        newColors.datalabelText;
-
-                    if (chart.options.scales) {
-                        Object.values(chart.options.scales).forEach(scale => {
-                            if (scale.ticks) scale.ticks.color = newColors.text;
-                            if (scale.grid) scale.grid.color = newColors.grid;
-                        });
-                    }
-
-                    // Tambahkan sedikit delay agar animasi render pertama selesai
-                    setTimeout(() => {
-                        chart.update(updateMode);
-                        isInitialLoad = false;
-                    }, 100);
-                });
-            });
-        });
-    </script> --}}
 
     <script>
         document.addEventListener('alpine:init', () => {
@@ -611,6 +276,132 @@
                         }
                         chart.update('none'); // Update instan tanpa trigger animasi ulang
                     });
+                }
+            });
+        });
+    </script>
+@endsection --}}
+
+@section('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
+    <script>
+        // Gunakan let agar bisa diakses antar scope
+        let loanChart, categoryChart;
+
+        function getChartColors(darkMode) {
+            return {
+                text: darkMode ? '#E5E7EB' : '#374151',
+                grid: darkMode ? '#4B5563' : '#E5E7EB',
+                tooltipBg: darkMode ? '#1F2937' : '#FFFFFF',
+                tooltipText: darkMode ? '#F3F4F6' : '#111827',
+                datalabelText: darkMode ? '#F9FAFB' : '#111827',
+            };
+        }
+
+        // FUNGSI RENDER UTAMA
+        function renderCharts() {
+            const isDark = document.documentElement.classList.contains('dark');
+            const colors = getChartColors(isDark);
+
+            // 1. Loan Chart
+            const ctxLoan = document.getElementById('loanChart');
+            if (ctxLoan && !loanChart) {
+                loanChart = new Chart(ctxLoan.getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: {!! json_encode($chartLabels) !!},
+                        datasets: [{
+                            label: 'Jumlah Peminjaman',
+                            data: {!! json_encode($chartData) !!},
+                            backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                            borderColor: 'rgba(59, 130, 246, 1)',
+                            pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.3,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        animation: { duration: 1500, easing: 'easeInOutQuart' },
+                        plugins: { legend: { labels: { color: colors.text } } },
+                        scales: {
+                            y: { beginAtZero: true, ticks: { color: colors.text }, grid: { color: colors.grid } },
+                            x: { ticks: { color: colors.text }, grid: { display: false } }
+                        }
+                    }
+                });
+            }
+
+            // 2. Category Chart
+            const ctxCategory = document.getElementById('categoryChart');
+            if (ctxCategory && !categoryChart) {
+                categoryChart = new Chart(ctxCategory.getContext('2d'), {
+                    type: 'pie',
+                    data: {
+                        labels: {!! json_encode($categoryLabels) !!},
+                        datasets: [{
+                            data: {!! json_encode($categoryData) !!},
+                            backgroundColor: {!! json_encode($categoryBgColors) !!},
+                            borderColor: {!! json_encode($categoryBorderColors) !!},
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: {
+                            animateRotate: true,
+                            animateScale: true,
+                            duration: 1500,
+                            easing: 'easeOutBack'
+                        },
+                        plugins: {
+                            legend: { position: 'right', labels: { color: colors.text } },
+                            datalabels: {
+                                color: colors.datalabelText,
+                                formatter: (val, ctx) => {
+                                    return {!! json_encode($categoryPercentages) !!}[ctx.dataIndex] + '%';
+                                },
+                                font: { weight: 'bold', size: 12 }
+                            }
+                        }
+                    },
+                    plugins: [ChartDataLabels]
+                });
+            }
+        }
+
+        // Jalankan saat DOM siap
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', renderCharts);
+        } else {
+            renderCharts();
+        }
+
+        // Integrasi dengan Alpine Store untuk toggle tema
+        document.addEventListener('alpine:init', () => {
+            Alpine.effect(() => {
+                // Pastikan Alpine Store tema sudah ada
+                if (Alpine.store('theme')) {
+                    const darkModeActive = Alpine.store('theme').dark;
+                    const newColors = getChartColors(darkModeActive);
+
+                    if (loanChart && categoryChart) {
+                        [loanChart, categoryChart].forEach(chart => {
+                            chart.options.plugins.legend.labels.color = newColors.text;
+                            if (chart.options.plugins.datalabels) chart.options.plugins.datalabels.color = newColors.datalabelText;
+                            if (chart.options.scales) {
+                                Object.values(chart.options.scales).forEach(s => {
+                                    if (s.ticks) s.ticks.color = newColors.text;
+                                    if (s.grid) s.grid.color = newColors.grid;
+                                });
+                            }
+                            chart.update('none'); // Update instan saat toggle tema
+                        });
+                    }
                 }
             });
         });
