@@ -16,7 +16,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach($employees as $emp)
+        @foreach ($employees as $emp)
         <tr>
             <td>{{ $emp->id }}</td>
             <td>{{ $emp->name }}</td>
@@ -61,7 +61,7 @@
                 </tr>
             </thead>
             <tbody class="bg-gray-200 divide-gray-200 dividbg-e-y dark:bg-gray-500 dark:divide-gray-800">
-                @foreach($employees as $emp)
+                @foreach ($employees as $emp)
                 <tr class="hover:bg-gray-50 hover:dark:bg-gray-600">
                     <td class="px-6 py-4 text-gray-800 dark:text-white">{{ $emp->id }}</td>
                     <td class="px-6 py-4 font-medium text-gray-800 dark:text-white">{{ $emp->name }}</td>
@@ -108,6 +108,39 @@
             </button>
         </div>
 
+        @if (session('success'))
+            <div id="success-alert"
+                class="px-4 py-3 mb-6 text-green-700 bg-green-100 border border-green-400 rounded transition-opacity duration-500"
+                role="alert">
+                {{ session('success') }}
+            </div>
+            <script>
+                setTimeout(() => {
+                    const alert = document.getElementById('success-alert');
+                    if (alert) {
+                        alert.classList.add('opacity-0');
+                        setTimeout(() => alert.remove(), 500);
+                    }
+                }, 2000);
+            </script>
+        @endif
+        @if (session('error'))
+            <div id="error-alert"
+                class="px-4 py-3 mb-6 text-red-700 bg-red-100 border border-red-400 rounded transition-opacity duration-500"
+                role="alert">
+                {{ session('error') }}
+            </div>
+            <script>
+                setTimeout(() => {
+                    const alert = document.getElementById('error-alert');
+                    if (alert) {
+                        alert.classList.add('opacity-0');
+                        setTimeout(() => alert.remove(), 500);
+                    }
+                }, 2000);
+            </script>
+        @endif
+
         <!-- Fitur Search dan Items per Page -->
         <div class="flex items-center justify-between mb-4">
             <div class="flex items-center">
@@ -150,7 +183,7 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                    @foreach($employees as $emp)
+                    @foreach ($employees as $emp)
                         <tr class="hover:bg-gray-50 hover:dark:bg-gray-700">
                             <td class="px-6 py-4">{{ $emp->id }}</td>
                             <td class="px-6 py-4 font-medium">{{ $emp->name }}</td>
@@ -162,7 +195,8 @@
                                     class="px-3 py-1 text-white transition bg-yellow-500 rounded hover:bg-yellow-600">
                                     Edit
                                 </button>
-                                <form action="{{ route('employees.destroy', $emp->id) }}" method="POST" class="inline-block">
+                                <form action="{{ route('employees.destroy', $emp->id) }}" method="POST"
+                                    class="inline-block">
                                     @csrf @method('DELETE')
                                     <button onclick="return confirm('Delete employee?')"
                                         class="px-3 py-1 text-white transition bg-red-500 rounded hover:bg-red-600">
@@ -181,7 +215,8 @@
             <div>
                 @if ($employees->total() > 0)
                     <p class="text-sm text-gray-700 dark:text-white">
-                        Showing {{ $employees->firstItem() }} to {{ $employees->lastItem() }} of {{ $employees->total() }}
+                        Showing {{ $employees->firstItem() }} to {{ $employees->lastItem() }} of
+                        {{ $employees->total() }}
                         entries
                     </p>
                 @endif
@@ -191,7 +226,8 @@
                     <nav role="navigation" aria-label="Pagination Navigation" class="flex items-center">
                         {{-- Previous Page Link --}}
                         @if ($employees->onFirstPage())
-                            <span class="px-3 py-1 mr-1 text-gray-400 bg-white border rounded cursor-not-allowed">Prev</span>
+                            <span
+                                class="px-3 py-1 mr-1 text-gray-400 bg-white border rounded cursor-not-allowed">Prev</span>
                         @else
                             <a href="{{ $employees->previousPageUrl() }}" rel="prev"
                                 class="px-3 py-1 mr-1 text-gray-700 bg-white border rounded hover:bg-gray-50">Prev</a>
@@ -239,9 +275,11 @@
 
                         @foreach ($links as $link)
                             @if ($link === '...')
-                                <span class="px-3 py-1 mr-1 text-gray-500 bg-white border rounded">{{ $link }}</span>
+                                <span
+                                    class="px-3 py-1 mr-1 text-gray-500 bg-white border rounded">{{ $link }}</span>
                             @elseif ($link == $currentPage)
-                                <span class="px-3 py-1 mr-1 text-white bg-blue-500 border border-blue-500 rounded">{{ $link }}</span>
+                                <span
+                                    class="px-3 py-1 mr-1 text-white bg-blue-500 border border-blue-500 rounded">{{ $link }}</span>
                             @else
                                 <a href="{{ $employees->url($link) }}"
                                     class="px-3 py-1 mr-1 text-gray-700 bg-white border rounded hover:bg-gray-50">{{ $link }}</a>
@@ -253,7 +291,8 @@
                             <a href="{{ $employees->nextPageUrl() }}" rel="next"
                                 class="px-3 py-1 ml-1 text-gray-700 bg-white border rounded hover:bg-gray-50">Next</a>
                         @else
-                            <span class="px-3 py-1 ml-1 text-gray-400 bg-white border rounded cursor-not-allowed">Next</span>
+                            <span
+                                class="px-3 py-1 ml-1 text-gray-400 bg-white border rounded cursor-not-allowed">Next</span>
                         @endif
                     </nav>
                 @endif
@@ -353,18 +392,22 @@
                 openCreate() {
                     this.modalType = 'create';
                     this.employee = {};
-                    this.formAction = '{{ route("employees.store") }}';
+                    this.formAction = '{{ route('employees.store') }}';
                     this.showModal = true;
                 },
                 openEdit(emp) {
                     this.modalType = 'edit';
-                    this.employee = { ...emp };
+                    this.employee = {
+                        ...emp
+                    };
                     this.formAction = `/employees/${emp.id}`;
                     this.showModal = true;
                 },
                 openShow(emp) {
                     this.modalType = 'show';
-                    this.employee = { ...emp };
+                    this.employee = {
+                        ...emp
+                    };
                     this.showModal = true;
                 },
                 closeModal() {

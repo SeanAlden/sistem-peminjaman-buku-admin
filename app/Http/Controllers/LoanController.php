@@ -62,26 +62,37 @@ class LoanController extends Controller
         $now = Carbon::now();
         $loanDate = Carbon::parse($loan->loan_date);
         $expectedReturnDate = Carbon::parse($loan->max_returned_at);
-        $maxReturnDate = $loanDate->copy()->addDays($loan->book->loan_duration);
+        // $maxReturnDate = $loanDate->copy()->addDays($loan->book->loan_duration);
 
         $statusNote = 'returned_on_time';
         $lateDays = 0;
         $fine = 0;
+
+        // if ($now->lt($expectedReturnDate)) {
+        //     $statusNote = 'Returned Earlier';
+        // } elseif ($now->isSameDay($expectedReturnDate)) {
+        //     $statusNote = 'Returned On Time';
+        // } elseif ($now->gt($expectedReturnDate)) {
+        //     if ($now->lte($maxReturnDate)) {
+        //         $statusNote = 'Late Within Allowed Duration';
+        //         $lateDays = $expectedReturnDate->diffInDays($now);
+        //     } else {
+        //         $statusNote = 'Overdue';
+        //         $lateDays = $maxReturnDate->diffInDays($now);
+        //         $fine = $lateDays * 1000; // Contoh denda per hari
+        //     }
+        // }
 
         if ($now->lt($expectedReturnDate)) {
             $statusNote = 'Returned Earlier';
         } elseif ($now->isSameDay($expectedReturnDate)) {
             $statusNote = 'Returned On Time';
         } elseif ($now->gt($expectedReturnDate)) {
-            if ($now->lte($maxReturnDate)) {
-                $statusNote = 'Late Within Allowed Duration';
-                $lateDays = $expectedReturnDate->diffInDays($now);
-            } else {
-                $statusNote = 'Overdue';
-                $lateDays = $maxReturnDate->diffInDays($now);
-                $fine = $lateDays * 1000; // Contoh denda per hari
-            }
+            $statusNote = 'Overdue';
+            $lateDays = $expectedReturnDate->diffInDays($now);
+            $fine = $lateDays * 1000; 
         }
+
 
         $loan->update([
             'status' => 'returned',

@@ -4,11 +4,29 @@
     <div class="container mx-auto mt-6">
         <h2 class="mb-4 text-2xl font-bold text-gray-800 dark:text-white">Student List</h2>
 
-        @if(session('success'))
+        {{-- @if (session('success'))
             <div class="px-4 py-3 mb-4 text-green-700 bg-green-100 border border-green-400 rounded">
                 {{ session('success') }}
             </div>
+        @endif --}}
+
+        @if (session('success'))
+            <div id="success-alert"
+                class="px-4 py-3 mb-4 text-green-700 bg-green-100 border border-green-400 rounded transition-opacity duration-500">
+                {{ session('success') }}
+            </div>
+
+            <script>
+                setTimeout(() => {
+                    const alert = document.getElementById('success-alert');
+                    if (alert) {
+                        alert.classList.add('opacity-0');
+                        setTimeout(() => alert.remove(), 500);
+                    }
+                }, 2000);
+            </script>
         @endif
+
 
         <div class="mb-4">
             <button onclick="openModal('createModal')"
@@ -98,8 +116,8 @@
                                         Delete
                                     </button>
                                 </form> --}}
-                                <form id="deleteForm-{{ $student->id }}" action="{{ route('students.destroy', $student->id) }}"
-                                    method="POST">
+                                <form id="deleteForm-{{ $student->id }}"
+                                    action="{{ route('students.destroy', $student->id) }}" method="POST">
                                     @csrf
                                     @method('DELETE')
                                     <button type="button" onclick="openDeleteModal({{ $student->id }})"
@@ -125,7 +143,8 @@
             <div>
                 @if ($students->total() > 0)
                     <p class="text-sm text-gray-700 dark:text-white">
-                        Showing {{ $students->firstItem() }} to {{ $students->lastItem() }} of {{ $students->total() }} entries
+                        Showing {{ $students->firstItem() }} to {{ $students->lastItem() }} of {{ $students->total() }}
+                        entries
                     </p>
                 @endif
             </div>
@@ -134,7 +153,8 @@
                     <nav role="navigation" aria-label="Pagination Navigation" class="flex items-center">
                         {{-- Previous Page Link --}}
                         @if ($students->onFirstPage())
-                            <span class="px-3 py-1 mr-1 text-gray-400 bg-white border rounded cursor-not-allowed">Prev</span>
+                            <span
+                                class="px-3 py-1 mr-1 text-gray-400 bg-white border rounded cursor-not-allowed">Prev</span>
                         @else
                             <a href="{{ $students->previousPageUrl() }}" rel="prev"
                                 class="px-3 py-1 mr-1 text-gray-700 bg-white border rounded hover:bg-gray-50">Prev</a>
@@ -182,9 +202,11 @@
 
                         @foreach ($links as $link)
                             @if ($link === '...')
-                                <span class="px-3 py-1 mr-1 text-gray-500 bg-white border rounded">{{ $link }}</span>
+                                <span
+                                    class="px-3 py-1 mr-1 text-gray-500 bg-white border rounded">{{ $link }}</span>
                             @elseif ($link == $currentPage)
-                                <span class="px-3 py-1 mr-1 text-white bg-blue-500 border border-blue-500 rounded">{{ $link }}</span>
+                                <span
+                                    class="px-3 py-1 mr-1 text-white bg-blue-500 border border-blue-500 rounded">{{ $link }}</span>
                             @else
                                 <a href="{{ $students->url($link) }}"
                                     class="px-3 py-1 mr-1 text-gray-700 bg-white border rounded hover:bg-gray-50">{{ $link }}</a>
@@ -196,7 +218,8 @@
                             <a href="{{ $students->nextPageUrl() }}" rel="next"
                                 class="px-3 py-1 ml-1 text-gray-700 bg-white border rounded hover:bg-gray-50">Next</a>
                         @else
-                            <span class="px-3 py-1 ml-1 text-gray-400 bg-white border rounded cursor-not-allowed">Next</span>
+                            <span
+                                class="px-3 py-1 ml-1 text-gray-400 bg-white border rounded cursor-not-allowed">Next</span>
                         @endif
                     </nav>
                 @endif
@@ -224,7 +247,8 @@
                     </div>
                     <div class="mb-4">
                         <label class="block mb-1 text-sm font-medium text-gray-700">Phone</label>
-                        <input name="phone" type="text" required maxlength="12" class="w-full px-3 py-2 border rounded" />
+                        <input name="phone" type="text" required maxlength="12"
+                            class="w-full px-3 py-2 border rounded" />
                     </div>
                     <div class="mb-4">
                         <label class="block mb-1 text-sm font-medium text-gray-700">Description</label>
@@ -240,7 +264,8 @@
         </div>
 
         <!-- Edit Modal -->
-        <div id="editModal" class="fixed inset-0 z-50 hidden overflow-y-auto" style="background-color: rgba(0, 0, 0, 0.5);">
+        <div id="editModal" class="fixed inset-0 z-50 hidden overflow-y-auto"
+            style="background-color: rgba(0, 0, 0, 0.5);">
             <div class="relative w-full max-w-lg p-6 mx-auto mt-20 bg-white rounded shadow-lg">
                 <h2 class="mb-4 text-xl font-semibold text-gray-700">Edit Student</h2>
                 <form id="editForm" method="POST">
@@ -256,7 +281,8 @@
                     </div>
                     <div class="mb-4">
                         <label class="block mb-1 text-sm font-medium text-gray-700">Email</label>
-                        <input name="email" id="editEmail" type="email" required class="w-full px-3 py-2 border rounded" />
+                        <input name="email" id="editEmail" type="email" required
+                            class="w-full px-3 py-2 border rounded" />
                     </div>
                     <div class="mb-4">
                         <label class="block mb-1 text-sm font-medium text-gray-700">Phone</label>
@@ -265,8 +291,7 @@
                     </div>
                     <div class="mb-4">
                         <label class="block mb-1 text-sm font-medium text-gray-700">Description</label>
-                        <textarea name="description" id="editDescription" rows="3"
-                            class="w-full px-3 py-2 border rounded"></textarea>
+                        <textarea name="description" id="editDescription" rows="3" class="w-full px-3 py-2 border rounded"></textarea>
                     </div>
                     <div class="flex justify-end space-x-2">
                         <button type="button" onclick="closeModal('editModal')"
@@ -316,7 +341,7 @@
             </div>
         </div>
 
-@endsection
+    @endsection
     @section('scripts')
         <script>
             let deleteStudentId = null;
@@ -326,7 +351,7 @@
                 document.getElementById('deleteModal').classList.remove('hidden');
             }
 
-            document.getElementById('confirmDeleteBtn').addEventListener('click', function () {
+            document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
                 if (deleteStudentId) {
                     document.getElementById(`deleteForm-${deleteStudentId}`).submit();
                 }
@@ -335,9 +360,11 @@
             function openModal(id) {
                 document.getElementById(id).classList.remove('hidden');
             }
+
             function closeModal(id) {
                 document.getElementById(id).classList.add('hidden');
             }
+
             function fillEditModal(student) {
                 const form = document.getElementById('editForm');
                 form.action = `/admin/students/${student.id}`;
@@ -348,6 +375,7 @@
                 document.getElementById('editDescription').value = student.description || '';
                 openModal('editModal');
             }
+
             function fillViewModal(student) {
                 document.getElementById('viewName').textContent = student.name;
                 document.getElementById('viewMajor').textContent = student.major;

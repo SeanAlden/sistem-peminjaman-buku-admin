@@ -8,7 +8,7 @@
         Tambah Supplier
     </button>
 
-    @if(session('success'))
+    @if (session('success'))
     <div class="mt-2 text-green-600">{{ session('success') }}</div>
     @endif
 
@@ -22,7 +22,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($suppliers as $supplier)
+            @foreach ($suppliers as $supplier)
             <tr>
                 <td class="px-4 py-2 border">{{ $supplier->id }}</td>
                 <td class="px-4 py-2 border">{{ $supplier->name }}</td>
@@ -31,7 +31,7 @@
                     <button onclick="openEditSupplierModal({{ $supplier->id }})"
                         class="px-2 py-1 text-white bg-yellow-400 rounded cursor-pointer">Edit</button>
 
-                    @if($supplier->purchases->count() === 0)
+                    @if ($supplier->purchases->count() === 0)
                     <form action="{{ route('suppliers.destroy', $supplier->id) }}" method="POST" class="inline">
                         @csrf @method('DELETE')
                         <button type="submit" class="px-2 py-1 text-white bg-red-500 rounded cursor-pointer"
@@ -108,7 +108,8 @@
             <div class="flex flex-col items-start justify-between mb-6 sm:flex-row sm:items-center">
                 <div>
                     <h1 class="text-3xl font-bold text-gray-800 dark:text-white">Daftar Supplier</h1>
-                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Kelola data supplier untuk kebutuhan pembelian Anda.</p>
+                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Kelola data supplier untuk kebutuhan pembelian
+                        Anda.</p>
                 </div>
                 <button onclick="openAddSupplierModal()"
                     class="flex items-center gap-2 px-4 py-2 mt-4 text-white transition-colors duration-200 bg-blue-600 rounded-lg shadow-md cursor-pointer sm:mt-0 hover:bg-blue-700">
@@ -120,6 +121,8 @@
                     Tambah Supplier
                 </button>
             </div>
+
+            
 
             <!-- Fitur Search dan Items per Page -->
             <div class="flex items-center justify-between mb-4">
@@ -150,7 +153,7 @@
             </div>
             <!-- End Fitur -->
 
-            @if(session('success'))
+            @if (session('success'))
                 <div id="success-alert"
                     class="relative p-4 mb-6 text-green-700 bg-green-100 border-l-4 border-green-500 rounded-md shadow-sm"
                     role="alert">
@@ -166,12 +169,22 @@
                         </svg>
                     </button>
                 </div>
+                <script>
+                    setTimeout(() => {
+                        const alert = document.getElementById('success-alert');
+                        if (alert) {
+                            alert.classList.add('opacity-0');
+                            setTimeout(() => alert.remove(), 500);
+                        }
+                    }, 2000);
+                </script>
             @endif
 
             <div class="overflow-hidden bg-white dark:bg-gray-500" rounded-lg shadow-lg">
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm text-left text-gray-600">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-100 border-b-2 border-gray-200 dark:bg-gray-300">
+                        <thead
+                            class="text-xs text-gray-700 uppercase bg-gray-100 border-b-2 border-gray-200 dark:bg-gray-300">
                             <tr>
                                 <th scope="col" class="px-6 py-3">ID</th>
                                 <th scope="col" class="px-6 py-3">Nama Supplier</th>
@@ -183,8 +196,10 @@
                         </thead>
                         <tbody>
                             @forelse($suppliers as $supplier)
-                                <tr class="transition-colors duration-150 bg-white dark:bg-gray-500" border-b hover:bg-gray-50">
-                                    <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">{{ $supplier->id }}</td>
+                                <tr class="transition-colors duration-150 bg-white dark:bg-gray-500" border-b
+                                    hover:bg-gray-50">
+                                    <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">{{ $supplier->id }}
+                                    </td>
                                     <td class="px-6 py-4 dark:text-white">{{ $supplier->name }}</td>
                                     <td class="px-6 py-4 dark:text-white">{{ $supplier->phone }}</td>
                                     <td class="px-6 py-4 dark:text-white">{{ $supplier->email }}</td>
@@ -201,16 +216,17 @@
                                                 Edit
                                             </button>
 
-                                            @if($supplier->purchases->count() === 0)
-                                                <form action="{{ route('suppliers.destroy', $supplier->id) }}" method="POST"
-                                                    class="inline"
+                                            @if ($supplier->purchases->count() === 0)
+                                                <form action="{{ route('suppliers.destroy', $supplier->id) }}"
+                                                    method="POST" class="inline"
                                                     onsubmit="return confirm('Apakah Anda yakin ingin menghapus supplier ini? Tindakan ini tidak dapat dibatalkan.');">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit"
                                                         class="flex items-center gap-1 font-medium text-red-600 hover:text-red-800">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none"
-                                                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4"
+                                                            fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                                            stroke-width="2">
                                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                         </svg>
@@ -220,8 +236,9 @@
                                             @else
                                                 <span class="flex items-center gap-1 text-gray-400 cursor-not-allowed"
                                                     title="Tidak dapat dihapus karena supplier memiliki data pembelian.">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none"
-                                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4"
+                                                        fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                                        stroke-width="2">
                                                         <path stroke-linecap="round" stroke-linejoin="round"
                                                             d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                     </svg>
@@ -248,7 +265,8 @@
                 <div>
                     @if ($suppliers->total() > 0)
                         <p class="text-sm text-gray-700 dark:text-white">
-                            Showing {{ $suppliers->firstItem() }} to {{ $suppliers->lastItem() }} of {{ $suppliers->total() }}
+                            Showing {{ $suppliers->firstItem() }} to {{ $suppliers->lastItem() }} of
+                            {{ $suppliers->total() }}
                             entries
                         </p>
                     @endif
@@ -258,7 +276,8 @@
                         <nav role="navigation" aria-label="Pagination Navigation" class="flex items-center">
                             {{-- Previous Page Link --}}
                             @if ($suppliers->onFirstPage())
-                                <span class="px-3 py-1 mr-1 text-gray-400 bg-white border rounded cursor-not-allowed">Prev</span>
+                                <span
+                                    class="px-3 py-1 mr-1 text-gray-400 bg-white border rounded cursor-not-allowed">Prev</span>
                             @else
                                 <a href="{{ $suppliers->previousPageUrl() }}" rel="prev"
                                     class="px-3 py-1 mr-1 text-gray-700 bg-white border rounded hover:bg-gray-50">Prev</a>
@@ -306,7 +325,8 @@
 
                             @foreach ($links as $link)
                                 @if ($link === '...')
-                                    <span class="px-3 py-1 mr-1 text-gray-500 bg-white border rounded">{{ $link }}</span>
+                                    <span
+                                        class="px-3 py-1 mr-1 text-gray-500 bg-white border rounded">{{ $link }}</span>
                                 @elseif ($link == $currentPage)
                                     <span
                                         class="px-3 py-1 mr-1 text-white bg-blue-500 border border-blue-500 rounded">{{ $link }}</span>
@@ -321,7 +341,8 @@
                                 <a href="{{ $suppliers->nextPageUrl() }}" rel="next"
                                     class="px-3 py-1 ml-1 text-gray-700 bg-white border rounded hover:bg-gray-50">Next</a>
                             @else
-                                <span class="px-3 py-1 ml-1 text-gray-400 bg-white border rounded cursor-not-allowed">Next</span>
+                                <span
+                                    class="px-3 py-1 ml-1 text-gray-400 bg-white border rounded cursor-not-allowed">Next</span>
                             @endif
                         </nav>
                     @endif
@@ -332,8 +353,8 @@
     </div>
 
     <div id="supplierModal" x-data="{ showModal: false, editMode: false, supplier: {} }" x-cloak x-show="showModal"
-        @keydown.escape.window="showModal = false"
-        class="fixed inset-0 z-50 flex items-center justify-center" style="display: none; background-color: rgba(0, 0, 0, 0.5);">
+        @keydown.escape.window="showModal = false" class="fixed inset-0 z-50 flex items-center justify-center"
+        style="display: none; background-color: rgba(0, 0, 0, 0.5);">
 
         <div @click.away="showModal = false" class="w-full max-w-lg mx-4 bg-white rounded-lg shadow-2xl">
             <div class="flex items-center justify-between p-4 border-b">
@@ -409,7 +430,12 @@
             const modalData = Alpine.$data(modalComponent);
 
             // Reset to empty for a new supplier
-            modalData.supplier = { name: '', phone: '', email: '', address: '' };
+            modalData.supplier = {
+                name: '',
+                phone: '',
+                email: '',
+                address: ''
+            };
             modalData.editMode = false;
             modalData.showModal = true;
         }

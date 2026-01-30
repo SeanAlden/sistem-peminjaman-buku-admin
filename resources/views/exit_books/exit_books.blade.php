@@ -10,10 +10,37 @@
                 Keluar</button>
         </div>
 
-        @if(session('success'))
-            <div class="p-2 mb-3 text-green-700 bg-green-100 rounded">
+        @if (session('success'))
+            <div id="success-alert"
+                class="px-4 py-3 mb-6 text-green-700 bg-green-100 border border-green-400 rounded transition-opacity duration-500"
+                role="alert">
                 {{ session('success') }}
             </div>
+            <script>
+                setTimeout(() => {
+                    const alert = document.getElementById('success-alert');
+                    if (alert) {
+                        alert.classList.add('opacity-0');
+                        setTimeout(() => alert.remove(), 500);
+                    }
+                }, 2000);
+            </script>
+        @endif
+        @if (session('error'))
+            <div id="error-alert"
+                class="px-4 py-3 mb-6 text-red-700 bg-red-100 border border-red-400 rounded transition-opacity duration-500"
+                role="alert">
+                {{ session('error') }}
+            </div>
+            <script>
+                setTimeout(() => {
+                    const alert = document.getElementById('error-alert');
+                    if (alert) {
+                        alert.classList.add('opacity-0');
+                        setTimeout(() => alert.remove(), 500);
+                    }
+                }, 2000);
+            </script>
         @endif
 
         <!-- Modal Tambah Data -->
@@ -27,7 +54,7 @@
                         <div>
                             <label>Buku</label>
                             <select name="book_id" class="w-full p-2 border rounded">
-                                @foreach($books as $book)
+                                @foreach ($books as $book)
                                     <option value="{{ $book->id }}">{{ $book->title }}</option>
                                 @endforeach
                             </select>
@@ -35,14 +62,15 @@
                         <div>
                             <label>Supplier</label>
                             <select name="supplier_id" class="w-full p-2 border rounded">
-                                @foreach($suppliers as $supplier)
+                                @foreach ($suppliers as $supplier)
                                     <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div>
                             <label>Jumlah Keluar</label>
-                            <input type="number" name="stock_out" class="w-full p-2 border rounded" min="1" required>
+                            <input type="number" name="stock_out" class="w-full p-2 border rounded" min="1"
+                                required>
                         </div>
                         <div>
                             <label>Alasan</label>
@@ -70,7 +98,7 @@
                         <div>
                             <label>Buku</label>
                             <select name="book_id" id="edit_book_id" class="w-full p-2 border rounded">
-                                @foreach($books as $book)
+                                @foreach ($books as $book)
                                     <option value="{{ $book->id }}">{{ $book->title }}</option>
                                 @endforeach
                             </select>
@@ -78,7 +106,7 @@
                         <div>
                             <label>Supplier</label>
                             <select name="supplier_id" id="edit_supplier_id" class="w-full p-2 border rounded">
-                                @foreach($suppliers as $supplier)
+                                @foreach ($suppliers as $supplier)
                                     <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
                                 @endforeach
                             </select>
@@ -145,10 +173,10 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($exits as $exit)
+                @foreach ($exits as $exit)
                     <tr class="border-b dark:border-white hover:bg-gray-50 dark:hover:bg-gray-600 dark:bg-gray-500">
                         {{-- <td class="px-4 py-2 border">
-                            @if($exit->book->image_url)
+                            @if ($exit->book->image_url)
                             <img src="{{ asset('storage/' . $exit->book->image_url) }}" alt="Gambar Buku"
                                 class="object-cover w-16 h-20 rounded" />
                             @else
@@ -156,7 +184,7 @@
                             @endif
                         </td> --}}
                         <td class="px-4 py-2 text-center border dark:border-white">
-                            {{-- @if($exit->book->image_url)
+                            {{-- @if ($exit->book->image_url)
                             <img src="{{ asset('storage/' . $exit->book->image_url) }}" alt="Gambar Buku"
                                 class="object-cover w-16 h-20 mx-auto rounded" />
                             @else
@@ -164,9 +192,8 @@
                                 class="object-cover w-16 h-20 mx-auto rounded" />
                             @endif --}}
 
-                            @if($exit->book->image_url)
-                                <img
-                                    src="{{ $exit->book->image_url ? Storage::disk('s3')->url($exit->book->image_url) : asset('assets/images/avatar.png') }}"
+                            @if ($exit->book->image_url)
+                                <img src="{{ $exit->book->image_url ? Storage::disk('s3')->url($exit->book->image_url) : asset('assets/images/avatar.png') }}"
                                     alt="Gambar Buku" class="object-cover w-16 h-20 mx-auto rounded" />
                             @else
                                 <img src="{{ asset('assets/images/avatar.png') }}" alt="Gambar Buku"
@@ -209,7 +236,8 @@
                     <nav role="navigation" aria-label="Pagination Navigation" class="flex items-center">
                         {{-- Previous Page Link --}}
                         @if ($exits->onFirstPage())
-                            <span class="px-3 py-1 mr-1 text-gray-400 bg-white border rounded cursor-not-allowed">Prev</span>
+                            <span
+                                class="px-3 py-1 mr-1 text-gray-400 bg-white border rounded cursor-not-allowed">Prev</span>
                         @else
                             <a href="{{ $exits->previousPageUrl() }}" rel="prev"
                                 class="px-3 py-1 mr-1 text-gray-700 bg-white border rounded hover:bg-gray-50">Prev</a>
@@ -257,9 +285,11 @@
 
                         @foreach ($links as $link)
                             @if ($link === '...')
-                                <span class="px-3 py-1 mr-1 text-gray-500 bg-white border rounded">{{ $link }}</span>
+                                <span
+                                    class="px-3 py-1 mr-1 text-gray-500 bg-white border rounded">{{ $link }}</span>
                             @elseif ($link == $currentPage)
-                                <span class="px-3 py-1 mr-1 text-white bg-blue-500 border border-blue-500 rounded">{{ $link }}</span>
+                                <span
+                                    class="px-3 py-1 mr-1 text-white bg-blue-500 border border-blue-500 rounded">{{ $link }}</span>
                             @else
                                 <a href="{{ $exits->url($link) }}"
                                     class="px-3 py-1 mr-1 text-gray-700 bg-white border rounded hover:bg-gray-50">{{ $link }}</a>
@@ -271,7 +301,8 @@
                             <a href="{{ $exits->nextPageUrl() }}" rel="next"
                                 class="px-3 py-1 ml-1 text-gray-700 bg-white border rounded hover:bg-gray-50">Next</a>
                         @else
-                            <span class="px-3 py-1 ml-1 text-gray-400 bg-white border rounded cursor-not-allowed">Next</span>
+                            <span
+                                class="px-3 py-1 ml-1 text-gray-400 bg-white border rounded cursor-not-allowed">Next</span>
                         @endif
                     </nav>
                 @endif

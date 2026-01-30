@@ -27,12 +27,12 @@ class PayrollController extends Controller
         // Jika ada keyword pencarian, tambahkan kondisi where
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
-                $q->
-                    where('basic_salary', 'like', "%{$search}%")
+                $q->where('basic_salary', 'like', "%{$search}%")
                     ->orWhere('bonus', 'like', "%{$search}%")
                     ->orWhere('deduction', 'like', "%{$search}%")
                     ->orWhere('net_salary', 'like', "%{$search}%")
                     ->orWhere('payment_date', 'like', "%{$search}%")
+                    ->orWhere('status', 'like', "%{$search}%")
                     ->orWhereHas('employee', function ($q2) use ($search) {
                         $q2->where('name', 'like', "%{$search}%");
                     });
@@ -53,28 +53,56 @@ class PayrollController extends Controller
         return view('payrolls.create', compact('employees'));
     }
 
+    // public function store(Request $request)
+    // {
+    //     $request->validate([
+    //         'employee_id'=>'required|exists:employees,id',
+    //         'basic_salary'=>'required|numeric',
+    //         'bonus'=>'nullable|numeric',
+    //         'deduction'=>'nullable|numeric',
+    //         'payment_date'=>'required|date'
+    //     ]);
+
+    //     $net = $request->basic_salary + ($request->bonus ?? 0) - ($request->deduction ?? 0);
+
+    //     Payroll::create([
+    //         'employee_id'=>$request->employee_id,
+    //         'basic_salary'=>$request->basic_salary,
+    //         'bonus'=>$request->bonus,
+    //         'deduction'=>$request->deduction,
+    //         'net_salary'=>$net,
+    //         'payment_date'=>$request->payment_date
+    //     ]);
+
+    //     return redirect()->route('payrolls.index')->with('success','Payroll added!');
+    // }
+
     public function store(Request $request)
     {
         $request->validate([
-            'employee_id'=>'required|exists:employees,id',
-            'basic_salary'=>'required|numeric',
-            'bonus'=>'nullable|numeric',
-            'deduction'=>'nullable|numeric',
-            'payment_date'=>'required|date'
+            'employee_id' => 'required|exists:employees,id',
+            'bonus' => 'nullable|numeric',
+            'deduction' => 'nullable|numeric',
+            'payment_date' => 'required|date',
         ]);
 
-        $net = $request->basic_salary + ($request->bonus ?? 0) - ($request->deduction ?? 0);
+        $employee = Employee::findOrFail($request->employee_id);
+
+        $basicSalary = $employee->base_salary;
+        $bonus = $request->bonus ?? 0;
+        $deduction = $request->deduction ?? 0;
 
         Payroll::create([
-            'employee_id'=>$request->employee_id,
-            'basic_salary'=>$request->basic_salary,
-            'bonus'=>$request->bonus,
-            'deduction'=>$request->deduction,
-            'net_salary'=>$net,
-            'payment_date'=>$request->payment_date
+            'employee_id' => $employee->id,
+            'basic_salary' => $basicSalary,
+            'bonus' => $bonus,
+            'deduction' => $deduction,
+            'net_salary' => $basicSalary + $bonus - $deduction,
+            'payment_date' => $request->payment_date,
         ]);
 
-        return redirect()->route('payrolls.index')->with('success','Payroll added!');
+        return redirect()->route('payrolls.index')
+            ->with('success', 'Payroll berhasil ditambahkan.');
     }
 
     public function show($id)
@@ -87,39 +115,97 @@ class PayrollController extends Controller
     {
         $payroll = Payroll::findOrFail($id);
         $employees = Employee::all();
-        return view('payrolls.edit', compact('payroll','employees'));
+        return view('payrolls.edit', compact('payroll', 'employees'));
     }
 
-    public function update(Request $request, $id)
-    {
-        $payroll = Payroll::findOrFail($id);
+    // public function update(Request $request, $id)
+    // {
+    //     $payroll = Payroll::findOrFail($id);
 
+    //     $request->validate([
+    //         'employee_id'=>'required|exists:employees,id',
+    //         'basic_salary'=>'required|numeric',
+    //         'bonus'=>'nullable|numeric',
+    //         'deduction'=>'nullable|numeric',
+    //         'payment_date'=>'required|date'
+    //     ]);
+
+    //     $net = $request->basic_salary + ($request->bonus ?? 0) - ($request->deduction ?? 0);
+
+    //     $payroll->update([
+    //         'employee_id'=>$request->employee_id,
+    //         'basic_salary'=>$request->basic_salary,
+    //         'bonus'=>$request->bonus,
+    //         'deduction'=>$request->deduction,
+    //         'net_salary'=>$net,
+    //         'payment_date'=>$request->payment_date
+    //     ]);
+
+    //     return redirect()->route('payrolls.index')->with('success','Payroll updated!');
+    // }
+
+    public function update(Request $request, Payroll $payroll)
+    {
         $request->validate([
-            'employee_id'=>'required|exists:employees,id',
-            'basic_salary'=>'required|numeric',
-            'bonus'=>'nullable|numeric',
-            'deduction'=>'nullable|numeric',
-            'payment_date'=>'required|date'
+            'employee_id' => 'required|exists:employees,id',
+            'bonus' => 'nullable|numeric',
+            'deduction' => 'nullable|numeric',
+            'payment_date' => 'required|date',
         ]);
 
-        $net = $request->basic_salary + ($request->bonus ?? 0) - ($request->deduction ?? 0);
+        $employee = Employee::findOrFail($request->employee_id);
+
+        $basicSalary = $employee->base_salary;
+        $bonus = $request->bonus ?? 0;
+        $deduction = $request->deduction ?? 0;
 
         $payroll->update([
-            'employee_id'=>$request->employee_id,
-            'basic_salary'=>$request->basic_salary,
-            'bonus'=>$request->bonus,
-            'deduction'=>$request->deduction,
-            'net_salary'=>$net,
-            'payment_date'=>$request->payment_date
+            'employee_id' => $employee->id,
+            'basic_salary' => $basicSalary,
+            'bonus' => $bonus,
+            'deduction' => $deduction,
+            'net_salary' => $basicSalary + $bonus - $deduction,
+            'payment_date' => $request->payment_date,
         ]);
 
-        return redirect()->route('payrolls.index')->with('success','Payroll updated!');
+        return redirect()->route('payrolls.index')
+            ->with('success', 'Payroll berhasil diperbarui.');
     }
 
     public function destroy($id)
     {
         $payroll = Payroll::findOrFail($id);
         $payroll->delete();
-        return redirect()->route('payrolls.index')->with('success','Payroll deleted!');
+        return redirect()->route('payrolls.index')->with('success', 'Payroll deleted!');
+    }
+
+    public function markPaid($id)
+    {
+        $payroll = Payroll::findOrFail($id);
+
+        if ($payroll->status === 'paid') {
+            return back()->with('error', 'Payroll sudah paid.');
+        }
+
+        $payroll->update([
+            'status' => 'paid'
+        ]);
+
+        return back()->with('success', 'Payroll berhasil ditandai sebagai PAID.');
+    }
+
+    public function markDraft($id)
+    {
+        $payroll = Payroll::findOrFail($id);
+
+        if ($payroll->status === 'draft') {
+            return back()->with('error', 'Payroll sudah draft.');
+        }
+
+        $payroll->update([
+            'status' => 'draft'
+        ]);
+
+        return back()->with('success', 'Status payroll dikembalikan ke DRAFT.');
     }
 }

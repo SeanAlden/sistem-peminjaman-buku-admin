@@ -17,10 +17,37 @@
             </a>
         </div>
 
-        @if(session('success'))
-            <div class="px-4 py-3 mb-4 text-green-700 bg-green-100 border border-green-400 rounded shadow-sm">
+        @if (session('success'))
+            <div id="success-alert"
+                class="px-4 py-3 mb-6 text-green-700 bg-green-100 border border-green-400 rounded transition-opacity duration-500"
+                role="alert">
                 {{ session('success') }}
             </div>
+            <script>
+                setTimeout(() => {
+                    const alert = document.getElementById('success-alert');
+                    if (alert) {
+                        alert.classList.add('opacity-0');
+                        setTimeout(() => alert.remove(), 500);
+                    }
+                }, 2000);
+            </script>
+        @endif
+        @if (session('error'))
+            <div id="error-alert"
+                class="px-4 py-3 mb-6 text-red-700 bg-red-100 border border-red-400 rounded transition-opacity duration-500"
+                role="alert">
+                {{ session('error') }}
+            </div>
+            <script>
+                setTimeout(() => {
+                    const alert = document.getElementById('error-alert');
+                    if (alert) {
+                        alert.classList.add('opacity-0');
+                        setTimeout(() => alert.remove(), 500);
+                    }
+                }, 2000);
+            </script>
         @endif
 
         <div class="flex items-center justify-between mb-4">
@@ -61,7 +88,8 @@
                         <th class="px-4 py-3 border dark:text-white">Tanggal</th>
                         <th class="px-4 py-3 border dark:text-white">Jumlah (Sisa / Awal)</th>
                         {{-- PERUBAHAN 1: Menambahkan kolom baru untuk total --}}
-                        <th class="px-4 py-3 text-center bg-gray-300 border dark:bg-gray-700 dark:text-white">Total Pengadaan (Buku Ini)</th>
+                        <th class="px-4 py-3 text-center bg-gray-300 border dark:bg-gray-700 dark:text-white">Total
+                            Pengadaan (Buku Ini)</th>
                         <th class="px-4 py-3 border dark:text-white">Total Harga</th>
                         <th class="px-4 py-3 border dark:text-white">Aksi</th>
                     </tr>
@@ -88,7 +116,10 @@
                                     {{ $purchase->quantity }} / {{ $purchase->initial_quantity }}
                                 </div>
                                 @php
-                                    $percentage = ($purchase->initial_quantity > 0) ? ($purchase->quantity / $purchase->initial_quantity) * 100 : 0;
+                                    $percentage =
+                                        $purchase->initial_quantity > 0
+                                            ? ($purchase->quantity / $purchase->initial_quantity) * 100
+                                            : 0;
                                 @endphp
                                 <div class="w-full h-2 mt-1 bg-gray-200 rounded-full">
                                     <div class="h-2 bg-blue-600 rounded-full" style="width: {{ $percentage }}%;"></div>
@@ -103,7 +134,8 @@
                                 </td>
                             @endif
 
-                            <td class="px-4 py-2 text-right border dark:text-white">Rp{{ number_format($purchase->total_price, 0, ',', '.') }}
+                            <td class="px-4 py-2 text-right border dark:text-white">
+                                Rp{{ number_format($purchase->total_price, 0, ',', '.') }}
                             </td>
                             <td class="px-4 py-2 text-center border">
                                 <div class="flex justify-center gap-2">
@@ -142,7 +174,8 @@
             <div>
                 @if ($purchases->total() > 0)
                     <p class="text-sm text-gray-700 dark:text-white">
-                        Showing {{ $purchases->firstItem() }} to {{ $purchases->lastItem() }} of {{ $purchases->total() }}
+                        Showing {{ $purchases->firstItem() }} to {{ $purchases->lastItem() }} of
+                        {{ $purchases->total() }}
                         entries
                     </p>
                 @endif
@@ -152,7 +185,8 @@
                     <nav role="navigation" aria-label="Pagination Navigation" class="flex items-center">
                         {{-- Previous Page Link --}}
                         @if ($purchases->onFirstPage())
-                            <span class="px-3 py-1 mr-1 text-gray-400 bg-white border rounded cursor-not-allowed">Prev</span>
+                            <span
+                                class="px-3 py-1 mr-1 text-gray-400 bg-white border rounded cursor-not-allowed">Prev</span>
                         @else
                             <a href="{{ $purchases->previousPageUrl() }}" rel="prev"
                                 class="px-3 py-1 mr-1 text-gray-700 bg-white border rounded hover:bg-gray-50">Prev</a>
@@ -200,9 +234,11 @@
 
                         @foreach ($links as $link)
                             @if ($link === '...')
-                                <span class="px-3 py-1 mr-1 text-gray-500 bg-white border rounded">{{ $link }}</span>
+                                <span
+                                    class="px-3 py-1 mr-1 text-gray-500 bg-white border rounded">{{ $link }}</span>
                             @elseif ($link == $currentPage)
-                                <span class="px-3 py-1 mr-1 text-white bg-blue-500 border border-blue-500 rounded">{{ $link }}</span>
+                                <span
+                                    class="px-3 py-1 mr-1 text-white bg-blue-500 border border-blue-500 rounded">{{ $link }}</span>
                             @else
                                 <a href="{{ $purchases->url($link) }}"
                                     class="px-3 py-1 mr-1 text-gray-700 bg-white border rounded hover:bg-gray-50">{{ $link }}</a>
@@ -214,7 +250,8 @@
                             <a href="{{ $purchases->nextPageUrl() }}" rel="next"
                                 class="px-3 py-1 ml-1 text-gray-700 bg-white border rounded hover:bg-gray-50">Next</a>
                         @else
-                            <span class="px-3 py-1 ml-1 text-gray-400 bg-white border rounded cursor-not-allowed">Next</span>
+                            <span
+                                class="px-3 py-1 ml-1 text-gray-400 bg-white border rounded cursor-not-allowed">Next</span>
                         @endif
                     </nav>
                 @endif

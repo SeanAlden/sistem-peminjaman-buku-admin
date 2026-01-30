@@ -123,4 +123,26 @@ class NotificationController extends Controller
             'count' => $count,
         ]);
     }
+
+    public function markAllAsRead()
+    {
+        $user = auth()->user();
+
+        if ($user->usertype === 'admin') {
+            // Admin: tandai semua notifikasi di tabel
+            Notification::where('is_read', false)
+                ->update(['is_read' => true]);
+        } else {
+            // User biasa: hanya notifikasi miliknya
+            Notification::where('user_id', $user->id)
+                ->where('is_read', false)
+                ->update(['is_read' => true]);
+        }
+
+        // return redirect()->back()->with('success', 'Semua notifikasi berhasil ditandai sebagai sudah dibaca.');
+        
+        return response()->json([
+            'message' => 'Semua notifikasi berhasil ditandai sebagai sudah dibaca.'
+        ]);
+    }
 }

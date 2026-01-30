@@ -7,10 +7,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Book extends Model
 {
-    
+
     use HasFactory;
 
     protected $fillable = ['title', 'image_url', 'author', 'stock', 'description', 'loan_duration', 'category_id', 'status'];
+
+    protected $casts = [
+        'is_borrowed_by_user' => 'boolean',
+        'has_active_reservation_by_user' => 'boolean',
+    ];
 
     public function category()
     {

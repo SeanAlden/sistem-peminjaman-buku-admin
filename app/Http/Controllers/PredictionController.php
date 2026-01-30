@@ -13,9 +13,6 @@ class PredictionController extends Controller
     // View Predictions
     public function index(Request $request)
     {
-        // $predictions = BookPrediction::with('book')->orderByDesc('predicted_popularity')->get();
-        // return view('prediction', compact('predictions'));
-
         // Mengambil nilai 'search' dari request, defaultnya string kosong
         $search = $request->input('search', '');
 
@@ -24,7 +21,6 @@ class PredictionController extends Controller
         $perPage = (int) $request->input('per_page', 5);
 
         // Memulai query pada model BookPrediction
-        // $query = Book::query();
         $query = BookPrediction::with('book')->orderByDesc('predicted_popularity');
 
         // Jika ada keyword pencarian, tambahkan kondisi where
@@ -179,7 +175,7 @@ class PredictionController extends Controller
 
             // Inisialisasi parameter smoothing
             $alpha = 0.6; // level
-            $beta = 0.4;  // trend
+            $beta = 0.2;  // trend
 
             // Inisialisasi DES
             $L_prev = $monthlyLoans[0];
@@ -199,6 +195,9 @@ class PredictionController extends Controller
 
             // Prediksi untuk bulan berikutnya
             $forecast = $L + $T;
+
+            // Constraint bisnis
+            $forecast = max(0, round($forecast));
 
             // Update hasil prediksi ke tabel book_predictions
             BookPrediction::updateOrCreate(

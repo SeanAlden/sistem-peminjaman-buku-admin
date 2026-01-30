@@ -146,7 +146,7 @@ class BookController extends Controller
 
         $book->update(['status' => 'inactive']);
 
-        return redirect()->route('books.index')->with('success', 'Buku telah dinonaktifkan.');
+        return redirect()->route('books.inactive')->with('success', 'Buku telah dinonaktifkan.');
     }
 
     public function inactive()
@@ -161,6 +161,6 @@ class BookController extends Controller
         $book->status = 'active';
         $book->save();
 
-        return redirect()->route('books.inactive')->with('success', 'Buku diaktifkan kembali.');
+        return redirect()->route('books.index')->with('success', 'Buku diaktifkan kembali.');
     }
 }

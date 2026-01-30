@@ -5,7 +5,7 @@
     <h2>Chart of Accounts</h2>
     <a href="{{ route('accounts.create') }}" class="mb-3 btn btn-primary">+ Add Account</a>
 
-    @if(session('success'))
+    @if (session('success'))
     <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
@@ -19,7 +19,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($accounts as $acc)
+            @foreach ($accounts as $acc)
             <tr>
                 <td>{{ $acc->code }}</td>
                 <td>{{ $acc->name }}</td>
@@ -52,11 +52,44 @@
         </a>
 
         <!-- Success Alert -->
-        @if(session('success'))
+        {{-- @if (session('success'))
             <div
                 class="px-4 py-3 mb-4 text-green-800 bg-green-100 border border-green-300 rounded-lg dark:bg-green-800 dark:text-green-100">
                 {{ session('success') }}
             </div>
+        @endif --}}
+
+        @if (session('success'))
+            <div id="success-alert"
+                class="px-4 py-3 mb-6 text-green-700 bg-green-100 border border-green-400 rounded transition-opacity duration-500"
+                role="alert">
+                {{ session('success') }}
+            </div>
+            <script>
+                setTimeout(() => {
+                    const alert = document.getElementById('success-alert');
+                    if (alert) {
+                        alert.classList.add('opacity-0');
+                        setTimeout(() => alert.remove(), 500);
+                    }
+                }, 2000);
+            </script>
+        @endif
+        @if (session('error'))
+            <div id="error-alert"
+                class="px-4 py-3 mb-6 text-red-700 bg-red-100 border border-red-400 rounded transition-opacity duration-500"
+                role="alert">
+                {{ session('error') }}
+            </div>
+            <script>
+                setTimeout(() => {
+                    const alert = document.getElementById('error-alert');
+                    if (alert) {
+                        alert.classList.add('opacity-0');
+                        setTimeout(() => alert.remove(), 500);
+                    }
+                }, 2000);
+            </script>
         @endif
 
         <!-- Fitur Search dan Items per Page -->
@@ -100,7 +133,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($accounts as $acc)
+                    @foreach ($accounts as $acc)
                         <tr
                             class="transition border-t border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900">
                             <td class="px-4 py-2 text-gray-800 dark:text-gray-100">{{ $acc->code }}</td>
@@ -142,7 +175,8 @@
                     <nav role="navigation" aria-label="Pagination Navigation" class="flex items-center">
                         {{-- Previous Page Link --}}
                         @if ($accounts->onFirstPage())
-                            <span class="px-3 py-1 mr-1 text-gray-400 bg-white border rounded cursor-not-allowed">Prev</span>
+                            <span
+                                class="px-3 py-1 mr-1 text-gray-400 bg-white border rounded cursor-not-allowed">Prev</span>
                         @else
                             <a href="{{ $accounts->previousPageUrl() }}" rel="prev"
                                 class="px-3 py-1 mr-1 text-gray-700 bg-white border rounded hover:bg-gray-50">Prev</a>
@@ -190,9 +224,11 @@
 
                         @foreach ($links as $link)
                             @if ($link === '...')
-                                <span class="px-3 py-1 mr-1 text-gray-500 bg-white border rounded">{{ $link }}</span>
+                                <span
+                                    class="px-3 py-1 mr-1 text-gray-500 bg-white border rounded">{{ $link }}</span>
                             @elseif ($link == $currentPage)
-                                <span class="px-3 py-1 mr-1 text-white bg-blue-500 border border-blue-500 rounded">{{ $link }}</span>
+                                <span
+                                    class="px-3 py-1 mr-1 text-white bg-blue-500 border border-blue-500 rounded">{{ $link }}</span>
                             @else
                                 <a href="{{ $accounts->url($link) }}"
                                     class="px-3 py-1 mr-1 text-gray-700 bg-white border rounded hover:bg-gray-50">{{ $link }}</a>
@@ -204,7 +240,8 @@
                             <a href="{{ $accounts->nextPageUrl() }}" rel="next"
                                 class="px-3 py-1 ml-1 text-gray-700 bg-white border rounded hover:bg-gray-50">Next</a>
                         @else
-                            <span class="px-3 py-1 ml-1 text-gray-400 bg-white border rounded cursor-not-allowed">Next</span>
+                            <span
+                                class="px-3 py-1 ml-1 text-gray-400 bg-white border rounded cursor-not-allowed">Next</span>
                         @endif
                     </nav>
                 @endif

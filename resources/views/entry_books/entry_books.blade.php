@@ -9,10 +9,37 @@
                 Barang Masuk</button>
         </div>
 
-        @if(session('success'))
-            <div class="p-4 mb-4 text-green-800 bg-green-100 rounded">
+        @if (session('success'))
+            <div id="success-alert"
+                class="px-4 py-3 mb-6 text-green-700 bg-green-100 border border-green-400 rounded transition-opacity duration-500"
+                role="alert">
                 {{ session('success') }}
             </div>
+            <script>
+                setTimeout(() => {
+                    const alert = document.getElementById('success-alert');
+                    if (alert) {
+                        alert.classList.add('opacity-0');
+                        setTimeout(() => alert.remove(), 500);
+                    }
+                }, 2000);
+            </script>
+        @endif
+        @if (session('error'))
+            <div id="error-alert"
+                class="px-4 py-3 mb-6 text-red-700 bg-red-100 border border-red-400 rounded transition-opacity duration-500"
+                role="alert">
+                {{ session('error') }}
+            </div>
+            <script>
+                setTimeout(() => {
+                    const alert = document.getElementById('error-alert');
+                    if (alert) {
+                        alert.classList.add('opacity-0');
+                        setTimeout(() => alert.remove(), 500);
+                    }
+                }, 2000);
+            </script>
         @endif
 
         <!-- Fitur Search dan Items per Page -->
@@ -45,66 +72,67 @@
         <!-- End Fitur -->
 
         {{-- <div class="overflow-x-auto"> --}}
-            <table class="min-w-full bg-white border">
-                <thead class="bg-gray-100">
-                    <tr class="text-left bg-gray-200 dark:bg-gray-600">
-                        <th class="px-4 py-2 border dark:text-white">Gambar</th>
-                        <th class="px-4 py-2 border dark:text-white">Nama Buku</th>
-                        <th class="px-4 py-2 border dark:text-white">Kategori</th>
-                        <th class="px-4 py-2 border dark:text-white">Stok Sebelum</th>
-                        <th class="px-4 py-2 border dark:text-white">Jumlah Masuk</th>
-                        <th class="px-4 py-2 border dark:text-white">Stok Setelah</th>
-                        <th class="px-4 py-2 border dark:text-white">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($entries as $entry)
-                        <tr class="border-b dark:border-white hover:bg-gray-50 dark:hover:bg-gray-600 dark:bg-gray-500">
-                            {{-- <td class="p-3">
+        <table class="min-w-full bg-white border">
+            <thead class="bg-gray-100">
+                <tr class="text-left bg-gray-200 dark:bg-gray-600">
+                    <th class="px-4 py-2 border dark:text-white">Gambar</th>
+                    <th class="px-4 py-2 border dark:text-white">Nama Buku</th>
+                    <th class="px-4 py-2 border dark:text-white">Kategori</th>
+                    <th class="px-4 py-2 border dark:text-white">Stok Sebelum</th>
+                    <th class="px-4 py-2 border dark:text-white">Jumlah Masuk</th>
+                    <th class="px-4 py-2 border dark:text-white">Stok Setelah</th>
+                    <th class="px-4 py-2 border dark:text-white">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($entries as $entry)
+                    <tr class="border-b dark:border-white hover:bg-gray-50 dark:hover:bg-gray-600 dark:bg-gray-500">
+                        {{-- <td class="p-3">
                                 <img src="{{ asset('storage/' . $entry->book->image_url) }}" alt="{{ $entry->book->title }}"
                                     class="object-cover h-20 w-14">
                             </td> --}}
-                            <td class="px-4 py-2 text-center border dark:border-white">
-                                {{-- @if($entry->book->image_url)
+                        <td class="px-4 py-2 text-center border dark:border-white">
+                            {{-- @if ($entry->book->image_url)
                                     <img src="{{ asset('storage/' . $entry->book->image_url) }}" alt="Gambar Buku"
                                         class="object-cover w-16 h-20 mx-auto rounded" />
                                 @else
                                     <img src="{{ asset('assets/images/avatar.png') }}" alt="Gambar Buku"
                                         class="object-cover w-16 h-20 mx-auto rounded" />
                                 @endif --}}
-                                
-                                @if($entry->book->image_url)
-                                    <img src="{{ $entry->book->image_url ? Storage::disk('s3')->url($entry->book->image_url) : asset('assets/images/avatar.png') }}" alt="Gambar Buku"
-                                        class="object-cover w-16 h-20 mx-auto rounded" />
-                                @else
-                                    <img src="{{ asset('assets/images/avatar.png') }}" alt="Gambar Buku"
-                                        class="object-cover w-16 h-20 mx-auto rounded" />
-                                @endif
-                            </td>
-                            <td class="px-4 py-2 border dark:border-white dark:text-white">{{ $entry->book->title }}</td>
-                            <td class="px-4 py-2 border dark:border-white dark:text-white">
-                                {{ $entry->book->category->name ?? '-' }}</td>
-                            <td class="px-4 py-2 border dark:border-white dark:text-white">{{ $entry->stock_before }}</td>
-                            <td class="px-4 py-2 font-bold text-green-500">+ {{ $entry->stock_in }}</td>
-                            <td class="px-4 py-2 border dark:border-white dark:text-white">{{ $entry->stock_after }}</td>
-                            <td class="px-4 py-2 border dark:border-white">
-                                <button @click="openEditModal({{ $entry->id }}, {{ $entry->book_id }}, {{ $entry->stock_in }})"
-                                    class="mr-2 text-blue-500 dark:text-blue-300 hover:underline">Edit</button>
-                                <form action="{{ route('entry_books.destroy', $entry->id) }}" method="POST" class="inline"
-                                    onsubmit="return confirm('Yakin ingin menghapus?')">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" class="text-red-500 dark:text-red-300 hover:underline">Hapus</button>
-                                </form>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="7" class="p-4 text-center text-gray-500">Belum ada data.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-            {{--
+
+                            @if ($entry->book->image_url)
+                                <img src="{{ $entry->book->image_url ? Storage::disk('s3')->url($entry->book->image_url) : asset('assets/images/avatar.png') }}"
+                                    alt="Gambar Buku" class="object-cover w-16 h-20 mx-auto rounded" />
+                            @else
+                                <img src="{{ asset('assets/images/avatar.png') }}" alt="Gambar Buku"
+                                    class="object-cover w-16 h-20 mx-auto rounded" />
+                            @endif
+                        </td>
+                        <td class="px-4 py-2 border dark:border-white dark:text-white">{{ $entry->book->title }}</td>
+                        <td class="px-4 py-2 border dark:border-white dark:text-white">
+                            {{ $entry->book->category->name ?? '-' }}</td>
+                        <td class="px-4 py-2 border dark:border-white dark:text-white">{{ $entry->stock_before }}</td>
+                        <td class="px-4 py-2 font-bold text-green-500">+ {{ $entry->stock_in }}</td>
+                        <td class="px-4 py-2 border dark:border-white dark:text-white">{{ $entry->stock_after }}</td>
+                        <td class="px-4 py-2 border dark:border-white">
+                            <button
+                                @click="openEditModal({{ $entry->id }}, {{ $entry->book_id }}, {{ $entry->stock_in }})"
+                                class="mr-2 text-blue-500 dark:text-blue-300 hover:underline">Edit</button>
+                            <form action="{{ route('entry_books.destroy', $entry->id) }}" method="POST" class="inline"
+                                onsubmit="return confirm('Yakin ingin menghapus?')">
+                                @csrf @method('DELETE')
+                                <button type="submit" class="text-red-500 dark:text-red-300 hover:underline">Hapus</button>
+                            </form>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="7" class="p-4 text-center text-gray-500">Belum ada data.</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+        {{--
         </div> --}}
         <!-- Fitur Pagination -->
         <div class="flex items-center justify-between mt-4">
@@ -121,7 +149,8 @@
                     <nav role="navigation" aria-label="Pagination Navigation" class="flex items-center">
                         {{-- Previous Page Link --}}
                         @if ($entries->onFirstPage())
-                            <span class="px-3 py-1 mr-1 text-gray-400 bg-white border rounded cursor-not-allowed">Prev</span>
+                            <span
+                                class="px-3 py-1 mr-1 text-gray-400 bg-white border rounded cursor-not-allowed">Prev</span>
                         @else
                             <a href="{{ $entries->previousPageUrl() }}" rel="prev"
                                 class="px-3 py-1 mr-1 text-gray-700 bg-white border rounded hover:bg-gray-50">Prev</a>
@@ -169,9 +198,11 @@
 
                         @foreach ($links as $link)
                             @if ($link === '...')
-                                <span class="px-3 py-1 mr-1 text-gray-500 bg-white border rounded">{{ $link }}</span>
+                                <span
+                                    class="px-3 py-1 mr-1 text-gray-500 bg-white border rounded">{{ $link }}</span>
                             @elseif ($link == $currentPage)
-                                <span class="px-3 py-1 mr-1 text-white bg-blue-500 border border-blue-500 rounded">{{ $link }}</span>
+                                <span
+                                    class="px-3 py-1 mr-1 text-white bg-blue-500 border border-blue-500 rounded">{{ $link }}</span>
                             @else
                                 <a href="{{ $entries->url($link) }}"
                                     class="px-3 py-1 mr-1 text-gray-700 bg-white border rounded hover:bg-gray-50">{{ $link }}</a>
@@ -183,7 +214,8 @@
                             <a href="{{ $entries->nextPageUrl() }}" rel="next"
                                 class="px-3 py-1 ml-1 text-gray-700 bg-white border rounded hover:bg-gray-50">Next</a>
                         @else
-                            <span class="px-3 py-1 ml-1 text-gray-400 bg-white border rounded cursor-not-allowed">Next</span>
+                            <span
+                                class="px-3 py-1 ml-1 text-gray-400 bg-white border rounded cursor-not-allowed">Next</span>
                         @endif
                     </nav>
                 @endif
@@ -207,7 +239,7 @@
                         <select name="book_id" x-model="selectedBookId" :disabled="isEdit"
                             class="w-full px-3 py-2 border rounded">
                             <option value="">-- Pilih Buku --</option>
-                            @foreach($books as $book)
+                            @foreach ($books as $book)
                                 <option value="{{ $book->id }}">
                                     {{ $book->title }}
                                 </option>

@@ -140,7 +140,7 @@ class PurchaseController extends Controller
         $request->validate([
             'supplier_id' => 'required',
             'book_id' => 'required',
-            'quantity' => 'required|integer|min:1',
+            'initial_quantity' => 'required|integer|min:1',
             'purchase_date' => 'required|date',
             'total_price' => 'required|numeric',
         ]);
@@ -155,4 +155,3 @@ class PurchaseController extends Controller
     }
 
 }
-

@@ -281,7 +281,7 @@
                                 {{-- <img src="{{ asset('assets/icons/notification.png') }}" alt="Notification"
                                     class="w-6 h-6 transition cursor-pointer hover:scale-110"> --}}
                                 <img :src="$store.theme.dark ? '{{ asset('assets/icons/notification_white.png') }}' : '{{ asset('assets/icons/notification.png') }}'"
-                                    alt="Notification" class="w-6 h-6 transition cursor-pointer hover:scale-110">
+                                    alt="Notification" class=" flex item-center justify-center w-6 h-6 transition cursor-pointer hover:scale-140">
                                 <!-- Badge -->
                                 <span x-show="count > 0" class="absolute -top-3 -right-3 min-w-[20px] h-[20px] flex items-center justify-center
        text-sm font-bold text-white bg-red-600 rounded-full px-2 shadow-xl shadow-red-500/50 border border-white">

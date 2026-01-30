@@ -5,7 +5,7 @@
     <h2>Payments</h2>
     <a href="{{ route('payments.create') }}" class="mb-3 btn btn-primary">+ Add Payment</a>
 
-    @if(session('success'))
+    @if (session('success'))
     <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
@@ -22,7 +22,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($payments as $p)
+            @foreach ($payments as $p)
             <tr>
                 <td>{{ $p->id }}</td>
                 <td>{{ $p->employee?->name }}</td>
@@ -55,7 +55,7 @@
         + Add Payment
     </a>
 
-    @if(session('success'))
+    @if (session('success'))
     <div class="px-4 py-3 mb-4 text-green-700 bg-green-100 border border-green-400 rounded">
         {{ session('success') }}
     </div>
@@ -75,7 +75,7 @@
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
-                @foreach($payments as $p)
+                @foreach ($payments as $p)
                 <tr class="hover:bg-gray-50">
                     <td class="px-4 py-2">{{ $p->id }}</td>
                     <td class="px-4 py-2">{{ $p->employee?->name }}</td>
@@ -95,7 +95,7 @@
                 </tr>
                 @endforeach
 
-                @if($payments->isEmpty())
+                @if ($payments->isEmpty())
                 <tr>
                     <td colspan="7" class="px-4 py-4 text-center text-gray-500">
                         No payments found.
@@ -124,8 +124,41 @@
             + New Payment
         </button>
 
-        @if(session('success'))
+        {{-- @if (session('success'))
             <div class="p-3 mb-4 text-green-800 bg-green-100 rounded">{{ session('success') }}</div>
+        @endif --}}
+
+        @if (session('success'))
+            <div id="success-alert"
+                class="px-4 py-3 mb-6 text-green-700 bg-green-100 border border-green-400 rounded transition-opacity duration-500"
+                role="alert">
+                {{ session('success') }}
+            </div>
+            <script>
+                setTimeout(() => {
+                    const alert = document.getElementById('success-alert');
+                    if (alert) {
+                        alert.classList.add('opacity-0');
+                        setTimeout(() => alert.remove(), 500);
+                    }
+                }, 2000);
+            </script>
+        @endif
+        @if (session('error'))
+            <div id="error-alert"
+                class="px-4 py-3 mb-6 text-red-700 bg-red-100 border border-red-400 rounded transition-opacity duration-500"
+                role="alert">
+                {{ session('error') }}
+            </div>
+            <script>
+                setTimeout(() => {
+                    const alert = document.getElementById('error-alert');
+                    if (alert) {
+                        alert.classList.add('opacity-0');
+                        setTimeout(() => alert.remove(), 500);
+                    }
+                }, 2000);
+            </script>
         @endif
 
         <!-- Fitur Search dan Items per Page -->
@@ -259,7 +292,7 @@
                             }
 
                             $links[] = $lastPage;
-                        } 
+                        }
                     @endphp
 
                     @foreach ($links as $link)
@@ -269,12 +302,10 @@
                             </span>
                         @elseif ($link == $currentPage)
                             <span
-                                class="px-3 py-1 mr-1 text-white bg-blue-500 border border-blue-500 rounded">{{ $link
-                                                                                                                                                                }}</span>
+                                class="px-3 py-1 mr-1 text-white bg-blue-500 border border-blue-500 rounded">{{ $link }}</span>
                         @else
                             <a href="{{ $payments->url($link) }}"
-                                class="px-3 py-1 mr-1 text-gray-700 bg-white border rounded hover:bg-gray-50">{{ $link
-                                                                                                                                                                }}</a>
+                                class="px-3 py-1 mr-1 text-gray-700 bg-white border rounded hover:bg-gray-50">{{ $link }}</a>
                         @endif
                     @endforeach
 
@@ -291,8 +322,8 @@
     <!-- End Fitur Pagination -->
 
     <!-- Modal Background -->
-    <div id="paymentModal"
-        class="fixed inset-0 z-50 flex items-center justify-center hidden backdrop-blur-sm" style="background-color: rgba(0, 0, 0, 0.5);">
+    <div id="paymentModal" class="fixed inset-0 z-50 flex items-center justify-center hidden backdrop-blur-sm"
+        style="background-color: rgba(0, 0, 0, 0.5);">
 
         <!-- Modal Box -->
         <div class="w-full max-w-lg p-5 bg-white rounded shadow-lg dark:bg-gray-900 dark:text-gray-100">
@@ -310,7 +341,7 @@
                     <select id="employee_id" name="employee_id"
                         class="w-full px-2 py-1 border rounded dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100">
                         <option value="">-- Optional --</option>
-                        @foreach($employees as $emp)
+                        @foreach ($employees as $emp)
                             <option value="{{ $emp->id }}">{{ $emp->name }}</option>
                         @endforeach
                     </select>
@@ -321,7 +352,7 @@
                     <select id="supplier_id" name="supplier_id"
                         class="w-full px-2 py-1 border rounded dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100">
                         <option value="">-- Optional --</option>
-                        @foreach($suppliers as $sup)
+                        @foreach ($suppliers as $sup)
                             <option value="{{ $sup->id }}">{{ $sup->name }}</option>
                         @endforeach
                     </select>
@@ -415,5 +446,4 @@
             document.getElementById('paymentModal').classList.add('hidden');
         }
     </script>
-
 @endsection

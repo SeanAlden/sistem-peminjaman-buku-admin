@@ -70,7 +70,7 @@
 //             'totalBooks' => $totalBooks,
 //             'totalFine' => $totalFine,
 //             'totalUsers' => $totalUsers,
-//             'totalBorrowedBooks' => $totalBorrowedBooks, 
+//             'totalBorrowedBooks' => $totalBorrowedBooks,
 //             // chart data
 //             'chartLabels' => $labels,
 //             'chartData' => $data,
@@ -339,7 +339,7 @@ class DashboardController extends Controller
         $totalBorrowedBooks = Loan::where('status', 'borrowed')->count();
 
         // 1. Hitung buku yang lewat tenggat (statusnya masih dipinjam & max_returned_at < sekarang)
-        $overdueBooksCount = Loan::where('status', 'borrowed')
+        $overdueBooksCount = Loan::where('status', 'returned')
                                  ->where('max_returned_at', '<', now())
                                  ->count();
 

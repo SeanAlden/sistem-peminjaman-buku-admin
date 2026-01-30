@@ -135,6 +135,11 @@ Route::middleware('adminMiddleware')->group(function () {
     Route::get('/payrolls/{id}/edit', [PayrollController::class, 'edit'])->name('payrolls.edit');
     Route::put('/payrolls/{id}', [PayrollController::class, 'update'])->name('payrolls.update');
     Route::delete('/payrolls/{id}', [PayrollController::class, 'destroy'])->name('payrolls.destroy');
+    Route::patch('/payrolls/{id}/paid', [PayrollController::class, 'markPaid'])
+        ->name('payrolls.markPaid');
+    Route::patch('/payrolls/{id}/draft', [PayrollController::class, 'markDraft'])
+        ->name('payrolls.markDraft');
+
 
     // Accounts
     Route::get('/accounts', [ChartOfAccountController::class, 'index'])->name('accounts.index');
@@ -175,6 +180,8 @@ Route::middleware('adminMiddleware')->group(function () {
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/read/{id}', [NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::get('/notifications/fetch', [NotificationController::class, 'fetchLatest'])->name('notifications.fetch');
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])
+        ->name('notifications.readAll');
 });
 
 Route::middleware('authenticatedAdminMiddleware')->group(function () {

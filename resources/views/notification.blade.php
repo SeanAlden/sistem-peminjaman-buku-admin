@@ -4,6 +4,23 @@
     <div class="p-6 bg-gray-200 rounded shadow dark:bg-gray-700">
         <h2 class="mb-4 text-xl font-bold dark:text-white">All Notifications</h2>
 
+        @if ($notifications->where('is_read', false)->count() > 0)
+            {{-- <div class="flex justify-end mb-4">
+                <form action="{{ route('notifications.readAll') }}" method="POST"
+                    onsubmit="return confirm('Tandai semua notifikasi sebagai sudah dibaca?')">
+                    @csrf
+                    <button type="submit" class="px-4 py-2 text-sm text-white bg-blue-600 rounded hover:bg-blue-700">
+                        Mark All as Read
+                    </button>
+                </form>
+            </div> --}}
+            <div class="flex justify-end mb-4">
+                <button id="markAllReadBtn" class="px-4 py-2 text-sm text-white bg-blue-600 rounded hover:bg-blue-700">
+                    Mark All as Read
+                </button>
+            </div>
+        @endif
+
         <!-- Fitur Search dan Items per Page -->
         <div class="flex items-center justify-between mb-4">
             <div class="flex items-center">
@@ -33,17 +50,41 @@
         </div>
         <!-- End Fitur -->
 
-        @foreach($notifications as $notif)
+        {{-- @foreach ($notifications as $notif)
             <div class="flex items-center justify-between px-2 py-2 bg-white border-b dark:bg-gray-800">
                 <div>
                     <p class="font-semibold dark:text-white">{{ $notif->title }}</p>
                     <p class="text-sm text-gray-600 dark:text-gray-300">{{ $notif->message }}</p>
                     <small class="text-gray-400">{{ $notif->created_at->diffForHumans() }}</small>
                 </div>
-                @if(!$notif->is_read)
+                @if (!$notif->is_read)
                     <form action="{{ route('notifications.read', $notif->id) }}" method="POST">
                         @csrf
                         <button type="submit" class="px-3 py-1 text-xs text-white bg-green-600 rounded hover:bg-green-700">
+                            Read
+                        </button>
+                    </form>
+                @endif
+            </div>
+        @endforeach --}}
+
+        @foreach ($notifications as $notif)
+            <div data-notification
+                class="flex items-center justify-between px-2 py-2 border-b
+        {{ $notif->is_read ? 'opacity-60 bg-gray-100' : 'bg-white' }}
+        dark:bg-gray-800">
+
+                <div>
+                    <p class="font-semibold dark:text-white">{{ $notif->title }}</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-300">{{ $notif->message }}</p>
+                    <small class="text-gray-400">{{ $notif->created_at->diffForHumans() }}</small>
+                </div>
+
+                @if (!$notif->is_read)
+                    <form action="{{ route('notifications.read', $notif->id) }}" method="POST">
+                        @csrf
+                        <button type="submit"
+                            class="read-btn px-3 py-1 text-xs text-white bg-green-600 rounded hover:bg-green-700">
                             Read
                         </button>
                     </form>
@@ -71,7 +112,8 @@
                     <nav role="navigation" aria-label="Pagination Navigation" class="flex items-center">
                         {{-- Previous Page Link --}}
                         @if ($notifications->onFirstPage())
-                            <span class="px-3 py-1 mr-1 text-gray-400 bg-white border rounded cursor-not-allowed">Prev</span>
+                            <span
+                                class="px-3 py-1 mr-1 text-gray-400 bg-white border rounded cursor-not-allowed">Prev</span>
                         @else
                             <a href="{{ $notifications->previousPageUrl() }}" rel="prev"
                                 class="px-3 py-1 mr-1 text-gray-700 bg-white border rounded hover:bg-gray-50">Prev</a>
@@ -119,9 +161,11 @@
 
                         @foreach ($links as $link)
                             @if ($link === '...')
-                                <span class="px-3 py-1 mr-1 text-gray-500 bg-white border rounded">{{ $link }}</span>
+                                <span
+                                    class="px-3 py-1 mr-1 text-gray-500 bg-white border rounded">{{ $link }}</span>
                             @elseif ($link == $currentPage)
-                                <span class="px-3 py-1 mr-1 text-white bg-blue-500 border border-blue-500 rounded">{{ $link }}</span>
+                                <span
+                                    class="px-3 py-1 mr-1 text-white bg-blue-500 border border-blue-500 rounded">{{ $link }}</span>
                             @else
                                 <a href="{{ $notifications->url($link) }}"
                                     class="px-3 py-1 mr-1 text-gray-700 bg-white border rounded hover:bg-gray-50">{{ $link }}</a>
@@ -133,7 +177,8 @@
                             <a href="{{ $notifications->nextPageUrl() }}" rel="next"
                                 class="px-3 py-1 ml-1 text-gray-700 bg-white border rounded hover:bg-gray-50">Next</a>
                         @else
-                            <span class="px-3 py-1 ml-1 text-gray-400 bg-white border rounded cursor-not-allowed">Next</span>
+                            <span
+                                class="px-3 py-1 ml-1 text-gray-400 bg-white border rounded cursor-not-allowed">Next</span>
                         @endif
                     </nav>
                 @endif
@@ -141,4 +186,34 @@
         </div>
         <!-- End Fitur Pagination -->
     </div>
+    <script>
+        document.getElementById('markAllReadBtn')?.addEventListener('click', function() {
+            if (!confirm('Tandai semua notifikasi sebagai sudah dibaca?')) return;
+
+            fetch("{{ route('notifications.readAll') }}", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                        "Accept": "application/json"
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Ubah tampilan semua notifikasi jadi "read"
+                    document.querySelectorAll('[data-notification]').forEach(el => {
+                        el.classList.remove('bg-white');
+                        el.classList.add('opacity-60');
+                    });
+
+                    // Hapus semua tombol Read per item
+                    document.querySelectorAll('.read-btn').forEach(btn => btn.remove());
+
+                    alert(data.message);
+                })
+                .catch(error => {
+                    console.error(error);
+                    alert('Terjadi kesalahan.');
+                });
+        });
+    </script>
 @endsection

@@ -1,71 +1,3 @@
-{{-- @extends('layouts.app')
-
-@section('content')
-<div class="min-h-screen px-4 py-8 bg-gray-100">
-    <div class="max-w-6xl p-6 mx-auto bg-white shadow-lg rounded-2xl">
-        <div class="flex items-center justify-between mb-6">
-            <h2 class="text-2xl font-bold text-gray-800">Payroll List</h2>
-            <a href="{{ route('payrolls.create') }}"
-                class="px-4 py-2 text-white transition duration-200 bg-indigo-600 rounded-lg shadow hover:bg-indigo-700">
-                + Add Payroll
-            </a>
-        </div>
-
-        <div class="overflow-x-auto">
-            <table class="w-full overflow-hidden border-collapse rounded-lg">
-                <thead>
-                    <tr class="text-white bg-indigo-600">
-                        <th class="px-4 py-3 text-sm font-semibold text-left">ID</th>
-                        <th class="px-4 py-3 text-sm font-semibold text-left">Employee</th>
-                        <th class="px-4 py-3 text-sm font-semibold text-left">Basic Salary</th>
-                        <th class="px-4 py-3 text-sm font-semibold text-left">Bonus</th>
-                        <th class="px-4 py-3 text-sm font-semibold text-left">Deduction</th>
-                        <th class="px-4 py-3 text-sm font-semibold text-left">Net Salary</th>
-                        <th class="px-4 py-3 text-sm font-semibold text-left">Date</th>
-                        <th class="px-4 py-3 text-sm font-semibold text-center">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-200">
-                    @foreach($payrolls as $p)
-                    <tr class="hover:bg-gray-50">
-                        <td class="px-4 py-3 text-sm text-gray-700">{{ $p->id }}</td>
-                        <td class="px-4 py-3 text-sm text-gray-700">{{ $p->employee->name }}</td>
-                        <td class="px-4 py-3 text-sm text-gray-700">{{ number_format($p->basic_salary,0,',','.') }}</td>
-                        <td class="px-4 py-3 text-sm text-gray-700">{{ number_format($p->bonus ?? 0,0,',','.') }}</td>
-                        <td class="px-4 py-3 text-sm text-gray-700">{{ number_format($p->deduction ?? 0,0,',','.') }}
-                        </td>
-                        <td class="px-4 py-3 font-semibold text-green-600">{{ number_format($p->net_salary,0,',','.') }}
-                        </td>
-                        <td class="px-4 py-3 text-sm text-gray-700">{{ $p->payment_date }}</td>
-                        <td class="px-4 py-3 text-center">
-                            <div class="flex items-center justify-center gap-2">
-                                <a href="{{ route('payrolls.show',$p->id) }}"
-                                    class="px-3 py-1 text-xs font-medium text-white transition bg-blue-500 rounded hover:bg-blue-600">
-                                    Detail
-                                </a>
-                                <a href="{{ route('payrolls.edit',$p->id) }}"
-                                    class="px-3 py-1 text-xs font-medium text-white transition bg-yellow-500 rounded hover:bg-yellow-600">
-                                    Edit
-                                </a>
-                                <form action="{{ route('payrolls.destroy',$p->id) }}" method="POST"
-                                    onsubmit="return confirm('Delete payroll?')">
-                                    @csrf @method('DELETE')
-                                    <button type="submit"
-                                        class="px-3 py-1 text-xs font-medium text-white transition bg-red-500 rounded hover:bg-red-600">
-                                        Del
-                                    </button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-@endsection --}}
-
 @extends('layouts.app')
 
 @section('content')
@@ -79,34 +11,67 @@
                 </a>
             </div>
 
-        <!-- Fitur Search dan Items per Page -->
-        <div class="flex items-center justify-between mb-4">
-            <div class="flex items-center">
-                <form action="{{ route('payrolls.index') }}" method="GET" class="flex items-center">
-                    <label for="per_page" class="mr-2 text-sm text-gray-600 dark:text-white">Show:</label>
-                    <select name="per_page" id="per_page"
-                        class="block w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                        onchange="this.form.submit()">
-                        <option value="5" {{ $perPage == 5 ? 'selected' : '' }}>5</option>
-                        <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
-                        <option value="25" {{ $perPage == 25 ? 'selected' : '' }}>25</option>
-                        <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option>
-                        <option value="100" {{ $perPage == 100 ? 'selected' : '' }}>100</option>
-                    </select>
-                    <input type="hidden" name="search" value="{{ $search }}">
-                </form>
+            @if (session('success'))
+                <div id="success-alert"
+                    class="px-4 py-3 mb-6 text-green-700 bg-green-100 border border-green-400 rounded transition-opacity duration-500"
+                    role="alert">
+                    {{ session('success') }}
+                </div>
+                <script>
+                    setTimeout(() => {
+                        const alert = document.getElementById('success-alert');
+                        if (alert) {
+                            alert.classList.add('opacity-0');
+                            setTimeout(() => alert.remove(), 500);
+                        }
+                    }, 2000);
+                </script>
+            @endif
+            @if (session('error'))
+                <div id="error-alert"
+                    class="px-4 py-3 mb-6 text-red-700 bg-red-100 border border-red-400 rounded transition-opacity duration-500"
+                    role="alert">
+                    {{ session('error') }}
+                </div>
+                <script>
+                    setTimeout(() => {
+                        const alert = document.getElementById('error-alert');
+                        if (alert) {
+                            alert.classList.add('opacity-0');
+                            setTimeout(() => alert.remove(), 500);
+                        }
+                    }, 2000);
+                </script>
+            @endif
+
+            <!-- Fitur Search dan Items per Page -->
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center">
+                    <form action="{{ route('payrolls.index') }}" method="GET" class="flex items-center">
+                        <label for="per_page" class="mr-2 text-sm text-gray-600 dark:text-white">Show:</label>
+                        <select name="per_page" id="per_page"
+                            class="block w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                            onchange="this.form.submit()">
+                            <option value="5" {{ $perPage == 5 ? 'selected' : '' }}>5</option>
+                            <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
+                            <option value="25" {{ $perPage == 25 ? 'selected' : '' }}>25</option>
+                            <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option>
+                            <option value="100" {{ $perPage == 100 ? 'selected' : '' }}>100</option>
+                        </select>
+                        <input type="hidden" name="search" value="{{ $search }}">
+                    </form>
+                </div>
+                <div class="flex items-center">
+                    <form action="{{ route('payrolls.index') }}" method="GET" class="flex items-center">
+                        <label for="search" class="mr-2 text-sm text-gray-600 dark:text-white">Search:</label>
+                        <input type="text" name="search" id="search"
+                            class="block w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                            value="{{ $search }}" placeholder="Search...">
+                        <input type="hidden" name="per_page" value="{{ $perPage }}">
+                    </form>
+                </div>
             </div>
-            <div class="flex items-center">
-                <form action="{{ route('payrolls.index') }}" method="GET" class="flex items-center">
-                    <label for="search" class="mr-2 text-sm text-gray-600 dark:text-white">Search:</label>
-                    <input type="text" name="search" id="search"
-                        class="block w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                        value="{{ $search }}" placeholder="Search...">
-                    <input type="hidden" name="per_page" value="{{ $perPage }}">
-                </form>
-            </div>
-        </div>
-        <!-- End Fitur -->
+            <!-- End Fitur -->
 
             <div class="overflow-x-auto">
                 <table class="w-full overflow-hidden border-collapse rounded-lg">
@@ -119,14 +84,17 @@
                             <th class="px-4 py-3 text-sm font-semibold text-left">Deduction</th>
                             <th class="px-4 py-3 text-sm font-semibold text-left">Net Salary</th>
                             <th class="px-4 py-3 text-sm font-semibold text-left">Date</th>
+                            <th class="px-4 py-3 text-sm font-semibold text-center">Status</th>
+                            <th class="px-4 py-3 text-sm font-semibold text-center">Toggle</th>
                             <th class="px-4 py-3 text-sm font-semibold text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                        @foreach($payrolls as $p)
+                        @foreach ($payrolls as $p)
                             <tr class="transition-colors hover:bg-gray-50 dark:hover:bg-gray-700">
                                 <td class="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{{ $p->id }}</td>
-                                <td class="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{{ $p->employee->name }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{{ $p->employee->name }}
+                                </td>
                                 <td class="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
                                     {{ number_format($p->basic_salary, 0, ',', '.') }}</td>
                                 <td class="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
@@ -136,13 +104,49 @@
                                 <td class="px-4 py-3 font-semibold text-green-600 dark:text-green-400">
                                     {{ number_format($p->net_salary, 0, ',', '.') }}</td>
                                 <td class="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{{ $p->payment_date }}</td>
+                                {{-- STATUS (READ ONLY) --}}
+                                <td class="px-4 py-3 text-center">
+                                    @if ($p->status === 'paid')
+                                        <span class="px-2 py-1 text-xs font-semibold text-green-700 bg-green-100 rounded">
+                                            PAID
+                                        </span>
+                                    @else
+                                        <span class="px-2 py-1 text-xs font-semibold text-gray-700 bg-gray-200 rounded">
+                                            DRAFT
+                                        </span>
+                                    @endif
+                                </td>
+
+                                {{-- TOGGLE BUTTON --}}
+                                <td class="px-4 py-3 text-center">
+                                    @if ($p->status === 'draft')
+                                        <form action="{{ route('payrolls.markPaid', $p->id) }}" method="POST">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button
+                                                class="px-3 py-1 text-xs font-semibold text-white bg-green-600 rounded hover:bg-green-700">
+                                                Paid
+                                            </button>
+                                        </form>
+                                    @else
+                                        <form action="{{ route('payrolls.markDraft', $p->id) }}" method="POST">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button
+                                                class="px-3 py-1 text-xs font-semibold text-gray-600 bg-gray-300 rounded hover:bg-gray-400">
+                                                Draft
+                                            </button>
+                                        </form>
+                                    @endif
+                                </td>
+
                                 <td class="px-4 py-3 text-center">
                                     <div class="flex items-center justify-center gap-2">
                                         <a href="{{ route('payrolls.show', $p->id) }}"
                                             class="px-3 py-1 text-xs font-medium text-white transition bg-blue-500 rounded hover:bg-blue-600">
                                             Detail
                                         </a>
-                                        <a href="{{ route('payrolls.edit', $p->id) }}"
+                                        {{-- <a href="{{ route('payrolls.edit', $p->id) }}"
                                             class="px-3 py-1 text-xs font-medium text-white transition bg-yellow-500 rounded hover:bg-yellow-600">
                                             Edit
                                         </a>
@@ -153,7 +157,31 @@
                                                 class="px-3 py-1 text-xs font-medium text-white transition bg-red-500 rounded hover:bg-red-600">
                                                 Del
                                             </button>
-                                        </form>
+                                        </form> --}}
+                                        @if ($p->status === 'paid')
+                                            <button
+                                                class="px-3 py-1 text-xs font-medium text-gray-400 bg-gray-200 rounded cursor-not-allowed">
+                                                Edit
+                                            </button>
+                                            <button
+                                                class="px-3 py-1 text-xs font-medium text-gray-400 bg-gray-200 rounded cursor-not-allowed">
+                                                Del
+                                            </button>
+                                        @else
+                                            <a href="{{ route('payrolls.edit', $p->id) }}"
+                                                class="px-3 py-1 text-xs font-medium text-white bg-yellow-500 rounded hover:bg-yellow-600">
+                                                Edit
+                                            </a>
+                                            <form action="{{ route('payrolls.destroy', $p->id) }}" method="POST"
+                                                onsubmit="return confirm('Delete payroll?')">
+                                                @csrf @method('DELETE')
+                                                <button
+                                                    class="px-3 py-1 text-xs font-medium text-white bg-red-500 rounded hover:bg-red-600">
+                                                    Del
+                                                </button>
+                                            </form>
+                                        @endif
+
                                     </div>
                                 </td>
                             </tr>
@@ -166,7 +194,8 @@
                 <div>
                     @if ($payrolls->total() > 0)
                         <p class="text-sm text-gray-700 dark:text-white">
-                            Showing {{ $payrolls->firstItem() }} to {{ $payrolls->lastItem() }} of {{ $payrolls->total() }}
+                            Showing {{ $payrolls->firstItem() }} to {{ $payrolls->lastItem() }} of
+                            {{ $payrolls->total() }}
                             entries
                         </p>
                     @endif
@@ -176,7 +205,8 @@
                         <nav role="navigation" aria-label="Pagination Navigation" class="flex items-center">
                             {{-- Previous Page Link --}}
                             @if ($payrolls->onFirstPage())
-                                <span class="px-3 py-1 mr-1 text-gray-400 bg-white border rounded cursor-not-allowed">Prev</span>
+                                <span
+                                    class="px-3 py-1 mr-1 text-gray-400 bg-white border rounded cursor-not-allowed">Prev</span>
                             @else
                                 <a href="{{ $payrolls->previousPageUrl() }}" rel="prev"
                                     class="px-3 py-1 mr-1 text-gray-700 bg-white border rounded hover:bg-gray-50">Prev</a>
@@ -224,7 +254,8 @@
 
                             @foreach ($links as $link)
                                 @if ($link === '...')
-                                    <span class="px-3 py-1 mr-1 text-gray-500 bg-white border rounded">{{ $link }}</span>
+                                    <span
+                                        class="px-3 py-1 mr-1 text-gray-500 bg-white border rounded">{{ $link }}</span>
                                 @elseif ($link == $currentPage)
                                     <span
                                         class="px-3 py-1 mr-1 text-white bg-blue-500 border border-blue-500 rounded">{{ $link }}</span>
@@ -239,7 +270,8 @@
                                 <a href="{{ $payrolls->nextPageUrl() }}" rel="next"
                                     class="px-3 py-1 ml-1 text-gray-700 bg-white border rounded hover:bg-gray-50">Next</a>
                             @else
-                                <span class="px-3 py-1 ml-1 text-gray-400 bg-white border rounded cursor-not-allowed">Next</span>
+                                <span
+                                    class="px-3 py-1 ml-1 text-gray-400 bg-white border rounded cursor-not-allowed">Next</span>
                             @endif
                         </nav>
                     @endif

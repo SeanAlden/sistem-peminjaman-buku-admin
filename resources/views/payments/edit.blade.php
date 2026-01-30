@@ -89,12 +89,12 @@
     @endif
 
     <form action="{{ route('payments.update', $payment) }}" method="POST" class="space-y-3">
-        @csrf 
+        @csrf
         @method('PUT')
 
         <div>
             <label class="block dark:text-gray-200">Employee</label>
-            <select name="employee_id" 
+            <select name="employee_id"
                     class="w-full px-2 py-1 border rounded dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500">
                 <option value="">-- Optional --</option>
                 @foreach($employees as $emp)
@@ -107,7 +107,7 @@
 
         <div>
             <label class="block dark:text-gray-200">Supplier</label>
-            <select name="supplier_id" 
+            <select name="supplier_id"
                     class="w-full px-2 py-1 border rounded dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500">
                 <option value="">-- Optional --</option>
                 @foreach($suppliers as $sup)
@@ -132,7 +132,7 @@
 
         <div>
             <label class="block dark:text-gray-200">Method</label>
-            <select name="method" 
+            <select name="method"
                     class="w-full px-2 py-1 border rounded dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500">
                 <option value="cash" {{ old('method',$payment->method)=='cash'?'selected':'' }}>Cash</option>
                 <option value="transfer" {{ old('method',$payment->method)=='transfer'?'selected':'' }}>Transfer</option>

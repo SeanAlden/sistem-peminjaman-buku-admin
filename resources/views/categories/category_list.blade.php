@@ -3,11 +3,11 @@
 @section('content')
     {{-- 1. Inisialisasi Alpine.js untuk mengelola state modal --}}
     <div x-data="{
-                    showAddModal: false,
-                    showEditModal: false,
-                    editCategory: {}, // Untuk menyimpan data kategori yang akan diedit
-                    editFormUrl: ''   // Untuk menyimpan URL action form edit
-                }" class="container px-4 py-8 mx-auto sm:px-6 lg:px-8">
+        showAddModal: false,
+        showEditModal: false,
+        editCategory: {}, // Untuk menyimpan data kategori yang akan diedit
+        editFormUrl: '' // Untuk menyimpan URL action form edit
+    }" class="container px-4 py-8 mx-auto sm:px-6 lg:px-8">
 
         <div class="flex flex-col items-center justify-between gap-4 mb-6 sm:flex-row">
             <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-300">📚 Daftar Kategori</h1>
@@ -20,14 +20,34 @@
         </div>
 
         @if (session('success'))
-            <div class="px-4 py-3 mb-6 text-green-700 bg-green-100 border border-green-400 rounded" role="alert">
+            <div id="success-alert" class="px-4 py-3 mb-6 text-green-700 bg-green-100 border border-green-400 rounded transition-opacity duration-500"
+                role="alert">
                 {{ session('success') }}
             </div>
+            <script>
+                setTimeout(() => {
+                    const alert = document.getElementById('success-alert');
+                    if (alert) {
+                        alert.classList.add('opacity-0');
+                        setTimeout(() => alert.remove(), 500);
+                    }
+                }, 2000);
+            </script>
         @endif
         @if (session('error'))
-            <div class="px-4 py-3 mb-6 text-red-700 bg-red-100 border border-red-400 rounded" role="alert">
+            <div id="error-alert" class="px-4 py-3 mb-6 text-red-700 bg-red-100 border border-red-400 rounded transition-opacity duration-500"
+                role="alert">
                 {{ session('error') }}
             </div>
+            <script>
+                setTimeout(() => {
+                    const alert = document.getElementById('error-alert');
+                    if (alert) {
+                        alert.classList.add('opacity-0');
+                        setTimeout(() => alert.remove(), 500);
+                    }
+                }, 2000);
+            </script>
         @endif
 
         <!-- Fitur Search dan Items per Page -->
@@ -118,7 +138,8 @@
 
                             <td class="flex items-center gap-4 px-6 py-4 text-sm">
                                 {{-- 3. Tombol "Edit" memanggil fungsi untuk fetch data dan membuka modal --}}
-                                <button @click="
+                                <button
+                                    @click="
                                                             fetch('{{ route('categories.edit', $category->id) }}')
                                                                 .then(response => response.json())
                                                                 .then(data => {
@@ -159,7 +180,8 @@
             <div>
                 @if ($categories->total() > 0)
                     <p class="text-sm text-gray-700 dark:text-gray-300">
-                        Showing {{ $categories->firstItem() }} to {{ $categories->lastItem() }} of {{ $categories->total() }}
+                        Showing {{ $categories->firstItem() }} to {{ $categories->lastItem() }} of
+                        {{ $categories->total() }}
                         entries
                     </p>
                 @endif
@@ -169,7 +191,8 @@
                     <nav role="navigation" aria-label="Pagination Navigation" class="flex items-center">
                         {{-- Previous Page Link --}}
                         @if ($categories->onFirstPage())
-                            <span class="px-3 py-1 mr-1 text-gray-400 bg-white border rounded cursor-not-allowed">Prev</span>
+                            <span
+                                class="px-3 py-1 mr-1 text-gray-400 bg-white border rounded cursor-not-allowed">Prev</span>
                         @else
                             <a href="{{ $categories->previousPageUrl() }}" rel="prev"
                                 class="px-3 py-1 mr-1 text-gray-700 bg-white border rounded hover:bg-gray-50">Prev</a>
@@ -217,9 +240,11 @@
 
                         @foreach ($links as $link)
                             @if ($link === '...')
-                                <span class="px-3 py-1 mr-1 text-gray-500 bg-white border rounded">{{ $link }}</span>
+                                <span
+                                    class="px-3 py-1 mr-1 text-gray-500 bg-white border rounded">{{ $link }}</span>
                             @elseif ($link == $currentPage)
-                                <span class="px-3 py-1 mr-1 text-white bg-blue-500 border border-blue-500 rounded">{{ $link }}</span>
+                                <span
+                                    class="px-3 py-1 mr-1 text-white bg-blue-500 border border-blue-500 rounded">{{ $link }}</span>
                             @else
                                 <a href="{{ $categories->url($link) }}"
                                     class="px-3 py-1 mr-1 text-gray-700 bg-white border rounded hover:bg-gray-50">{{ $link }}</a>
@@ -231,7 +256,8 @@
                             <a href="{{ $categories->nextPageUrl() }}" rel="next"
                                 class="px-3 py-1 ml-1 text-gray-700 bg-white border rounded hover:bg-gray-50">Next</a>
                         @else
-                            <span class="px-3 py-1 ml-1 text-gray-400 bg-white border rounded cursor-not-allowed">Next</span>
+                            <span
+                                class="px-3 py-1 ml-1 text-gray-400 bg-white border rounded cursor-not-allowed">Next</span>
                         @endif
                     </nav>
                 @endif
@@ -259,8 +285,7 @@
                         <label for="description_add"
                             class="block mb-1 font-medium text-gray-700 dark:text-gray-300">Deskripsi</label>
                         <textarea id="description_add" name="description"
-                            class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
-                            required></textarea>
+                            class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600" required></textarea>
                     </div>
                     <div class="flex justify-end pt-4 space-x-2">
                         <button type="button" @click="showAddModal = false"
@@ -283,7 +308,8 @@
                     @csrf
                     @method('PUT')
                     <div>
-                        <label for="name_edit" class="block mb-1 font-medium text-gray-700 dark:text-gray-300">Nama</label>
+                        <label for="name_edit"
+                            class="block mb-1 font-medium text-gray-700 dark:text-gray-300">Nama</label>
                         <input id="name_edit" type="text" name="name" x-model="editCategory.name"
                             class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
                             required>
@@ -292,8 +318,7 @@
                         <label for="description_edit"
                             class="block mb-1 font-medium text-gray-700 dark:text-gray-300">Deskripsi</label>
                         <textarea id="description_edit" name="description" x-model="editCategory.description"
-                            class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
-                            required></textarea>
+                            class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600" required></textarea>
                     </div>
                     <div class="flex justify-end pt-4 space-x-2">
                         <button type="button" @click="showEditModal = false"

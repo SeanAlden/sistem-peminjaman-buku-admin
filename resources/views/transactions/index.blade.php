@@ -5,7 +5,7 @@
     <h2>Transactions</h2>
     <a href="{{ route('transactions.create') }}" class="mb-3 btn btn-primary">+ Add Transaction</a>
 
-    @if(session('success'))
+    @if (session('success'))
     <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
@@ -19,13 +19,13 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($transactions as $t)
+            @foreach ($transactions as $t)
             <tr>
                 <td>{{ $t->reference }}</td>
                 <td>{{ $t->transaction_date }}</td>
                 <td>
                     <ul>
-                        @foreach($t->journalEntries as $entry)
+                        @foreach ($t->journalEntries as $entry)
                         <li>{{ $entry->account->name }} - Debit: {{ $entry->debit }} | Credit: {{ $entry->credit }}</li>
                         @endforeach
                     </ul>
@@ -58,7 +58,7 @@
     </a>
 
     <!-- Success Alert -->
-    @if(session('success'))
+    @if (session('success'))
     <div
         class="px-4 py-3 mb-4 text-green-800 bg-green-100 border border-green-300 rounded-lg dark:bg-green-800 dark:text-green-100">
         {{ session('success') }}
@@ -77,7 +77,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($transactions as $t)
+                @foreach ($transactions as $t)
                 <tr
                     class="transition border-t border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900">
                     <!-- Reference -->
@@ -89,7 +89,7 @@
                     <!-- Entries -->
                     <td class="px-4 py-2 text-gray-800 dark:text-gray-100">
                         <ul class="space-y-1 list-disc list-inside">
-                            @foreach($t->journalEntries as $entry)
+                            @foreach ($t->journalEntries as $entry)
                             <li>
                                 <span class="font-medium">{{ $entry->account->name }}</span>
                                 <span class="text-sm text-gray-600 dark:text-gray-400">
@@ -138,7 +138,7 @@
             Balance</a>
     </div>
 
-    @if(session('success'))
+    @if (session('success'))
     <div class="p-3 mb-4 text-green-800 bg-green-100 rounded">{{ session('success') }}</div>
     @endif
 
@@ -154,14 +154,14 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($transactions as $t)
+                @foreach ($transactions as $t)
                 <tr class="border-t hover:bg-gray-50">
                     <td class="px-4 py-2">{{ $t->reference }}</td>
                     <td class="px-4 py-2">{{ $t->transaction_date->format('Y-m-d') }}</td>
                     <td class="px-4 py-2">{{ \Illuminate\Support\Str::limit($t->description, 50) }}</td>
                     <td class="px-4 py-2">
                         <ul class="text-sm">
-                            @foreach($t->journalEntries as $je)
+                            @foreach ($t->journalEntries as $je)
                             <li>{{ $je->account->code ?? $je->coa_id }} — {{ $je->account->name ?? '-' }}: D {{
                                 number_format($je->debit,2) }} / C {{ number_format($je->credit,2) }}</li>
                             @endforeach
@@ -170,7 +170,7 @@
                     <td class="px-4 py-2 text-center">
                         <a href="{{ route('transactions.show', $t->id) }}"
                             class="px-2 py-1 text-white rounded bg-cyan-600">View</a>
-                        @if(!$t->is_reversal && $t->status !== 'reversed')
+                        @if (!$t->is_reversal && $t->status !== 'reversed')
                         <form action="{{ route('transactions.reverse', $t->id) }}" method="POST" class="inline-block"
                             onsubmit="return confirm('Reverse this transaction?')">
                             @csrf
@@ -232,8 +232,41 @@
         </div>
         <!-- End Fitur -->
 
-        @if(session('success'))
+        {{-- @if (session('success'))
             <div class="p-3 mb-4 text-green-800 bg-green-100 rounded">{{ session('success') }}</div>
+        @endif --}}
+
+        @if (session('success'))
+            <div id="success-alert"
+                class="px-4 py-3 mb-6 text-green-700 bg-green-100 border border-green-400 rounded transition-opacity duration-500"
+                role="alert">
+                {{ session('success') }}
+            </div>
+            <script>
+                setTimeout(() => {
+                    const alert = document.getElementById('success-alert');
+                    if (alert) {
+                        alert.classList.add('opacity-0');
+                        setTimeout(() => alert.remove(), 500);
+                    }
+                }, 2000);
+            </script>
+        @endif
+        @if (session('error'))
+            <div id="error-alert"
+                class="px-4 py-3 mb-6 text-red-700 bg-red-100 border border-red-400 rounded transition-opacity duration-500"
+                role="alert">
+                {{ session('error') }}
+            </div>
+            <script>
+                setTimeout(() => {
+                    const alert = document.getElementById('error-alert');
+                    if (alert) {
+                        alert.classList.add('opacity-0');
+                        setTimeout(() => alert.remove(), 500);
+                    }
+                }, 2000);
+            </script>
         @endif
 
         <div class="overflow-x-auto bg-white rounded shadow dark:bg-gray-600">
@@ -248,17 +281,18 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($transactions as $t)
+                    @foreach ($transactions as $t)
                         <tr class="border-t hover:bg-gray-50 dark:hover:bg-gray-500">
                             <td class="px-4 py-2 text-gray-900 dark:text-gray-200">{{ $t->reference }}</td>
-                            <td class="px-4 py-2 text-gray-900 dark:text-gray-200">{{ $t->transaction_date->format('Y-m-d') }}
+                            <td class="px-4 py-2 text-gray-900 dark:text-gray-200">
+                                {{ $t->transaction_date->format('Y-m-d') }}
                             </td>
                             <td class="px-4 py-2 text-gray-900 dark:text-gray-200">
                                 {{ \Illuminate\Support\Str::limit($t->description, 50) }}
                             </td>
                             <td class="px-4 py-2 text-gray-900 dark:text-gray-200">
                                 <ul class="text-sm">
-                                    @foreach($t->journalEntries as $je)
+                                    @foreach ($t->journalEntries as $je)
                                         <li>{{ $je->account->code ?? $je->coa_id }} — {{ $je->account->name ?? '-' }}: D
                                             {{ number_format($je->debit, 2) }} / C {{ number_format($je->credit, 2) }}
                                         </li>
@@ -268,9 +302,9 @@
                             <td class="px-4 py-2 text-center">
                                 <a href="{{ route('transactions.show', $t->id) }}"
                                     class="px-2 py-1 text-white rounded bg-cyan-600">View</a>
-                                @if(!$t->is_reversal && $t->status !== 'reversed')
-                                    <form action="{{ route('transactions.reverse', $t->id) }}" method="POST" class="inline-block"
-                                        onsubmit="return confirm('Reverse this transaction?')">
+                                @if (!$t->is_reversal && $t->status !== 'reversed')
+                                    <form action="{{ route('transactions.reverse', $t->id) }}" method="POST"
+                                        class="inline-block" onsubmit="return confirm('Reverse this transaction?')">
                                         @csrf
                                         <button class="px-2 py-1 text-white bg-orange-600 rounded">Reverse</button>
                                     </form>
@@ -286,7 +320,8 @@
             <div>
                 @if ($transactions->total() > 0)
                     <p class="text-sm text-gray-700 dark:text-white">
-                        Showing {{ $transactions->firstItem() }} to {{ $transactions->lastItem() }} of {{ $transactions->total() }}
+                        Showing {{ $transactions->firstItem() }} to {{ $transactions->lastItem() }} of
+                        {{ $transactions->total() }}
                         entries
                     </p>
                 @endif
@@ -296,7 +331,8 @@
                     <nav role="navigation" aria-label="Pagination Navigation" class="flex items-center">
                         {{-- Previous Page Link --}}
                         @if ($transactions->onFirstPage())
-                            <span class="px-3 py-1 mr-1 text-gray-400 bg-white border rounded cursor-not-allowed">Prev</span>
+                            <span
+                                class="px-3 py-1 mr-1 text-gray-400 bg-white border rounded cursor-not-allowed">Prev</span>
                         @else
                             <a href="{{ $transactions->previousPageUrl() }}" rel="prev"
                                 class="px-3 py-1 mr-1 text-gray-700 bg-white border rounded hover:bg-gray-50">Prev</a>
@@ -344,9 +380,11 @@
 
                         @foreach ($links as $link)
                             @if ($link === '...')
-                                <span class="px-3 py-1 mr-1 text-gray-500 bg-white border rounded">{{ $link }}</span>
+                                <span
+                                    class="px-3 py-1 mr-1 text-gray-500 bg-white border rounded">{{ $link }}</span>
                             @elseif ($link == $currentPage)
-                                <span class="px-3 py-1 mr-1 text-white bg-blue-500 border border-blue-500 rounded">{{ $link }}</span>
+                                <span
+                                    class="px-3 py-1 mr-1 text-white bg-blue-500 border border-blue-500 rounded">{{ $link }}</span>
                             @else
                                 <a href="{{ $transactions->url($link) }}"
                                     class="px-3 py-1 mr-1 text-gray-700 bg-white border rounded hover:bg-gray-50">{{ $link }}</a>
@@ -358,7 +396,8 @@
                             <a href="{{ $transactions->nextPageUrl() }}" rel="next"
                                 class="px-3 py-1 ml-1 text-gray-700 bg-white border rounded hover:bg-gray-50">Next</a>
                         @else
-                            <span class="px-3 py-1 ml-1 text-gray-400 bg-white border rounded cursor-not-allowed">Next</span>
+                            <span
+                                class="px-3 py-1 ml-1 text-gray-400 bg-white border rounded cursor-not-allowed">Next</span>
                         @endif
                     </nav>
                 @endif
@@ -366,8 +405,8 @@
         </div>
         <!-- End Fitur Pagination -->
 
-        <div class="mt-4">
+        {{-- </div><div class="mt-4">
             {{ $transactions->links() }}
-        </div>
+        </div> --}}
     </div>
 @endsection

@@ -31,8 +31,8 @@
             </div>
             <div>
                 <label class="block dark:text-white">Jumlah</label>
-                <input type="number" name="quantity" min="1" class="w-full p-2 border dark:text-white"
-                    value="{{ $purchase->quantity }}" required>
+                <input type="number" name="initial_quantity" min="1" class="w-full p-2 border dark:text-white"
+                    value="{{ $purchase->initial_quantity }}" required>
             </div>
             <div>
                 <label class="block dark:text-white">Tanggal Pengadaan</label>

@@ -12,7 +12,7 @@
         </form>
     </div>
 
-    @if(session('success'))
+    @if (session('success'))
     <div class="p-2 mb-4 text-green-800 bg-green-200 rounded">
         {{ session('success') }}
     </div>
@@ -55,10 +55,43 @@
         </div>
 
         {{-- Success Message --}}
-        @if(session('success'))
+        {{-- @if (session('success'))
             <div class="p-4 mb-4 text-green-700 bg-green-100 rounded-lg shadow">
                 {{ session('success') }}
             </div>
+        @endif --}}
+
+        @if (session('success'))
+            <div id="success-alert"
+                class="px-4 py-3 mb-6 text-green-700 bg-green-100 border border-green-400 rounded transition-opacity duration-500"
+                role="alert">
+                {{ session('success') }}
+            </div>
+            <script>
+                setTimeout(() => {
+                    const alert = document.getElementById('success-alert');
+                    if (alert) {
+                        alert.classList.add('opacity-0');
+                        setTimeout(() => alert.remove(), 500);
+                    }
+                }, 2000);
+            </script>
+        @endif
+        @if (session('error'))
+            <div id="error-alert"
+                class="px-4 py-3 mb-6 text-red-700 bg-red-100 border border-red-400 rounded transition-opacity duration-500"
+                role="alert">
+                {{ session('error') }}
+            </div>
+            <script>
+                setTimeout(() => {
+                    const alert = document.getElementById('error-alert');
+                    if (alert) {
+                        alert.classList.add('opacity-0');
+                        setTimeout(() => alert.remove(), 500);
+                    }
+                }, 2000);
+            </script>
         @endif
 
         <!-- Fitur Search dan Items per Page -->
@@ -130,7 +163,7 @@
                         <th class="px-6 py-3 text-left">Judul Buku</th>
                         <th class="px-6 py-3 text-left">Kategori</th>
                         <th class="px-6 py-3 text-left">Jumlah Peminjaman</th>
-                        <th class="px-6 py-3 text-left">Prediksi (Skor)</th>
+                        <th class="px-6 py-3 text-left">Prediksi Laku (Skor)</th>
                         <th class="px-6 py-3 text-left">Prediksi (Jumlah Buku Dipinjam Bulan Depan)</th>
                     </tr>
                 </thead>
@@ -166,7 +199,8 @@
             <div>
                 @if ($predictions->total() > 0)
                     <p class="text-sm text-gray-700 dark:text-white">
-                        Showing {{ $predictions->firstItem() }} to {{ $predictions->lastItem() }} of {{ $predictions->total() }}
+                        Showing {{ $predictions->firstItem() }} to {{ $predictions->lastItem() }} of
+                        {{ $predictions->total() }}
                         entries
                     </p>
                 @endif
@@ -176,7 +210,8 @@
                     <nav role="navigation" aria-label="Pagination Navigation" class="flex items-center">
                         {{-- Previous Page Link --}}
                         @if ($predictions->onFirstPage())
-                            <span class="px-3 py-1 mr-1 text-gray-400 bg-white border rounded cursor-not-allowed">Prev</span>
+                            <span
+                                class="px-3 py-1 mr-1 text-gray-400 bg-white border rounded cursor-not-allowed">Prev</span>
                         @else
                             <a href="{{ $predictions->previousPageUrl() }}" rel="prev"
                                 class="px-3 py-1 mr-1 text-gray-700 bg-white border rounded hover:bg-gray-50">Prev</a>
@@ -224,9 +259,11 @@
 
                         @foreach ($links as $link)
                             @if ($link === '...')
-                                <span class="px-3 py-1 mr-1 text-gray-500 bg-white border rounded">{{ $link }}</span>
+                                <span
+                                    class="px-3 py-1 mr-1 text-gray-500 bg-white border rounded">{{ $link }}</span>
                             @elseif ($link == $currentPage)
-                                <span class="px-3 py-1 mr-1 text-white bg-blue-500 border border-blue-500 rounded">{{ $link }}</span>
+                                <span
+                                    class="px-3 py-1 mr-1 text-white bg-blue-500 border border-blue-500 rounded">{{ $link }}</span>
                             @else
                                 <a href="{{ $predictions->url($link) }}"
                                     class="px-3 py-1 mr-1 text-gray-700 bg-white border rounded hover:bg-gray-50">{{ $link }}</a>
@@ -238,7 +275,8 @@
                             <a href="{{ $predictions->nextPageUrl() }}" rel="next"
                                 class="px-3 py-1 ml-1 text-gray-700 bg-white border rounded hover:bg-gray-50">Next</a>
                         @else
-                            <span class="px-3 py-1 ml-1 text-gray-400 bg-white border rounded cursor-not-allowed">Next</span>
+                            <span
+                                class="px-3 py-1 ml-1 text-gray-400 bg-white border rounded cursor-not-allowed">Next</span>
                         @endif
                     </nav>
                 @endif
