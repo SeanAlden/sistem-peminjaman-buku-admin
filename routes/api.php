@@ -5,10 +5,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BookController;
+use App\Http\Controllers\Api\LoanController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\FavoriteController;
 use App\Http\Controllers\Api\CategoryController;
-use App\Http\Controllers\API\LoanController;
 // use App\Http\Controllers\Api\BookDetailController;
 use App\Http\Controllers\Api\ReservationController;
 
