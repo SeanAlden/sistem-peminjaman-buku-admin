@@ -58,7 +58,7 @@
 //             ->groupBy('book_id')
 //             ->pluck('total', 'book_id');
 
-//         // Kembalikan view 
+//         // Kembalikan view
 //         return view('entry_books.entry_books', compact('entries', 'books', 'purchaseStockMap', 'search', 'perPage'));
 //     }
 
@@ -387,6 +387,7 @@ use Illuminate\Support\Facades\Log; // Pastikan ini di-import
 
 class EntryBookController extends Controller
 {
+
     public function index(Request $request)
     {
         Log::info('Mengakses halaman daftar barang masuk.', ['request' => $request->all()]);
