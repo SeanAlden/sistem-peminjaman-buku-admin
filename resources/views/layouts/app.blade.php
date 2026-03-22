@@ -274,14 +274,17 @@
                         window.Echo.channel('notifications')
                                 .listen('.new-notification', (e) => {
                                     console.log('Notif Event Received:', e);
-                                    fetchData();
+                                    {{-- fetchData(); --}}
+                                    // PERBAIKAN FATAL: Wajib menggunakan this.fetchData()
+                                    this.fetchData();
                                 });
                         ">
                             <button @click="openNotif = !openNotif" class="relative">
                                 {{-- <img src="{{ asset('assets/icons/notification.png') }}" alt="Notification"
                                     class="w-6 h-6 transition cursor-pointer hover:scale-110"> --}}
                                 <img :src="$store.theme.dark ? '{{ asset('assets/icons/notification_white.png') }}' : '{{ asset('assets/icons/notification.png') }}'"
-                                    alt="Notification" class=" flex item-center justify-center w-6 h-6 transition cursor-pointer hover:scale-140">
+                                    alt="Notification"
+                                    class=" flex item-center justify-center w-6 h-6 transition cursor-pointer hover:scale-140">
                                 <!-- Badge -->
                                 <span x-show="count > 0" class="absolute -top-3 -right-3 min-w-[20px] h-[20px] flex items-center justify-center
        text-sm font-bold text-white bg-red-600 rounded-full px-2 shadow-xl shadow-red-500/50 border border-white">
@@ -315,9 +318,10 @@
                             {{-- <img @click="openDropdown = !openDropdown"
                                 src="{{ Auth::user()->profile_image ? asset('storage/profile_images/' . Auth::user()->profile_image) : asset('assets/images/profile.png') }}"
                                 alt="Profile"
-                                class="w-10 h-10 transition duration-200 border-2 border-white rounded-full cursor-pointer hover:scale-105"> --}}
+                                class="w-10 h-10 transition duration-200 border-2 border-white rounded-full cursor-pointer hover:scale-105">
+                            --}}
 
-                                <img @click="openDropdown = !openDropdown"
+                            <img @click="openDropdown = !openDropdown"
                                 src="{{ Auth::user()->profile_image ? Storage::disk('s3')->url(Auth::user()->profile_image) : asset('assets/images/profile.png') }}"
                                 alt="Profile"
                                 class="w-10 h-10 transition duration-200 border-2 border-white rounded-full cursor-pointer hover:scale-105">
