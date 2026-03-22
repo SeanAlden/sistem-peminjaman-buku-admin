@@ -337,27 +337,49 @@
         loadHistory();
 
         // 1) Setup Pusher
+        // const pusher = new Pusher("{{ config('broadcasting.connections.pusher.key') }}", {
+        //     cluster: "{{ config('broadcasting.connections.pusher.options.cluster') }}",
+        //     forceTLS: true
+        // });
+
+        // // const channel = pusher.subscribe('chat.' + myId);
+
+        // // UBAH: Subscribe ke channel milik User (Lawan Chat), bukan myId
+        // const channel = pusher.subscribe('chat.' + userId);
+
+        // // channel.bind('message.sent', function (e) {
+        // //     const payload = e.message;
+        // //     appendMessage(payload, payload.from_id === myId);
+        // // });
+
+        // channel.bind('message.sent', function (e) {
+        //     const payload = e.message;
+
+        //     // UBAH: Karena Admin sudah me-render chatnya secara lokal saat form submit,
+        //     // cegah duplikasi chat dengan mengabaikan pesan yang dikirim oleh Admin itu sendiri (myId).
+        //     if (payload.from_id !== myId) {
+        //         appendMessage(payload, false);
+        //     }
+        // });
+
+        // 1) Setup Pusher
         const pusher = new Pusher("{{ config('broadcasting.connections.pusher.key') }}", {
             cluster: "{{ config('broadcasting.connections.pusher.options.cluster') }}",
             forceTLS: true
         });
 
-        // const channel = pusher.subscribe('chat.' + myId);
-
-        // UBAH: Subscribe ke channel milik User (Lawan Chat), bukan myId
-        const channel = pusher.subscribe('chat.' + userId);
-
-        // channel.bind('message.sent', function (e) {
-        //     const payload = e.message;
-        //     appendMessage(payload, payload.from_id === myId);
-        // });
+        // PERBAIKAN 1: Subscribe ke channel milik Admin itu sendiri (myId)
+        // Karena pesan dari Flutter akan di-broadcast ke penerima (Admin)
+        const channel = pusher.subscribe('chat.' + myId);
 
         channel.bind('message.sent', function (e) {
             const payload = e.message;
 
-            // UBAH: Karena Admin sudah me-render chatnya secara lokal saat form submit,
-            // cegah duplikasi chat dengan mengabaikan pesan yang dikirim oleh Admin itu sendiri (myId).
-            if (payload.from_id !== myId) {
+            // PERBAIKAN 2:
+            // - Pastikan pesan bukan dari kita sendiri (mencegah duplikat karena sudah dirender lokal).
+            // - Pastikan pesan yang masuk benar-benar berasal dari user yang SEDANG KITA BUKA chat-nya (userId).
+            // (Agar jika ada User C chat, tidak tiba-tiba nyasar ke layar chat User B).
+            if (payload.from_id !== myId && payload.from_id === userId) {
                 appendMessage(payload, false);
             }
         });
