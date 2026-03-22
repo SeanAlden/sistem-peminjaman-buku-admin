@@ -12,6 +12,7 @@
     @vite('resources/css/app.css')
     @vite(['resources/js/app.js'])
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
 </head>
 
 <body class="bg-gray-100 dark:bg-gray-900">
@@ -267,17 +268,38 @@
                                 .then(data => {
                                     this.notifications = data.notifications;
                                     this.count = data.count;
-                                });
+                                })
+                                .catch(err => console.error('Gagal memuat notif:', err));
+                        },
+                        // Fungsi inisialisasi Pusher secara Native
+                        initPusher() {
+                        // Nyalakan log untuk melihat pergerakan data di Console Browser
+                        Pusher.logToConsole = true;
+
+                        const pusher = new Pusher('{{ config('broadcasting.connections.pusher.key') }}', {
+                        cluster: '{{ config('broadcasting.connections.pusher.options.cluster') }}',
+                        forceTLS: true
+                        });
+
+                        // Subscribe ke channel public 'notifications'
+                        const channel = pusher.subscribe('notifications');
+
+                        // Dengarkan event 'new-notification'
+                        channel.bind('new-notification', (data) => {
+                        console.log('✅ Notifikasi Real-time Masuk:', data);
+                        // Panggil API lagi untuk update angka & list
+                        this.fetchData();
+                        });
                         }
                      }" x-init="
                         fetchData();
-                        window.Echo.channel('notifications')
+                        {{-- window.Echo.channel('notifications')
                                 .listen('.new-notification', (e) => {
                                     console.log('Notif Event Received:', e);
-                                    {{-- fetchData(); --}}
                                     // PERBAIKAN FATAL: Wajib menggunakan this.fetchData()
                                     this.fetchData();
-                                });
+                                }); --}}
+                                initPusher();
                         ">
                             <button @click="openNotif = !openNotif" class="relative">
                                 {{-- <img src="{{ asset('assets/icons/notification.png') }}" alt="Notification"
