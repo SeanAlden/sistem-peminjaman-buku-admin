@@ -362,6 +362,8 @@
         //     }
         // });
 
+        Pusher.logToConsole = true;
+
         // 1) Setup Pusher
         const pusher = new Pusher("{{ config('broadcasting.connections.pusher.key') }}", {
             cluster: "{{ config('broadcasting.connections.pusher.options.cluster') }}",
@@ -373,6 +375,7 @@
         const channel = pusher.subscribe('chat.' + myId);
 
         channel.bind('message.sent', function (e) {
+            console.log("Pusher event diterima:", e);
             const payload = e.message;
 
             // PERBAIKAN 2:
