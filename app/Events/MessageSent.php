@@ -66,6 +66,47 @@
 //     }
 // }
 
+// namespace App\Events;
+
+// use Illuminate\Broadcasting\Channel;
+// use Illuminate\Queue\SerializesModels;
+// use Illuminate\Foundation\Events\Dispatchable;
+// use Illuminate\Broadcasting\InteractsWithSockets;
+// use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
+
+// class MessageSent implements ShouldBroadcastNow
+// {
+//     use Dispatchable, InteractsWithSockets, SerializesModels;
+
+//     public $userId;  // Ubah menjadi $userId (bukan object User)
+//     public $message;
+
+//     // Hapus type hint 'User' agar bisa menerima angka/integer dari Controller
+//     public function __construct($userId, $message)
+//     {
+//         $this->userId = $userId;
+//         $this->message = $message;
+//     }
+
+//     public function broadcastOn()
+//     {
+//         // Langsung gunakan $this->userId
+//         return new Channel('chat.' . $this->userId);
+//     }
+
+//     public function broadcastAs()
+//     {
+//         return 'message.sent';
+//     }
+
+//     public function broadcastWith()
+//     {
+//         return [
+//             'message' => $this->message
+//         ];
+//     }
+// }
+
 namespace App\Events;
 
 use Illuminate\Broadcasting\Channel;
@@ -78,19 +119,27 @@ class MessageSent implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $userId;  // Ubah menjadi $userId (bukan object User)
+    public $userId;
     public $message;
 
-    // Hapus type hint 'User' agar bisa menerima angka/integer dari Controller
-    public function __construct($userId, $message)
+    // Hapus type hint sama sekali, kita akan proses di dalam
+    public function __construct($userOrId, $message)
     {
-        $this->userId = $userId;
+        // PERBAIKAN FATAL: Memaksa mengambil ID saja, apa pun yang dilempar dari Controller
+        if (is_object($userOrId) || is_array($userOrId)) {
+            // Jika Controller secara tidak sengaja melempar Object User, ambil ID-nya
+            $this->userId = (int) (is_object($userOrId) ? $userOrId->id : $userOrId['id']);
+        } else {
+            // Jika Controller benar melempar angka
+            $this->userId = (int) $userOrId;
+        }
+
         $this->message = $message;
     }
 
     public function broadcastOn()
     {
-        // Langsung gunakan $this->userId
+        // Channel name SEKARANG DIJAMIN hanya string seperti "chat.7"
         return new Channel('chat.' . $this->userId);
     }
 
