@@ -388,179 +388,11 @@
         });
 
         // 2) Kirim pesan
-        document.getElementById('chatForm').addEventListener('submit', async function (e) {
-            e.preventDefault();
-            const input = document.getElementById('message');
-            const message = input.value.trim();
-            if (!message) return;
-
-            try {
-                const res = await fetch("{{ route('chat.send', $user->id) }}", {
-                    method: "POST",
-                    headers: {
-                        "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                        "Content-Type": "application/json",
-                        "Accept": "application/json"
-                    },
-                    body: JSON.stringify({ message })
-                });
-
-                if (!res.ok) {
-                    const txt = await res.text();
-                    console.error('Server error', res.status, txt);
-                    return;
-                }
-
-                const json = await res.json();
-
-                if (json.message) {
-                    appendMessage(json.message, json.message.from_id === myId);
-                } else {
-                    // fallback
-                    appendMessage({
-                        from_id: myId,
-                        from: '{{ auth()->user()->name }}',
-                        to_id: {{ $user->id }},
-                        body: message,
-                        created_at: new Date().toISOString()
-                    }, true);
-                }
-                input.value = '';
-
-            } catch (err) {
-                console.error('Failed to send message', err);
-            }
-        });
-
-        // const userId = {{ $user->id }};
-        // const myId = {{ auth()->id() }};
-        // const messagesDiv = document.getElementById('messages');
-
-        // let lastRenderedDate = null;
-
-        // function formatTime(isoString) {
-        //     const date = new Date(isoString);
-        //     return date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false });
-        // }
-
-        // function formatDateDetail(isoString) {
-        //     const date = new Date(isoString);
-        //     return date.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-        // }
-
-        // function getDateString(isoString) {
-        //     const date = new Date(isoString);
-        //     return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
-        // }
-
-        // function appendMessage(payload, meSide = false) {
-        //     const msgDate = getDateString(payload.created_at);
-        //     if (lastRenderedDate !== msgDate) {
-        //         const dateWrapper = document.createElement('div');
-        //         dateWrapper.className = 'flex justify-center my-4';
-
-        //         const dateBadge = document.createElement('span');
-        //         dateBadge.className = 'bg-gray-300 text-gray-700 text-xs px-3 py-1 rounded-full dark:bg-gray-600 dark:text-gray-200';
-        //         dateBadge.textContent = formatDateDetail(payload.created_at);
-
-        //         dateWrapper.appendChild(dateBadge);
-        //         messagesDiv.appendChild(dateWrapper);
-
-        //         lastRenderedDate = msgDate;
-        //     }
-
-        //     const wrapper = document.createElement('div');
-        //     wrapper.className = meSide
-        //         ? 'flex justify-end items-end mb-2 gap-2'
-        //         : 'flex justify-start items-end mb-2 gap-2';
-
-        //     const bubble = document.createElement('div');
-        //     bubble.className = meSide
-        //         ? 'bg-green-500 text-white px-4 py-2 rounded-l-lg rounded-tr-lg max-w-[70%]'
-        //         : 'bg-gray-200 text-black px-4 py-2 rounded-r-lg rounded-tl-lg max-w-[70%] dark:bg-gray-700 dark:text-white';
-
-        //     // Disini appendMessage mengharapkan payload.body
-        //     bubble.textContent = payload.body;
-
-        //     const time = document.createElement('div');
-        //     time.className = 'text-[10px] text-gray-500 dark:text-gray-300 min-w-fit mb-1';
-        //     time.textContent = formatTime(payload.created_at);
-
-        //     if (meSide) {
-        //         wrapper.appendChild(time);
-        //         wrapper.appendChild(bubble);
-        //     } else {
-        //         wrapper.appendChild(bubble);
-        //         wrapper.appendChild(time);
-        //     }
-
-        //     messagesDiv.appendChild(wrapper);
-        //     messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        // }
-
-        // async function loadHistory() {
-        //     try {
-        //         const res = await fetch("{{ route('chat.messages', $user->id) }}");
-        //         const data = await res.json();
-
-        //         lastRenderedDate = null;
-
-        //         data.forEach(m => {
-        //             appendMessage({
-        //                 id: m.id,
-        //                 from_id: m.sender_id,
-        //                 to_id: m.receiver_id,
-        //                 body: m.message,
-        //                 created_at: m.created_at
-        //             }, m.sender_id === myId);
-        //         });
-        //     } catch (err) {
-        //         console.error('Failed to load chat history', err);
-        //     }
-        // }
-
-        // loadHistory();
-
-        // // 1) Setup Pusher
-        // const pusher = new Pusher("{{ config('broadcasting.connections.pusher.key') }}", {
-        //     cluster: "{{ config('broadcasting.connections.pusher.options.cluster') }}",
-        //     forceTLS: true
-        // });
-
-        // // KEMBALIKAN KE myId: Admin listen ke channelnya sendiri agar dapat menerima broadcast dari siapapun
-        // const channel = pusher.subscribe('chat.' + myId);
-
-        // channel.bind('message.sent', function (e) {
-        //     const rawMsg = e.message;
-
-        //     // Abaikan jika pesan ini dari diri kita sendiri (sudah dirender di bawah saat form submit)
-        //     // Note: raw Laravel model memakai 'sender_id', bukan 'from_id'
-        //     if (rawMsg.sender_id === myId) return;
-
-        //     // Mencegah chat nyasar: Pastikan pesan yang masuk berasal dari User yang sedang kita buka chatnya
-        //     if (rawMsg.sender_id !== userId) return;
-
-        //     // FORMATTING: Map properti dari raw Laravel Model ke format yang diterima appendMessage
-        //     const formattedPayload = {
-        //         id: rawMsg.id,
-        //         from_id: rawMsg.sender_id,
-        //         to_id: rawMsg.receiver_id,
-        //         body: rawMsg.message, // <- INI KUNCI PERBAIKANNYA (mapping 'message' ke 'body')
-        //         created_at: rawMsg.created_at
-        //     };
-
-        //     appendMessage(formattedPayload, false);
-        // });
-
-        // // 2) Kirim pesan
         // document.getElementById('chatForm').addEventListener('submit', async function (e) {
         //     e.preventDefault();
         //     const input = document.getElementById('message');
         //     const message = input.value.trim();
         //     if (!message) return;
-
-        //     // Kosongkan input duluan agar responsif
-        //     input.value = '';
 
         //     try {
         //         const res = await fetch("{{ route('chat.send', $user->id) }}", {
@@ -574,33 +406,83 @@
         //         });
 
         //         if (!res.ok) {
-        //             console.error('Server error', res.status);
+        //             const txt = await res.text();
+        //             console.error('Server error', res.status, txt);
         //             return;
         //         }
 
         //         const json = await res.json();
 
         //         if (json.message) {
-        //             // Perbaiki juga bagian ini agar selaras dengan formatting di atas
-        //             const formattedMsg = {
-        //                 id: json.message.id,
-        //                 from_id: json.message.sender_id,
-        //                 body: json.message.message,
-        //                 created_at: json.message.created_at
-        //             };
-        //             appendMessage(formattedMsg, true);
+        //             appendMessage(json.message, json.message.from_id === myId);
         //         } else {
         //             // fallback
         //             appendMessage({
         //                 from_id: myId,
+        //                 from: '{{ auth()->user()->name }}',
+        //                 to_id: {{ $user->id }},
         //                 body: message,
         //                 created_at: new Date().toISOString()
         //             }, true);
         //         }
+        //         input.value = '';
 
         //     } catch (err) {
         //         console.error('Failed to send message', err);
         //     }
         // });
+
+        // 2) Kirim pesan (Optimistic UI Update)
+        document.getElementById('chatForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const input = document.getElementById('message');
+            const messageText = input.value.trim();
+            if (!messageText) return;
+
+            // --- 1. OPTIMISTIC RENDER (Seketika tampil di layar) ---
+            const tempId = 'temp_' + Date.now(); // ID sementara
+            const optimisticPayload = {
+                id: tempId,
+                from_id: myId,
+                from: '{{ auth()->user()->name }}',
+                to_id: userId,
+                body: messageText,
+                created_at: new Date().toISOString() // Waktu lokal browser saat ini
+            };
+
+            // Render ke layar seketika sebagai pesan saya (meSide = true)
+            appendMessage(optimisticPayload, true);
+
+            // --- 2. KOSONGKAN INPUT SEKETIKA ---
+            // Agar user merasa sangat responsif dan bisa langsung mengetik pesan berikutnya
+            input.value = '';
+
+            // --- 3. BACKGROUND SYNC (Kirim diam-diam ke API) ---
+            // Kita tidak pakai 'await' yang memblokir proses luar,
+            // biarkan fetch berjalan sendiri di background (Fire and Forget)
+            fetch("{{ route('chat.send', $user->id) }}", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify({ message: messageText })
+            })
+            .then(async res => {
+                if (!res.ok) {
+                    const txt = await res.text();
+                    console.error('Background Sync Error:', res.status, txt);
+                    // (Opsional) Senior touch: Jika gagal, Anda bisa memanipulasi DOM
+                    // elemen dengan tempId untuk memberi warna merah/tanda seru.
+                }
+                // Jika sukses, kita tidak perlu melakukan apa-apa karena
+                // pesan sudah terlanjur tampil di layar dengan sempurna.
+            })
+            .catch(err => {
+                console.error('Koneksi terputus saat background sync', err);
+            });
+        });
     </script>
 @endsection
