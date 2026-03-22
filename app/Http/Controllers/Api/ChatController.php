@@ -120,7 +120,39 @@ class ChatController extends Controller
     //     return response()->json(['success' => true, 'message' => $payload]);
     // }
 
-    public function sendMessage(Request $request, $otherUserId)
+    // public function sendMessage(Request $request, $otherUserId)
+    // {
+    //     $request->validate([
+    //         'message' => 'required|string|max:5000',
+    //     ]);
+
+    //     $authId = Auth::id();
+
+    //     $message = Message::create([
+    //         'sender_id' => $authId,
+    //         'receiver_id' => $otherUserId,
+    //         'message' => $request->message,
+    //     ]);
+
+    //     $payload = [
+    //         'id' => $message->id,
+    //         'from_id' => $authId,
+    //         'from' => Auth::user()->name,
+    //         'to_id' => $otherUserId,
+    //         'body' => $message->message,
+    //         'created_at' => $message->created_at->toDateTimeString(),
+    //     ];
+
+    //     broadcast(new MessageSent($otherUserId, $payload))->toOthers();
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'message' => $payload,
+    //     ]);
+    // }
+
+    // GANTI $otherUserId menjadi tipe User $user
+    public function sendMessage(Request $request, User $user)
     {
         $request->validate([
             'message' => 'required|string|max:5000',
@@ -130,7 +162,8 @@ class ChatController extends Controller
 
         $message = Message::create([
             'sender_id' => $authId,
-            'receiver_id' => $otherUserId,
+            // Gunakan $user->id
+            'receiver_id' => $user->id,
             'message' => $request->message,
         ]);
 
@@ -138,17 +171,18 @@ class ChatController extends Controller
             'id' => $message->id,
             'from_id' => $authId,
             'from' => Auth::user()->name,
-            'to_id' => $otherUserId,
+            // Gunakan $user->id
+            'to_id' => $user->id,
             'body' => $message->message,
             'created_at' => $message->created_at->toDateTimeString(),
         ];
 
-        broadcast(new MessageSent($otherUserId, $payload))->toOthers();
+        // SEKARANG PASTIKAN HANYA MENGIRIM ID-NYA SAJA (Tipe Integer)
+        broadcast(new MessageSent($user->id, $payload))->toOthers();
 
         return response()->json([
             'success' => true,
             'message' => $payload,
         ]);
     }
-
 }
