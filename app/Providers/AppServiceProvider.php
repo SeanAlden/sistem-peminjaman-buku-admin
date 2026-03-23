@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\URL;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 
@@ -22,9 +23,14 @@ class AppServiceProvider extends ServiceProvider
     {
         //
         Paginator::useTailwind();
-        
+
         if ($this->app->environment('production')) {
-        \URL::forceScheme('https');
-    }
+            \URL::forceScheme('https');
+        }
+
+        // Jika aplikasi berjalan di production/Vercel, paksa SEMUA rute menjadi HTTPS
+        if (env('APP_ENV') !== 'local') {
+            URL::forceScheme('https');
+        }
     }
 }
