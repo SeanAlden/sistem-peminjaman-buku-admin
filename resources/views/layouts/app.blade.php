@@ -13,6 +13,7 @@
     @vite(['resources/js/app.js'])
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body class="bg-gray-100 dark:bg-gray-900">
@@ -389,7 +390,7 @@
                     @yield('content')
                 </main>
             </div>
-            <div x-show="showLogoutConfirm" class="fixed inset-0 z-50 flex items-center justify-center"
+            {{-- <div x-show="showLogoutConfirm" class="fixed inset-0 z-50 flex items-center justify-center"
                 style="display: none; background-color: rgba(0, 0, 0, 0.5);">
                 <div @click.away="showLogoutConfirm = false" class="w-full max-w-md p-6 bg-white rounded shadow-md">
                     <h2 class="mb-4 text-lg font-semibold">Konfirmasi Logout</h2>
@@ -404,7 +405,10 @@
                         </form>
                     </div>
                 </div>
-            </div>
+            </div> --}}
+            <form id="logout-form" action="{{ route('admin.logout') }}" method="POST" style="display: none;">
+                @csrf
+            </form>
     </div>
     {{-- 1. Definisikan Alpine Store di sini --}}
     <script>
@@ -424,6 +428,28 @@
                 localStorage.setItem('darkMode', JSON.stringify(Alpine.store('theme').dark));
             });
         });
+    </script>
+    {{-- Script SweetAlert untuk Logout --}}
+    <script>
+        function confirmLogout() {
+            Swal.fire({
+                title: 'Konfirmasi Logout',
+                text: "Apakah Anda yakin ingin keluar dari sistem?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',   // Warna merah untuk tombol Yes
+                cancelButtonColor: '#6b7280', // Warna abu-abu untuk tombol No
+                confirmButtonText: 'Yes, Logout',
+                cancelButtonText: 'Batal',
+                background: document.documentElement.classList.contains('dark') ? '#1f2937' : '#ffffff', // Dukungan Dark Mode!
+                color: document.documentElement.classList.contains('dark') ? '#ffffff' : '#000000',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Jika user klik Yes, submit form hidden secara otomatis
+                    document.getElementById('logout-form').submit();
+                }
+            })
+        }
     </script>
     {{-- Section scripts dipindah ke sini agar bisa mengakses store --}}
     @yield(section: 'scripts')
