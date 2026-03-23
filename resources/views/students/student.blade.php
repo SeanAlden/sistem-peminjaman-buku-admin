@@ -1,14 +1,8 @@
-@extends('layouts.app')
+{{-- @extends('layouts.app')
 
 @section('content')
     <div class="container mx-auto mt-6">
         <h2 class="mb-4 text-2xl font-bold text-gray-800 dark:text-white">Student List</h2>
-
-        {{-- @if (session('success'))
-            <div class="px-4 py-3 mb-4 text-green-700 bg-green-100 border border-green-400 rounded">
-                {{ session('success') }}
-            </div>
-        @endif --}}
 
         @if (session('success'))
             <div id="success-alert"
@@ -89,33 +83,11 @@
                             <td class="px-6 py-4 dark:text-white">{{ $student->email }}</td>
                             <td class="px-6 py-4 dark:text-white">{{ $student->phone }}</td>
                             <td class="flex px-6 py-4 space-x-2">
-                                {{-- <a href="{{ route('students.show', $student->id) }}"
-                                    class="px-3 py-1 text-sm text-white bg-blue-500 rounded hover:bg-blue-600">View</a>
-                                <a href="{{ route('students.edit', $student->id) }}"
-                                    class="px-3 py-1 text-sm text-white bg-yellow-500 rounded hover:bg-yellow-600">Edit</a>
-                                <form action="{{ route('students.destroy', $student->id) }}" method="POST"
-                                    onsubmit="return confirm('Delete this student?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit"
-                                        class="px-3 py-1 text-sm text-white bg-red-500 rounded hover:bg-red-600">
-                                        Delete
-                                    </button>
-                                </form> --}}
                                 <button onclick='fillViewModal(@json($student))'
                                     class="px-3 py-1 text-sm text-white bg-blue-500 rounded cursor-pointer hover:bg-blue-600">View</button>
 
                                 <button onclick='fillEditModal(@json($student))'
                                     class="px-3 py-1 text-sm text-white bg-yellow-500 rounded cursor-pointer hover:bg-yellow-600">Edit</button>
-                                {{-- <form action="{{ route('students.destroy', $student->id) }}" method="POST"
-                                    onsubmit="return confirm('Delete this student?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit"
-                                        class="px-3 py-1 text-sm text-white bg-red-500 rounded hover:bg-red-600">
-                                        Delete
-                                    </button>
-                                </form> --}}
                                 <form id="deleteForm-{{ $student->id }}"
                                     action="{{ route('students.destroy', $student->id) }}" method="POST">
                                     @csrf
@@ -151,7 +123,6 @@
             <div>
                 @if ($students->hasPages())
                     <nav role="navigation" aria-label="Pagination Navigation" class="flex items-center">
-                        {{-- Previous Page Link --}}
                         @if ($students->onFirstPage())
                             <span
                                 class="px-3 py-1 mr-1 text-gray-400 bg-white border rounded cursor-not-allowed">Prev</span>
@@ -213,7 +184,6 @@
                             @endif
                         @endforeach
 
-                        {{-- Next Page Link --}}
                         @if ($students->hasMorePages())
                             <a href="{{ $students->nextPageUrl() }}" rel="next"
                                 class="px-3 py-1 ml-1 text-gray-700 bg-white border rounded hover:bg-gray-50">Next</a>
@@ -384,5 +354,312 @@
                 document.getElementById('viewDescription').textContent = student.description || '-';
                 openModal('viewModal');
             }
+        </script>
+    @endsection --}}
+
+    @extends('layouts.app')
+
+    @section('content')
+        <div class="container mx-auto mt-6">
+            <h2 class="mb-4 text-2xl font-bold text-gray-800 dark:text-white">Student List</h2>
+
+            @if (session('success'))
+                <div id="success-alert"
+                    class="px-4 py-3 mb-4 text-green-700 transition-opacity duration-500 bg-green-100 border border-green-400 rounded">
+                    {{ session('success') }}
+                </div>
+                <script>
+                    setTimeout(() => {
+                        const alert = document.getElementById('success-alert');
+                        if (alert) {
+                            alert.classList.add('opacity-0');
+                            setTimeout(() => alert.remove(), 500);
+                        }
+                    }, 2000);
+                </script>
+            @endif
+
+            <div class="mb-4">
+                <button onclick="addStudent()"
+                    class="inline-block px-4 py-2 font-semibold text-white bg-blue-600 rounded shadow cursor-pointer hover:bg-blue-700">
+                    + Add Student
+                </button>
+
+                <button onclick="window.location='{{ route('admin.registered_students') }}'"
+                    class="inline-block px-4 py-2 ml-2 font-semibold text-white bg-green-600 rounded shadow cursor-pointer hover:bg-green-700">
+                    Registered Students
+                </button>
+            </div>
+
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center">
+                    <label for="per_page" class="mr-2 text-sm text-gray-600 dark:text-white">Show:</label>
+                    <select name="per_page" id="per_page"
+                        class="block w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="5" {{ $perPage == 5 ? 'selected' : '' }}>5</option>
+                        <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
+                        <option value="25" {{ $perPage == 25 ? 'selected' : '' }}>25</option>
+                        <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option>
+                        <option value="100" {{ $perPage == 100 ? 'selected' : '' }}>100</option>
+                    </select>
+                </div>
+                <div class="flex items-center">
+                    <label for="search" class="mr-2 text-sm text-gray-600 dark:text-white">Search:</label>
+                    <input type="text" name="search" id="search"
+                        class="block w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                        value="{{ $search }}" placeholder="Search by name...">
+                </div>
+            </div>
+
+            <div class="overflow-x-auto bg-white rounded shadow">
+                <table class="min-w-full bg-white dark:bg-gray-600">
+                    <thead class="bg-gray-200">
+                        <tr class="text-sm leading-normal text-gray-700 uppercase">
+                            <th class="px-6 py-3 text-left">Name</th>
+                            <th class="px-6 py-3 text-left">Major</th>
+                            <th class="px-6 py-3 text-left">Email</th>
+                            <th class="px-6 py-3 text-left">Phone</th>
+                            <th class="px-6 py-3 text-left">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body" class="text-sm text-gray-600">
+                        @forelse($students as $student)
+                            <tr class="border-b border-gray-200 hover:bg-gray-100 dark:hover:bg-gray-500">
+                                <td class="px-6 py-4 dark:text-white">{{ $student->name }}</td>
+                                <td class="px-6 py-4 dark:text-white">{{ $student->major }}</td>
+                                <td class="px-6 py-4 dark:text-white">{{ $student->email }}</td>
+                                <td class="px-6 py-4 dark:text-white">{{ $student->phone }}</td>
+                                <td class="flex px-6 py-4 space-x-2">
+                                    <button onclick='viewStudent(@json($student))'
+                                        class="px-3 py-1 text-sm text-white bg-blue-500 rounded cursor-pointer hover:bg-blue-600">View</button>
+                                    <button onclick='editStudent(@json($student))'
+                                        class="px-3 py-1 text-sm text-white bg-yellow-500 rounded cursor-pointer hover:bg-yellow-600">Edit</button>
+                                    <form id="deleteForm-{{ $student->id }}" action="{{ route('students.destroy', $student->id) }}"
+                                        method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button" onclick="deleteStudent({{ $student->id }})"
+                                            class="px-3 py-1 text-sm text-white bg-red-500 rounded cursor-pointer hover:bg-red-600">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="px-6 py-4 text-center text-gray-500">No students found.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="pagination-container" class="flex items-center justify-between mt-4">
+                <div>
+                    @if ($students->total() > 0)
+                        <p class="text-sm text-gray-700 dark:text-white">
+                            Showing {{ $students->firstItem() }} to {{ $students->lastItem() }} of {{ $students->total() }} entries
+                        </p>
+                    @endif
+                </div>
+                <div>
+                    @if ($students->hasPages())
+                        {{ $students->appends(['search' => $search, 'per_page' => $perPage])->links('pagination::tailwind') }}
+                    @endif
+                </div>
+            </div>
+        </div>
+    @endsection
+
+    @section('scripts')
+        <script>
+            /* =========================================
+               1. SWEET ALERT MODALS (CRUD)
+               ========================================= */
+
+            function viewStudent(student) {
+                Swal.fire({
+                    title: 'Student Details',
+                    html: `
+                            <div style="text-align: left; padding: 10px;">
+                                <p class="mb-2"><strong>Name:</strong> ${student.name}</p>
+                                <p class="mb-2"><strong>Major:</strong> ${student.major}</p>
+                                <p class="mb-2"><strong>Email:</strong> ${student.email}</p>
+                                <p class="mb-2"><strong>Phone:</strong> ${student.phone}</p>
+                                <p class="mb-2"><strong>Description:</strong> ${student.description || '-'}</p>
+                            </div>
+                        `,
+                    icon: 'info',
+                    confirmButtonColor: '#3085d6',
+                });
+            }
+
+            function deleteStudent(id) {
+                Swal.fire({
+                    title: 'Confirm Delete',
+                    text: "Are you sure you want to delete this student?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#6b7280',
+                    confirmButtonText: 'Yes, Delete'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById(`deleteForm-${id}`).submit();
+                    }
+                });
+            }
+
+            async function addStudent() {
+                const { value: formValues } = await Swal.fire({
+                    title: 'Add Student',
+                    html:
+                        '<input id="swal-name" class="swal2-input" placeholder="Name" required>' +
+                        '<input id="swal-major" class="swal2-input" placeholder="Major" required>' +
+                        '<input id="swal-email" type="email" class="swal2-input" placeholder="Email" required>' +
+                        '<input id="swal-phone" class="swal2-input" placeholder="Phone" required>' +
+                        '<textarea id="swal-desc" class="swal2-textarea" placeholder="Description"></textarea>',
+                    focusConfirm: false,
+                    showCancelButton: true,
+                    confirmButtonText: 'Save',
+                    confirmButtonColor: '#2563eb',
+                    preConfirm: () => {
+                        return [
+                            document.getElementById('swal-name').value,
+                            document.getElementById('swal-major').value,
+                            document.getElementById('swal-email').value,
+                            document.getElementById('swal-phone').value,
+                            document.getElementById('swal-desc').value
+                        ]
+                    }
+                });
+
+                if (formValues) {
+                    submitDynamicForm('{{ route('students.store') }}', 'POST', formValues);
+                }
+            }
+
+            async function editStudent(student) {
+                const { value: formValues } = await Swal.fire({
+                    title: 'Edit Student',
+                    html:
+                        `<input id="swal-name" class="swal2-input" value="${student.name}" required>` +
+                        `<input id="swal-major" class="swal2-input" value="${student.major}" required>` +
+                        `<input id="swal-email" type="email" class="swal2-input" value="${student.email}" required>` +
+                        `<input id="swal-phone" class="swal2-input" value="${student.phone}" required>` +
+                        `<textarea id="swal-desc" class="swal2-textarea">${student.description || ''}</textarea>`,
+                    focusConfirm: false,
+                    showCancelButton: true,
+                    confirmButtonText: 'Update',
+                    confirmButtonColor: '#ca8a04', // Yellow 600
+                    preConfirm: () => {
+                        return [
+                            document.getElementById('swal-name').value,
+                            document.getElementById('swal-major').value,
+                            document.getElementById('swal-email').value,
+                            document.getElementById('swal-phone').value,
+                            document.getElementById('swal-desc').value
+                        ]
+                    }
+                });
+
+                if (formValues) {
+                    submitDynamicForm(`/admin/students/${student.id}`, 'PUT', formValues);
+                }
+            }
+
+            // Helper untuk submit form dari SweetAlert
+            function submitDynamicForm(url, method, values) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = url;
+
+                form.innerHTML = `
+                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                        ${method === 'PUT' ? '<input type="hidden" name="_method" value="PUT">' : ''}
+                        <input type="hidden" name="name" value="${values[0]}">
+                        <input type="hidden" name="major" value="${values[1]}">
+                        <input type="hidden" name="email" value="${values[2]}">
+                        <input type="hidden" name="phone" value="${values[3]}">
+                        <input type="hidden" name="description" value="${values[4]}">
+                    `;
+                document.body.appendChild(form);
+                form.submit();
+            }
+
+            /* =========================================
+               2. REAL-TIME AJAX (Search & Pagination)
+               ========================================= */
+
+            let debounceTimer;
+            const searchInput = document.getElementById('search');
+            const perPageSelect = document.getElementById('per_page');
+
+            // Event Listener untuk Search (Dengan Debounce)
+            searchInput.addEventListener('input', function () {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    fetchTableData(null, true); // true = reset ke page 1
+                }, 400); // Tunggu 400ms setelah berhenti mengetik
+            });
+
+            // Event Listener untuk Select Per Page
+            perPageSelect.addEventListener('change', function () {
+                fetchTableData(null, true);
+            });
+
+            // Fungsi Utama Pengambil Data
+            function fetchTableData(url = null, resetPage = false) {
+                const searchVal = searchInput.value;
+                const perPageVal = perPageSelect.value;
+
+                // Susun URL jika tidak ada (Bukan klik dari pagination)
+                if (!url) {
+                    const currentUrl = new URL(window.location.href);
+                    currentUrl.searchParams.set('search', searchVal);
+                    currentUrl.searchParams.set('per_page', perPageVal);
+                    if (resetPage) currentUrl.searchParams.set('page', 1);
+                    url = currentUrl.toString();
+                }
+
+                // Ubah URL di Browser (Tanpa reload)
+                window.history.pushState({}, '', url);
+
+                // Fetch data di latar belakang
+                fetch(url, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                    .then(response => response.text())
+                    .then(html => {
+                        // Parsing HTML string menjadi DOM
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+
+                        // Trik Senior: Timpa isi Tbody dan Pagination dengan HTML baru
+                        document.getElementById('table-body').innerHTML = doc.getElementById('table-body').innerHTML;
+
+                        const currentPagination = document.getElementById('pagination-container');
+                        const newPagination = doc.getElementById('pagination-container');
+                        if (currentPagination && newPagination) {
+                            currentPagination.innerHTML = newPagination.innerHTML;
+                            bindPaginationEvents(); // Pasang ulang event listener ke link baru
+                        }
+                    })
+                    .catch(error => console.error('Error fetching data:', error));
+            }
+
+            // Fungsi mencegat klik pagination agar tidak pindah halaman
+            function bindPaginationEvents() {
+                const paginationLinks = document.querySelectorAll('#pagination-container a');
+                paginationLinks.forEach(link => {
+                    link.addEventListener('click', function (e) {
+                        e.preventDefault(); // Cegah reload
+                        fetchTableData(this.href); // Fetch isi halaman tersebut
+                    });
+                });
+            }
+
+            // Inisialisasi binding saat halaman pertama kali diload
+            document.addEventListener('DOMContentLoaded', () => {
+                bindPaginationEvents();
+            });
         </script>
     @endsection

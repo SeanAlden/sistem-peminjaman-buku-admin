@@ -441,8 +441,8 @@
                 cancelButtonColor: '#6b7280', // Warna abu-abu untuk tombol No
                 confirmButtonText: 'Yes, Logout',
                 cancelButtonText: 'Batal',
-                background: document.documentElement.classList.contains('dark') ? '#1f2937' : '#ffffff', // Dukungan Dark Mode!
-                color: document.documentElement.classList.contains('dark') ? '#ffffff' : '#000000',
+                background: document.documentElement.classList.contains('dark') ? '#4C4C4C' : '#ffffff', // Dukungan Dark Mode!
+                color: document.documentElement.classList.contains('dark') ? '#ffffff' : '#4C4C4C',
             }).then((result) => {
                 if (result.isConfirmed) {
                     // Jika user klik Yes, submit form hidden secara otomatis
