@@ -168,7 +168,7 @@
                     </div>
 
                     <div class="px-4 py-3 mt-auto border-t border-orange-700">
-                        <button @click="showLogoutConfirm = true"
+                        <button @click="confirmLogout()"
                             class="flex items-center w-full px-2 py-2 text-left transition-colors cursor-pointer hover:bg-orange-700">
                             <img src="{{ asset('assets/icons/logout.png') }}" class="w-5 h-5" alt="LogOut Icon">
                             <span x-show="sidebarExpanded" class="ml-3">Logout</span>
