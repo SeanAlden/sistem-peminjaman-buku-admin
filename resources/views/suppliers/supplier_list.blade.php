@@ -803,7 +803,7 @@
             });
         }
 
-        // EDIT MODAL (Instan menggunakan @json)
+        // EDIT MODAL (Instan menggunakan json)
         function openEditModal(supplier) {
             Swal.fire({
                 title: 'Edit Supplier',
