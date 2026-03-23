@@ -542,6 +542,7 @@
             // ==========================================
             let debounceTimer;
 
+            // Fungsi Debounce untuk Search (Mencegah spam request)
             function handleSearch() {
                 clearTimeout(debounceTimer);
                 debounceTimer = setTimeout(() => {
@@ -549,27 +550,49 @@
                 }, 300);
             }
 
+            // Fungsi inti untuk mengambil data tanpa reload
             function fetchData(targetUrl = null) {
+                // PERBAIKAN 1: Mencegah error jika targetUrl secara tak sengaja berisi Event browser
+                if (typeof targetUrl !== 'string') {
+                    targetUrl = null;
+                }
+
                 const search = document.getElementById('search').value;
                 const perPage = document.getElementById('per_page').value;
 
-                const url = targetUrl || `{{ route('students.index') }}?search=${encodeURIComponent(search)}&per_page=${perPage}`;
+                // PERBAIKAN 2: Menggunakan Object URL agar parameter pagination, search, dan per_page
+                // selalu tergabung dengan sempurna, tidak peduli tombol apa yang ditekan user.
+                let urlString = targetUrl || `{{ route('students.index') }}`;
+                const urlObj = new URL(urlString, window.location.origin);
 
+                // Paksa suntikkan parameter ke URL
+                urlObj.searchParams.set('search', search);
+                urlObj.searchParams.set('per_page', perPage);
+
+                // Tampilkan efek loading
                 document.getElementById('dynamic-content').style.opacity = '0.5';
 
-                fetch(url, {
+                fetch(urlObj.toString(), {
                     headers: { 'X-Requested-With': 'XMLHttpRequest' }
                 })
-                    .then(response => response.text())
+                    .then(response => {
+                        if (!response.ok) throw new Error("Gagal menghubungi server");
+                        return response.text();
+                    })
                     .then(html => {
+                        // DOM Parsing
                         const parser = new DOMParser();
                         const doc = parser.parseFromString(html, 'text/html');
-                        const newContent = doc.getElementById('dynamic-content').innerHTML;
+                        const dynamicElement = doc.getElementById('dynamic-content');
 
-                        document.getElementById('dynamic-content').innerHTML = newContent;
+                        // PERBAIKAN 3: Null safety check agar tidak crash jika session habis / halaman error
+                        if (dynamicElement) {
+                            document.getElementById('dynamic-content').innerHTML = dynamicElement.innerHTML;
+                        } else {
+                            console.error("Elemen #dynamic-content tidak ditemukan dari response server.");
+                        }
+
                         document.getElementById('dynamic-content').style.opacity = '1';
-
-                        // HAPUS pemanggilan attachPaginationListeners() di sini
                     })
                     .catch(error => {
                         console.error('Error fetching data:', error);
@@ -577,32 +600,32 @@
                     });
             }
 
-            // --- PERBAIKAN FATAL: Gunakan Event Delegation ---
-            // Kita pasang listener SEKALI SAJA di dokumen, lalu cek apakah yang diklik adalah link pagination.
+            // PERBAIKAN 4: EVENT DELEGATION MURNI (Hapus fungsi attachPaginationListeners lama Anda!)
+            // Kita cukup tanam 1 telinga ('listener') di document, ia akan mendengarkan klik selamanya.
             document.addEventListener('click', function (e) {
-                // Cari apakah elemen yang diklik (atau parent-nya) adalah tag <a> di dalam pagination
-                const paginationLink = e.target.closest('#pagination-links a');
+                // Cari tag <a> terdekat dari elemen yang diklik user
+                const link = e.target.closest('a');
 
-                if (paginationLink) {
-                    e.preventDefault(); // Cegah reload halaman
-                    fetchData(paginationLink.href); // Jalankan fetch dengan URL dari link
+                // Jika yang diklik adalah <a> DAN <a> tersebut ada di dalam kotak pagination
+                if (link && link.closest('#pagination-links')) {
+                    e.preventDefault(); // Hentikan sifat asli tombol (reload halaman)
+                    fetchData(link.href); // Panggil AJAX dengan URL halaman tujuan
                 }
             });
 
-            // Menangkap klik pada tombol pagination agar tidak reload halaman
-            function attachPaginationListeners() {
-                const links = document.querySelectorAll('#pagination-links a');
-                links.forEach(link => {
-                    link.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        fetchData(this.href);
-                    });
-                });
-            }
+            // // Menangkap klik pada tombol pagination agar tidak reload halaman
+            // function attachPaginationListeners() {
+            //     const links = document.querySelectorAll('#pagination-links a');
+            //     links.forEach(link => {
+            //         link.addEventListener('click', function (e) {
+            //             e.preventDefault();
+            //             fetchData(this.href);
+            //         });
+            //     });
+            // }
 
             // Pasang listener saat halaman pertama kali dimuat
-            document.addEventListener('DOMContentLoaded', attachPaginationListeners);
-
+            // document.addEventListener('DOMContentLoaded', attachPaginationListeners);
 
             // ==========================================
             // 2. SWEETALERT MODALS LOGIC
@@ -618,19 +641,19 @@
                 Swal.fire({
                     title: 'Student Details',
                     html: `
-                        <div class="space-y-3 text-left text-sm" style="color: ${swalText()}">
-                            <div><strong class="inline-block w-24">Name:</strong> ${student.name}</div>
-                            <div><strong class="inline-block w-24">Major:</strong> ${student.major}</div>
-                            <div><strong class="inline-block w-24">Email:</strong> ${student.email}</div>
-                            <div><strong class="inline-block w-24">Phone:</strong> ${student.phone}</div>
-                            <div>
-                                <strong>Description:</strong>
-                                <div class="p-3 mt-2 overflow-y-auto border rounded bg-gray-50 dark:bg-gray-700 dark:border-gray-600 max-h-40">
-                                    ${student.description || '-'}
+                            <div class="space-y-3 text-left text-sm" style="color: ${swalText()}">
+                                <div><strong class="inline-block w-24">Name:</strong> ${student.name}</div>
+                                <div><strong class="inline-block w-24">Major:</strong> ${student.major}</div>
+                                <div><strong class="inline-block w-24">Email:</strong> ${student.email}</div>
+                                <div><strong class="inline-block w-24">Phone:</strong> ${student.phone}</div>
+                                <div>
+                                    <strong>Description:</strong>
+                                    <div class="p-3 mt-2 overflow-y-auto border rounded bg-gray-50 dark:bg-gray-700 dark:border-gray-600 max-h-40">
+                                        ${student.description || '-'}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    `,
+                        `,
                     background: swalBg(),
                     color: swalText(),
                     confirmButtonColor: '#3b82f6',
@@ -645,30 +668,30 @@
                     background: swalBg(),
                     color: swalText(),
                     html: `
-                        <form id="createForm" action="{{ route('students.store') }}" method="POST" class="text-left text-sm">
-                            @csrf
-                            <div class="mb-3">
-                                <label class="block mb-1 font-medium">Name</label>
-                                <input name="name" required class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600" />
-                            </div>
-                            <div class="mb-3">
-                                <label class="block mb-1 font-medium">Major</label>
-                                <input name="major" required class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600" />
-                            </div>
-                            <div class="mb-3">
-                                <label class="block mb-1 font-medium">Email</label>
-                                <input name="email" type="email" required class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600" />
-                            </div>
-                            <div class="mb-3">
-                                <label class="block mb-1 font-medium">Phone</label>
-                                <input name="phone" type="text" maxlength="12" required class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600" />
-                            </div>
-                            <div class="mb-3">
-                                <label class="block mb-1 font-medium">Description</label>
-                                <textarea name="description" rows="2" class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600"></textarea>
-                            </div>
-                        </form>
-                    `,
+                            <form id="createForm" action="{{ route('students.store') }}" method="POST" class="text-left text-sm">
+                                @csrf
+                                <div class="mb-3">
+                                    <label class="block mb-1 font-medium">Name</label>
+                                    <input name="name" required class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="block mb-1 font-medium">Major</label>
+                                    <input name="major" required class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="block mb-1 font-medium">Email</label>
+                                    <input name="email" type="email" required class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="block mb-1 font-medium">Phone</label>
+                                    <input name="phone" type="text" maxlength="12" required class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="block mb-1 font-medium">Description</label>
+                                    <textarea name="description" rows="2" class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600"></textarea>
+                                </div>
+                            </form>
+                        `,
                     showCancelButton: true,
                     confirmButtonText: 'Save Student',
                     confirmButtonColor: '#2563eb',
@@ -694,31 +717,31 @@
                     background: swalBg(),
                     color: swalText(),
                     html: `
-                        <form id="editForm" action="/admin/students/${student.id}" method="POST" class="text-left text-sm">
-                            @csrf
-                            @method('PUT')
-                            <div class="mb-3">
-                                <label class="block mb-1 font-medium">Name</label>
-                                <input name="name" value="${student.name}" required class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600" />
-                            </div>
-                            <div class="mb-3">
-                                <label class="block mb-1 font-medium">Major</label>
-                                <input name="major" value="${student.major}" required class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600" />
-                            </div>
-                            <div class="mb-3">
-                                <label class="block mb-1 font-medium">Email</label>
-                                <input name="email" type="email" value="${student.email}" required class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600" />
-                            </div>
-                            <div class="mb-3">
-                                <label class="block mb-1 font-medium">Phone</label>
-                                <input name="phone" type="text" value="${student.phone}" maxlength="12" required class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600" />
-                            </div>
-                            <div class="mb-3">
-                                <label class="block mb-1 font-medium">Description</label>
-                                <textarea name="description" rows="2" class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600">${student.description || ''}</textarea>
-                            </div>
-                        </form>
-                    `,
+                            <form id="editForm" action="/admin/students/${student.id}" method="POST" class="text-left text-sm">
+                                @csrf
+                                @method('PUT')
+                                <div class="mb-3">
+                                    <label class="block mb-1 font-medium">Name</label>
+                                    <input name="name" value="${student.name}" required class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="block mb-1 font-medium">Major</label>
+                                    <input name="major" value="${student.major}" required class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="block mb-1 font-medium">Email</label>
+                                    <input name="email" type="email" value="${student.email}" required class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="block mb-1 font-medium">Phone</label>
+                                    <input name="phone" type="text" value="${student.phone}" maxlength="12" required class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="block mb-1 font-medium">Description</label>
+                                    <textarea name="description" rows="2" class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600">${student.description || ''}</textarea>
+                                </div>
+                            </form>
+                        `,
                     showCancelButton: true,
                     confirmButtonText: 'Update Student',
                     confirmButtonColor: '#d97706', // Yellow/Amber
