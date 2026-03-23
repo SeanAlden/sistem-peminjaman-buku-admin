@@ -333,7 +333,7 @@
     </script>
     @endsection --}}
 
-@extends('layouts.app')
+{{-- @extends('layouts.app')
 
 @section('content')
     <div class="container mx-auto mt-6">
@@ -441,7 +441,6 @@
                 <div>
                     @if ($students->hasPages())
                         <nav role="navigation" aria-label="Pagination Navigation" class="flex items-center">
-                            {{-- Previous Page --}}
                             @if ($students->onFirstPage())
                                 <span
                                     class="px-3 py-1 mr-1 text-gray-400 bg-white border rounded cursor-not-allowed">Prev</span>
@@ -450,7 +449,6 @@
                                     class="px-3 py-1 mr-1 text-gray-700 bg-white border rounded hover:bg-gray-50">Prev</a>
                             @endif
 
-                            {{-- Numbers --}}
                             @php
                                 $currentPage = $students->currentPage();
                                 $lastPage = $students->lastPage();
@@ -468,7 +466,6 @@
                                 @endif
                             @endfor
 
-                            {{-- Next Page --}}
                             @if ($students->hasMorePages())
                                 <a href="{{ $students->nextPageUrl() }}"
                                     class="px-3 py-1 ml-1 text-gray-700 bg-white border rounded hover:bg-gray-50">Next</a>
@@ -834,6 +831,423 @@
                 color: swalText(),
                 showCancelButton: true,
                 confirmButtonColor: '#dc2626', // Red
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Yes, Delete'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const form = document.getElementById('globalDeleteForm');
+                    form.action = `/admin/students/${studentId}`;
+                    form.submit();
+                }
+            });
+        }
+    </script>
+@endsection --}}
+
+@extends('layouts.app')
+
+@section('content')
+    <div class="container mx-auto mt-6">
+        <h2 class="mb-4 text-2xl font-bold text-gray-800 dark:text-white">Student List</h2>
+
+        @if (session('success'))
+            <div id="success-alert"
+                class="px-4 py-3 mb-4 text-green-700 transition-opacity duration-500 bg-green-100 border border-green-400 rounded">
+                {{ session('success') }}
+            </div>
+            <script>
+                setTimeout(() => {
+                    const alert = document.getElementById('success-alert');
+                    if (alert) {
+                        alert.classList.add('opacity-0');
+                        setTimeout(() => alert.remove(), 500);
+                    }
+                }, 2000);
+            </script>
+        @endif
+
+        <div class="mb-4">
+            <button onclick="openCreateModal()"
+                class="inline-block px-4 py-2 font-semibold text-white bg-blue-600 rounded shadow cursor-pointer hover:bg-blue-700">
+                + Add Student
+            </button>
+
+            <button onclick="window.location='{{ route('admin.registered_students') }}'"
+                class="inline-block px-4 py-2 ml-2 font-semibold text-white bg-green-600 rounded shadow cursor-pointer hover:bg-green-700">
+                Registered Students
+            </button>
+        </div>
+
+        <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center">
+                <label for="per_page" class="mr-2 text-sm text-gray-600 dark:text-white">Show:</label>
+                <select id="per_page" onchange="fetchData()"
+                    class="block w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                    <option value="5" {{ $perPage == 5 ? 'selected' : '' }}>5</option>
+                    <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
+                    <option value="25" {{ $perPage == 25 ? 'selected' : '' }}>25</option>
+                    <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option>
+                    <option value="100" {{ $perPage == 100 ? 'selected' : '' }}>100</option>
+                </select>
+            </div>
+            <div class="flex items-center">
+                <label for="search" class="mr-2 text-sm text-gray-600 dark:text-white">Search:</label>
+                <input type="text" id="search" oninput="handleSearch()"
+                    class="block w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    value="{{ $search }}" placeholder="Type to search...">
+            </div>
+        </div>
+
+        <div id="dynamic-content">
+            <div class="overflow-x-auto bg-white rounded shadow">
+                <table class="min-w-full bg-white dark:bg-gray-600">
+                    <thead class="bg-gray-200">
+                        <tr class="text-sm leading-normal text-gray-700 uppercase">
+                            <th class="px-6 py-3 text-left">Name</th>
+                            <th class="px-6 py-3 text-left">Major</th>
+                            <th class="px-6 py-3 text-left">Email</th>
+                            <th class="px-6 py-3 text-left">Phone</th>
+                            <th class="px-6 py-3 text-left">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm text-gray-600">
+                        @forelse($students as $student)
+                            <tr class="border-b border-gray-200 hover:bg-gray-100 dark:hover:bg-gray-500">
+                                <td class="px-6 py-4 dark:text-white">{{ $student->name }}</td>
+                                <td class="px-6 py-4 dark:text-white">{{ $student->major }}</td>
+                                <td class="px-6 py-4 dark:text-white">{{ $student->email }}</td>
+                                <td class="px-6 py-4 dark:text-white">{{ $student->phone }}</td>
+                                <td class="flex px-6 py-4 space-x-2">
+                                    <button onclick='openViewModal(@json($student))'
+                                        class="px-3 py-1 text-sm text-white bg-blue-500 rounded cursor-pointer hover:bg-blue-600">View</button>
+
+                                    <button onclick='openEditModal(@json($student))'
+                                        class="px-3 py-1 text-sm text-white bg-yellow-500 rounded cursor-pointer hover:bg-yellow-600">Edit</button>
+
+                                    <button type="button" onclick="openDeleteModal({{ $student->id }})"
+                                        class="px-3 py-1 text-sm text-white bg-red-500 rounded cursor-pointer hover:bg-red-600">Delete</button>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="px-6 py-4 text-center text-gray-500 dark:text-white">
+                                    No students found.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="pagination-links" class="flex items-center justify-between mt-4">
+                <div>
+                    @if ($students->total() > 0)
+                        <p class="text-sm text-gray-700 dark:text-white">
+                            Showing {{ $students->firstItem() }} to {{ $students->lastItem() }} of {{ $students->total() }}
+                            entries
+                        </p>
+                    @endif
+                </div>
+                <div>
+                    @if ($students->hasPages())
+                        <nav role="navigation" aria-label="Pagination Navigation" class="flex items-center">
+                            @if ($students->onFirstPage())
+                                <span class="px-3 py-1 mr-1 text-gray-400 bg-white border rounded cursor-not-allowed">Prev</span>
+                            @else
+                                <a href="{{ $students->previousPageUrl() }}"
+                                    class="px-3 py-1 mr-1 text-gray-700 bg-white border rounded hover:bg-gray-50">Prev</a>
+                            @endif
+
+                            @php
+                                $currentPage = $students->currentPage();
+                                $lastPage = $students->lastPage();
+                                $start = max(1, $currentPage - 2);
+                                $end = min($lastPage, $currentPage + 2);
+                            @endphp
+
+                            @for ($i = $start; $i <= $end; $i++)
+                                @if ($i == $currentPage)
+                                    <span class="px-3 py-1 mr-1 text-white bg-blue-500 border border-blue-500 rounded">{{ $i }}</span>
+                                @else
+                                    <a href="{{ $students->url($i) }}"
+                                        class="px-3 py-1 mr-1 text-gray-700 bg-white border rounded hover:bg-gray-50">{{ $i }}</a>
+                                @endif
+                            @endfor
+
+                            @if ($students->hasMorePages())
+                                <a href="{{ $students->nextPageUrl() }}"
+                                    class="px-3 py-1 ml-1 text-gray-700 bg-white border rounded hover:bg-gray-50">Next</a>
+                            @else
+                                <span class="px-3 py-1 ml-1 text-gray-400 bg-white border rounded cursor-not-allowed">Next</span>
+                            @endif
+                        </nav>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form id="globalDeleteForm" method="POST" style="display: none;">
+        @csrf
+        @method('DELETE')
+    </form>
+@endsection
+
+@section('scripts')
+    <script>
+        // =========================================================
+        // 1. ENGINE SPA (PREFETCH, CACHE, & REAL-TIME SEARCH)
+        // =========================================================
+        const pageCache = {}; // Objek untuk menyimpan HTML di memori browser
+        let currentAbortController = null; // Controller untuk membunuh request lama
+        let debounceTimer;
+
+        // Fungsi Debounce dengan jeda super singkat (100ms) agar terasa Real-Time
+        function handleSearch() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                fetchData();
+            }, 100);
+        }
+
+        // Fungsi Utama Pengambil Data
+        function fetchData(targetUrl = null) {
+            if (typeof targetUrl !== 'string') targetUrl = null;
+
+            const search = document.getElementById('search').value;
+            const perPage = document.getElementById('per_page').value;
+
+            // Bangun URL dengan parameter lengkap
+            let urlString = targetUrl || `{{ route('students.index') }}`;
+            const urlObj = new URL(urlString, window.location.origin);
+            if (window.location.protocol === 'https:') urlObj.protocol = 'https:';
+
+            urlObj.searchParams.set('search', search);
+            urlObj.searchParams.set('per_page', perPage);
+
+            const finalUrl = urlObj.toString();
+
+            // TAHAP 1: CEK MEMORI (0ms Delay)
+            // Jika data sudah ada di cache, render seketika!
+            if (pageCache[finalUrl]) {
+                renderDOM(pageCache[finalUrl]);
+                window.history.pushState({ path: finalUrl }, '', finalUrl);
+                return; // Batalkan proses fetch
+            }
+
+            // TAHAP 2: BUNUH REQUEST LAMA (Anti Race-Condition)
+            if (currentAbortController) {
+                currentAbortController.abort();
+            }
+            currentAbortController = new AbortController();
+
+            // Efek Loading Transisi Tipis
+            document.getElementById('dynamic-content').style.opacity = '0.5';
+
+            // TAHAP 3: FETCH DATA BARU
+            fetch(finalUrl, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                signal: currentAbortController.signal // Ikatkan sinyal pembunuh
+            })
+                .then(response => {
+                    if (!response.ok) throw new Error("Gagal memuat server");
+                    return response.text();
+                })
+                .then(html => {
+                    pageCache[finalUrl] = html; // Simpan ke dalam memori
+                    renderDOM(html);
+                    window.history.pushState({ path: finalUrl }, '', finalUrl); // Ubah URL bar
+                })
+                .catch(error => {
+                    if (error.name !== 'AbortError') {
+                        console.error('Fetch Error:', error);
+                        document.getElementById('dynamic-content').style.opacity = '1';
+                    }
+                });
+        }
+
+        // Ekstraktor HTML
+        function renderDOM(html) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const dynamicElement = doc.getElementById('dynamic-content');
+
+            if (dynamicElement) {
+                document.getElementById('dynamic-content').innerHTML = dynamicElement.innerHTML;
+            }
+            document.getElementById('dynamic-content').style.opacity = '1';
+        }
+
+        // TAHAP 4: INTENT PREDICTION (SIHIR 0ms)
+        // Jika mouse menyentuh tombol paginasi, segera download datanya diam-diam.
+        document.addEventListener('mouseover', function (e) {
+            const link = e.target.closest('#pagination-links a');
+            if (link) {
+                const hoverUrl = link.href;
+                if (!pageCache[hoverUrl]) {
+                    // Download & Simpan ke Cache di background
+                    fetch(hoverUrl, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                        .then(res => res.text())
+                        .then(html => pageCache[hoverUrl] = html)
+                        .catch(() => { }); // Abaikan error prefetch
+                }
+            }
+        });
+
+        // TAHAP 5: EVENT DELEGATION UNTUK KLIK
+        document.addEventListener('click', function (e) {
+            const link = e.target.closest('#pagination-links a');
+            if (link) {
+                e.preventDefault();
+                fetchData(link.href);
+            }
+        });
+
+        // TAHAP 6: HANDLE TOMBOL BACK/FORWARD BROWSER (Sifat Asli SPA)
+        window.addEventListener('popstate', function (e) {
+            if (e.state && e.state.path) {
+                fetchData(e.state.path);
+            } else {
+                fetchData(window.location.href);
+            }
+        });
+
+
+        // =========================================================
+        // 2. SWEETALERT MODALS LOGIC (Tidak Berubah)
+        // =========================================================
+        const isDark = () => document.documentElement.classList.contains('dark');
+        const swalBg = () => isDark() ? '#1f2937' : '#ffffff';
+        const swalText = () => isDark() ? '#ffffff' : '#374151';
+
+        function openViewModal(student) {
+            Swal.fire({
+                title: 'Student Details',
+                html: `
+                        <div class="space-y-3 text-left text-sm" style="color: ${swalText()}">
+                            <div><strong class="inline-block w-24">Name:</strong> ${student.name}</div>
+                            <div><strong class="inline-block w-24">Major:</strong> ${student.major}</div>
+                            <div><strong class="inline-block w-24">Email:</strong> ${student.email}</div>
+                            <div><strong class="inline-block w-24">Phone:</strong> ${student.phone}</div>
+                            <div>
+                                <strong>Description:</strong>
+                                <div class="p-3 mt-2 overflow-y-auto border rounded bg-gray-50 dark:bg-gray-700 dark:border-gray-600 max-h-40">
+                                    ${student.description || '-'}
+                                </div>
+                            </div>
+                        </div>
+                    `,
+                background: swalBg(),
+                color: swalText(),
+                confirmButtonColor: '#3b82f6',
+                confirmButtonText: 'Close'
+            });
+        }
+
+        function openCreateModal() {
+            Swal.fire({
+                title: 'Add New Student',
+                background: swalBg(),
+                color: swalText(),
+                html: `
+                        <form id="createForm" action="{{ route('students.store') }}" method="POST" class="text-left text-sm">
+                            @csrf
+                            <div class="mb-3">
+                                <label class="block mb-1 font-medium">Name</label>
+                                <input name="name" required class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="block mb-1 font-medium">Major</label>
+                                <input name="major" required class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="block mb-1 font-medium">Email</label>
+                                <input name="email" type="email" required class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="block mb-1 font-medium">Phone</label>
+                                <input name="phone" type="text" maxlength="12" required class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="block mb-1 font-medium">Description</label>
+                                <textarea name="description" rows="2" class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600"></textarea>
+                            </div>
+                        </form>
+                    `,
+                showCancelButton: true,
+                confirmButtonText: 'Save Student',
+                confirmButtonColor: '#2563eb',
+                cancelButtonColor: '#6b7280',
+                preConfirm: () => {
+                    const form = document.getElementById('createForm');
+                    if (form.checkValidity()) {
+                        form.submit();
+                        return false;
+                    } else {
+                        form.reportValidity();
+                        return false;
+                    }
+                }
+            });
+        }
+
+        function openEditModal(student) {
+            Swal.fire({
+                title: 'Edit Student',
+                background: swalBg(),
+                color: swalText(),
+                html: `
+                        <form id="editForm" action="/admin/students/${student.id}" method="POST" class="text-left text-sm">
+                            @csrf
+                            @method('PUT')
+                            <div class="mb-3">
+                                <label class="block mb-1 font-medium">Name</label>
+                                <input name="name" value="${student.name}" required class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="block mb-1 font-medium">Major</label>
+                                <input name="major" value="${student.major}" required class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="block mb-1 font-medium">Email</label>
+                                <input name="email" type="email" value="${student.email}" required class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="block mb-1 font-medium">Phone</label>
+                                <input name="phone" type="text" value="${student.phone}" maxlength="12" required class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="block mb-1 font-medium">Description</label>
+                                <textarea name="description" rows="2" class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600">${student.description || ''}</textarea>
+                            </div>
+                        </form>
+                    `,
+                showCancelButton: true,
+                confirmButtonText: 'Update Student',
+                confirmButtonColor: '#d97706',
+                cancelButtonColor: '#6b7280',
+                preConfirm: () => {
+                    const form = document.getElementById('editForm');
+                    if (form.checkValidity()) {
+                        form.submit();
+                        return false;
+                    } else {
+                        form.reportValidity();
+                        return false;
+                    }
+                }
+            });
+        }
+
+        function openDeleteModal(studentId) {
+            Swal.fire({
+                title: 'Confirm Delete',
+                text: "Are you sure you want to delete this student?",
+                icon: 'warning',
+                background: swalBg(),
+                color: swalText(),
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626',
                 cancelButtonColor: '#6b7280',
                 confirmButtonText: 'Yes, Delete'
             }).then((result) => {
