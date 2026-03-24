@@ -686,7 +686,7 @@
             });
         }
 
-        // EDIT MODAL (Data Injection via @json)
+        // EDIT MODAL (Data Injection via json)
         function openEditModal(exitData) {
             Swal.fire({
                 title: 'Edit Barang Keluar',
