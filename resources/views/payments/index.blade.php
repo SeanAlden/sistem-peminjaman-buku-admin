@@ -108,25 +108,16 @@
 </div>
 @endsection --}}
 
-@extends('layouts.app')
+{{-- @extends('layouts.app')
 
 @section('content')
     <div class="container">
         <h2 class="mb-4 text-xl font-bold text-gray-800 dark:text-gray-200">Payments</h2>
 
-        {{-- <a href="{{ route('payments.create') }}"
-            class="inline-block px-4 py-2 mb-3 text-white bg-blue-600 rounded-md hover:bg-blue-700">
-            + New Payment
-        </a> --}}
-
         <button onclick="openCreateModal()"
             class="inline-block px-4 py-2 mb-3 text-white bg-blue-600 rounded-md hover:bg-blue-700">
             + New Payment
         </button>
-
-        {{-- @if (session('success'))
-            <div class="p-3 mb-4 text-green-800 bg-green-100 rounded">{{ session('success') }}</div>
-        @endif --}}
 
         @if (session('success'))
             <div id="success-alert"
@@ -213,8 +204,6 @@
                         <td class="px-3 py-2 text-gray-900 dark:text-gray-100">{{ ucfirst($pay->method) }}</td>
                         <td class="px-3 py-2 text-gray-900 dark:text-gray-100">{{ $pay->notes ?? '-' }}</td>
                         <td class="px-3 py-2">
-                            {{-- <a href="{{ route('payments.edit', $pay) }}"
-                                class="px-2 py-1 text-white bg-yellow-500 rounded">Edit</a> --}}
                             <button type="button" onclick='openEditModal(@json($pay))'
                                 class="px-2 py-1 text-white bg-yellow-500 rounded">
                                 Edit
@@ -444,6 +433,467 @@
 
         function closePaymentModal() {
             document.getElementById('paymentModal').classList.add('hidden');
+        }
+    </script>
+@endsection --}}
+
+@extends('layouts.app')
+
+@section('content')
+    <div class="container px-6 mx-auto mt-10 min-h-screen">
+        <h2 class="mb-6 text-2xl font-bold text-gray-800 dark:text-gray-200">Payments</h2>
+
+        <button onclick="openCreateModal()"
+            class="inline-block px-4 py-2 mb-6 font-medium text-white transition bg-blue-600 rounded-lg shadow-md hover:bg-blue-700">
+            + New Payment
+        </button>
+
+        @if (session('success'))
+            <div id="success-alert"
+                class="px-4 py-3 mb-6 text-green-700 transition-opacity duration-500 bg-green-100 border border-green-400 rounded shadow-sm"
+                role="alert">
+                {{ session('success') }}
+            </div>
+            <script>
+                setTimeout(() => {
+                    const alert = document.getElementById('success-alert');
+                    if (alert) {
+                        alert.classList.add('opacity-0');
+                        setTimeout(() => alert.remove(), 500);
+                    }
+                }, 2000);
+            </script>
+        @endif
+
+        @if (session('error'))
+            <div id="error-alert"
+                class="px-4 py-3 mb-6 text-red-700 transition-opacity duration-500 bg-red-100 border border-red-400 rounded shadow-sm"
+                role="alert">
+                {{ session('error') }}
+            </div>
+            <script>
+                setTimeout(() => {
+                    const alert = document.getElementById('error-alert');
+                    if (alert) {
+                        alert.classList.add('opacity-0');
+                        setTimeout(() => alert.remove(), 500);
+                    }
+                }, 2000);
+            </script>
+        @endif
+
+        <div class="flex flex-col gap-3 mb-4 sm:flex-row sm:items-center sm:justify-between">
+            <div class="flex items-center w-full sm:w-auto">
+                <label for="per_page" class="mr-2 text-sm text-gray-600 dark:text-white">Show:</label>
+                <select id="per_page" onchange="fetchData()"
+                    class="block w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 sm:w-auto">
+                    <option value="5" {{ $perPage == 5 ? 'selected' : '' }}>5</option>
+                    <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
+                    <option value="25" {{ $perPage == 25 ? 'selected' : '' }}>25</option>
+                    <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option>
+                    <option value="100" {{ $perPage == 100 ? 'selected' : '' }}>100</option>
+                </select>
+            </div>
+            <div class="flex items-center w-full sm:w-auto">
+                <label for="search" class="mr-2 text-sm text-gray-600 dark:text-white">Search:</label>
+                <input type="text" id="search" oninput="handleSearch()"
+                    class="block w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 sm:w-64"
+                    value="{{ $search }}" placeholder="Search payments...">
+            </div>
+        </div>
+        <div id="dynamic-content">
+            <div class="overflow-x-auto bg-white rounded-lg shadow-lg dark:bg-gray-800">
+                <table class="min-w-full border border-gray-200 dark:border-gray-700">
+                    <thead class="bg-gray-100 dark:bg-gray-700">
+                        <tr>
+                            <th class="px-4 py-3 font-semibold text-left text-gray-700 dark:text-gray-200">ID</th>
+                            <th class="px-4 py-3 font-semibold text-left text-gray-700 dark:text-gray-200">Employee</th>
+                            <th class="px-4 py-3 font-semibold text-left text-gray-700 dark:text-gray-200">Supplier</th>
+                            <th class="px-4 py-3 font-semibold text-left text-gray-700 dark:text-gray-200">Amount</th>
+                            <th class="px-4 py-3 font-semibold text-left text-gray-700 dark:text-gray-200">Date</th>
+                            <th class="px-4 py-3 font-semibold text-left text-gray-700 dark:text-gray-200">Method</th>
+                            <th class="px-4 py-3 font-semibold text-left text-gray-700 dark:text-gray-200">Notes</th>
+                            <th class="px-4 py-3 font-semibold text-center text-gray-700 dark:text-gray-200">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                        @forelse($payments as $pay)
+                            <tr class="transition-colors bg-white hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700">
+                                <td class="px-4 py-3 text-gray-900 dark:text-gray-100">{{ $pay->id }}</td>
+                                <td class="px-4 py-3 text-gray-900 dark:text-gray-100">{{ $pay->employee?->name ?? '-' }}</td>
+                                <td class="px-4 py-3 text-gray-900 dark:text-gray-100">{{ $pay->supplier?->name ?? '-' }}</td>
+                                <td class="px-4 py-3 font-medium text-green-600 dark:text-green-400">Rp {{ number_format($pay->amount, 2) }}</td>
+                                <td class="px-4 py-3 text-gray-900 dark:text-gray-100">{{ $pay->payment_date }}</td>
+                                <td class="px-4 py-3 text-gray-900 dark:text-gray-100">
+                                    <span class="px-2 py-1 text-xs font-semibold text-indigo-700 bg-indigo-100 rounded-full dark:bg-indigo-900 dark:text-indigo-300">
+                                        {{ ucfirst($pay->method) }}
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3 text-gray-900 dark:text-gray-100">{{ \Illuminate\Support\Str::limit($pay->notes ?? '-', 30) }}</td>
+                                <td class="px-4 py-3 text-center">
+                                    <div class="flex items-center justify-center gap-2">
+                                        <button type="button" onclick='openEditModal(@json($pay))'
+                                            class="px-3 py-1.5 text-xs font-medium text-white transition bg-yellow-500 rounded hover:bg-yellow-600 shadow-sm">
+                                            Edit
+                                        </button>
+                                        <button type="button" onclick="openDeleteModal({{ $pay->id }})"
+                                            class="px-3 py-1.5 text-xs font-medium text-white transition bg-red-600 rounded hover:bg-red-700 shadow-sm">
+                                            Delete
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="8" class="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+                                    No payments found.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="pagination-links" class="flex flex-col items-center justify-between mt-6 sm:flex-row">
+                <div class="mb-4 sm:mb-0">
+                    @if ($payments->total() > 0)
+                        <p class="text-sm text-gray-700 dark:text-gray-300">
+                            Showing {{ $payments->firstItem() }} to {{ $payments->lastItem() }} of {{ $payments->total() }} entries
+                        </p>
+                    @endif
+                </div>
+                <div>
+                    @if ($payments->hasPages())
+                        <nav role="navigation" aria-label="Pagination Navigation" class="flex items-center">
+                            {{-- Previous Page --}}
+                            @if ($payments->onFirstPage())
+                                <span class="px-3 py-1 mr-1 text-gray-400 bg-white border border-gray-300 rounded cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:text-gray-500">Prev</span>
+                            @else
+                                <a href="{{ $payments->previousPageUrl() }}" rel="prev" class="px-3 py-1 mr-1 text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">Prev</a>
+                            @endif
+
+                            @php
+                                $currentPage = $payments->currentPage();
+                                $lastPage = $payments->lastPage();
+                                $start = max(1, $currentPage - 2);
+                                $end = min($lastPage, $currentPage + 2);
+                            @endphp
+
+                            @for ($i = $start; $i <= $end; $i++)
+                                @if ($i == $currentPage)
+                                    <span class="px-3 py-1 mr-1 text-white bg-blue-600 border border-blue-600 rounded dark:bg-blue-600 dark:border-blue-600">{{ $i }}</span>
+                                @else
+                                    <a href="{{ $payments->url($i) }}" class="px-3 py-1 mr-1 text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">{{ $i }}</a>
+                                @endif
+                            @endfor
+
+                            {{-- Next Page --}}
+                            @if ($payments->hasMorePages())
+                                <a href="{{ $payments->nextPageUrl() }}" rel="next" class="px-3 py-1 ml-1 text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">Next</a>
+                            @else
+                                <span class="px-3 py-1 ml-1 text-gray-400 bg-white border border-gray-300 rounded cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:text-gray-500">Next</span>
+                            @endif
+                        </nav>
+                    @endif
+                </div>
+            </div>
+        </div>
+        </div>
+
+    <form id="globalDeleteForm" method="POST" style="display: none;">
+        @csrf
+        @method('DELETE')
+    </form>
+@endsection
+
+@section('scripts')
+    <script>
+        // =========================================================
+        // 1. ENGINE SPA (PREFETCH, CACHE, & REAL-TIME SEARCH)
+        // =========================================================
+        const pageCache = {};
+        let currentAbortController = null;
+        let debounceTimer;
+
+        // Fungsi Debounce untuk Pengetikan Pencarian (100ms super ringan)
+        function handleSearch() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                fetchData();
+            }, 100);
+        }
+
+        // Fetch Data Utama SPA
+        function fetchData(targetUrl = null) {
+            if (typeof targetUrl !== 'string') targetUrl = null;
+
+            const search = document.getElementById('search').value;
+            const perPage = document.getElementById('per_page').value;
+
+            let urlString = targetUrl || `{{ route('payments.index') }}`;
+            const urlObj = new URL(urlString, window.location.origin);
+
+            // Fix Vercel HTTPS Protocol Error (Wajib!)
+            if (window.location.protocol === 'https:') {
+                urlObj.protocol = 'https:';
+            }
+
+            urlObj.searchParams.set('search', search);
+            urlObj.searchParams.set('per_page', perPage);
+
+            const finalUrl = urlObj.toString();
+
+            // Cek Cache untuk memuat seketika tanpa nembak server (0ms Delay)
+            if (pageCache[finalUrl]) {
+                renderDOM(pageCache[finalUrl]);
+                window.history.pushState({ path: finalUrl }, '', finalUrl);
+                return;
+            }
+
+            // Batalkan request usang jika user mengetik super cepat
+            if (currentAbortController) {
+                currentAbortController.abort();
+            }
+            currentAbortController = new AbortController();
+
+            document.getElementById('dynamic-content').style.opacity = '0.5';
+
+            fetch(finalUrl, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                signal: currentAbortController.signal
+            })
+            .then(response => {
+                if (!response.ok) throw new Error("Gagal memuat server");
+                return response.text();
+            })
+            .then(html => {
+                pageCache[finalUrl] = html;
+                renderDOM(html);
+                window.history.pushState({ path: finalUrl }, '', finalUrl);
+            })
+            .catch(error => {
+                if (error.name !== 'AbortError') {
+                    console.error('Fetch Error:', error);
+                    document.getElementById('dynamic-content').style.opacity = '1';
+                }
+            });
+        }
+
+        function renderDOM(html) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const dynamicElement = doc.getElementById('dynamic-content');
+
+            if (dynamicElement) {
+                document.getElementById('dynamic-content').innerHTML = dynamicElement.innerHTML;
+            }
+            document.getElementById('dynamic-content').style.opacity = '1';
+        }
+
+        // INTENT PREDICTION (Hover Fetching)
+        document.addEventListener('mouseover', function (e) {
+            const link = e.target.closest('#pagination-links a');
+            if (link) {
+                const hoverUrlObj = new URL(link.href, window.location.origin);
+                if (window.location.protocol === 'https:') hoverUrlObj.protocol = 'https:';
+                const safeHoverUrl = hoverUrlObj.toString();
+
+                if (!pageCache[safeHoverUrl]) {
+                    fetch(safeHoverUrl, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                        .then(res => res.text())
+                        .then(html => pageCache[safeHoverUrl] = html)
+                        .catch(() => { });
+                }
+            }
+        });
+
+        // EVENT DELEGATION UNTUK PAGINASI
+        document.addEventListener('click', function(e) {
+            const link = e.target.closest('#pagination-links a');
+            if (link) {
+                e.preventDefault();
+                fetchData(link.href);
+            }
+        });
+
+        // SPA Navigation Back/Forward
+        window.addEventListener('popstate', function(e) {
+            if (e.state && e.state.path) {
+                fetchData(e.state.path);
+            } else {
+                fetchData(window.location.href);
+            }
+        });
+
+
+        // =========================================================
+        // 2. SWEETALERT MODALS LOGIC
+        // =========================================================
+        const isDark = () => document.documentElement.classList.contains('dark');
+        const swalBg = () => isDark() ? '#1f2937' : '#ffffff';
+        const swalText = () => isDark() ? '#ffffff' : '#374151';
+
+        // --- Helper untuk merender list opsi Dropdown secara dinamis dari Blade ---
+        function buildEmployeeSelect(selectedId = null) {
+            let options = '<option value="">-- Optional --</option>';
+            @foreach ($employees as $emp)
+                options += `<option value="{{ $emp->id }}" ${selectedId == {{ $emp->id }} ? 'selected' : ''}>{{ addslashes($emp->name) }}</option>`;
+            @endforeach
+            return options;
+        }
+
+        function buildSupplierSelect(selectedId = null) {
+            let options = '<option value="">-- Optional --</option>';
+            @foreach ($suppliers as $sup)
+                options += `<option value="{{ $sup->id }}" ${selectedId == {{ $sup->id }} ? 'selected' : ''}>{{ addslashes($sup->name) }}</option>`;
+            @endforeach
+            return options;
+        }
+        // ------------------------------------------------------------------------
+
+        // MODAL CREATE PAYMENT
+        function openCreateModal() {
+            Swal.fire({
+                title: 'Create Payment',
+                background: swalBg(),
+                color: swalText(),
+                html: `
+                    <form id="createForm" action="{{ route('payments.store') }}" method="POST" class="text-left text-sm space-y-4">
+                        @csrf
+                        <div>
+                            <label class="block mb-1 font-medium">Employee</label>
+                            <select name="employee_id" class="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                ${buildEmployeeSelect()}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block mb-1 font-medium">Supplier</label>
+                            <select name="supplier_id" class="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                ${buildSupplierSelect()}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block mb-1 font-medium">Amount</label>
+                            <input type="number" step="0.01" name="amount" required class="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                        </div>
+                        <div>
+                            <label class="block mb-1 font-medium">Payment Date</label>
+                            <input type="date" name="payment_date" required class="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:[color-scheme:dark]" />
+                        </div>
+                        <div>
+                            <label class="block mb-1 font-medium">Method</label>
+                            <select name="method" class="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                <option value="cash">Cash</option>
+                                <option value="transfer">Transfer</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block mb-1 font-medium">Notes</label>
+                            <textarea name="notes" rows="2" class="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"></textarea>
+                        </div>
+                    </form>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Save Payment',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#2563eb', // Blue-600
+                cancelButtonColor: '#6b7280',
+                preConfirm: () => {
+                    const form = document.getElementById('createForm');
+                    if (form.checkValidity()) {
+                        form.submit();
+                        return false;
+                    } else {
+                        form.reportValidity();
+                        return false;
+                    }
+                }
+            });
+        }
+
+        // MODAL EDIT PAYMENT
+        function openEditModal(payment) {
+            Swal.fire({
+                title: 'Edit Payment #' + payment.id,
+                background: swalBg(),
+                color: swalText(),
+                html: `
+                    <form id="editForm" action="/payments/${payment.id}" method="POST" class="text-left text-sm space-y-4">
+                        @csrf
+                        @method('PUT')
+                        <div>
+                            <label class="block mb-1 font-medium">Employee</label>
+                            <select name="employee_id" class="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                ${buildEmployeeSelect(payment.employee_id)}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block mb-1 font-medium">Supplier</label>
+                            <select name="supplier_id" class="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                ${buildSupplierSelect(payment.supplier_id)}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block mb-1 font-medium">Amount</label>
+                            <input type="number" step="0.01" name="amount" value="${payment.amount}" required class="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                        </div>
+                        <div>
+                            <label class="block mb-1 font-medium">Payment Date</label>
+                            <input type="date" name="payment_date" value="${payment.payment_date}" required class="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:[color-scheme:dark]" />
+                        </div>
+                        <div>
+                            <label class="block mb-1 font-medium">Method</label>
+                            <select name="method" class="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                <option value="cash" ${payment.method === 'cash' ? 'selected' : ''}>Cash</option>
+                                <option value="transfer" ${payment.method === 'transfer' ? 'selected' : ''}>Transfer</option>
+                                <option value="other" ${payment.method === 'other' ? 'selected' : ''}>Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block mb-1 font-medium">Notes</label>
+                            <textarea name="notes" rows="2" class="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">${payment.notes || ''}</textarea>
+                        </div>
+                    </form>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Update Payment',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#d97706', // Yellow-600
+                cancelButtonColor: '#6b7280',
+                preConfirm: () => {
+                    const form = document.getElementById('editForm');
+                    if (form.checkValidity()) {
+                        form.submit();
+                        return false;
+                    } else {
+                        form.reportValidity();
+                        return false;
+                    }
+                }
+            });
+        }
+
+        // MODAL DELETE PAYMENT
+        function openDeleteModal(paymentId) {
+            Swal.fire({
+                title: 'Delete Payment?',
+                text: "Are you sure you want to delete this payment record? This action cannot be undone.",
+                icon: 'warning',
+                background: swalBg(),
+                color: swalText(),
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626', // Red-600
+                cancelButtonColor: '#6b7280',  // Gray-500
+                confirmButtonText: 'Yes, Delete',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const form = document.getElementById('globalDeleteForm');
+                    form.action = `/payments/${paymentId}`; // Eksekusi Delete
+                    form.submit();
+                }
+            });
         }
     </script>
 @endsection
