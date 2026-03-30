@@ -19,7 +19,6 @@ class SupplierController extends Controller
         // dan memastikan nilainya adalah integer
         $perPage = (int) $request->input('per_page', 5);
 
-        // Memulai query pada model Supplier
         // $query = Book::query();
         $query = Supplier::query();
 
