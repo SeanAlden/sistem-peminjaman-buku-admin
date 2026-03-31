@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Auth;
 
 class ReservationController extends Controller
 {
-    // Menampilkan daftar reservasi milik user
     public function index()
     {
         $reservations = Reservation::where('user_id', Auth::id())
