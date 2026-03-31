@@ -17,7 +17,7 @@ class BookController extends Controller
 
         $query = Book::where('status', 'active')->with('category');
 
-        $view = $request->input('view', 'card'); // default ke card
+        $view = $request->input('view', 'card');
 
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
