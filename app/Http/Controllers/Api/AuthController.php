@@ -319,7 +319,6 @@ class AuthController extends Controller
         return response()->json(['message' => 'No image uploaded'], 400);
     }
 
-    // Fungsi untuk mendapatkan data gambar profil
     // public function getProfileImage(Request $request)
     // {
     //     $user = Auth::user();
