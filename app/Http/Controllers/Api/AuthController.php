@@ -179,7 +179,6 @@ class AuthController extends Controller
         ], 201);
     }
 
-    // Fungsi untuk melakukan logout
     public function destroy(Request $request)
     {
         auth()->user()->tokens()->delete();
@@ -189,7 +188,6 @@ class AuthController extends Controller
         ];
     }
 
-    // Fungsi untuk mengupdate data profil
     public function updateProfile(Request $request)
     {
         // /**
@@ -374,7 +372,7 @@ class AuthController extends Controller
     //     return response()->json(['error' => 'No image uploaded'], 400);
     // }
 
-    // public function getProfileImage(Request $request) 
+    // public function getProfileImage(Request $request)
     // {
 
     //     $user = Auth::user();
