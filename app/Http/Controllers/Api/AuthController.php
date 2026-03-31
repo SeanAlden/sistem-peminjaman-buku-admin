@@ -413,7 +413,6 @@ class AuthController extends Controller
         return response()->json(['message' => 'Reset code sent to email.']);
     }
 
-    // Melakukan verifikasi kode dari inputan user
     public function validateVerificationCode(Request $request)
     {
         $request->validate([
