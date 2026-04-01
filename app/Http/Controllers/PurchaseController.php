@@ -109,7 +109,7 @@ class PurchaseController extends Controller
             'supplier_id' => $request->supplier_id,
             'book_id' => $request->book_id,
             'quantity' => $request->quantity,
-            'initial_quantity' => $request->quantity, // isi sama dengan quantity saat pertama kali
+            'initial_quantity' => $request->quantity,
             'purchase_date' => $request->purchase_date,
             'total_price' => $request->total_price,
             'notes' => $request->notes,
