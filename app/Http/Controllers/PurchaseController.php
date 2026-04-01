@@ -56,7 +56,6 @@ class PurchaseController extends Controller
 
         $query = Purchase::with(['supplier', 'book']); // Eager load relasi
 
-        // ... (logika pencarian Anda tidak perlu diubah) ...
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
                 $q->where('total_price', 'like', "%{$search}%")
