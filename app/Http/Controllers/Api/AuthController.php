@@ -21,7 +21,6 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
-    // Fungsi untuk mendaftarkan atau membuat akun baru
     // public function store(Request $request)
     // {
     //     $request->validate([
