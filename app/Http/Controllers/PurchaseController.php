@@ -54,7 +54,7 @@ class PurchaseController extends Controller
         $search = $request->input('search', '');
         $perPage = (int) $request->input('per_page', 5);
 
-        $query = Purchase::with(['supplier', 'book']); // Eager load relasi
+        $query = Purchase::with(['supplier', 'book']);
 
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
