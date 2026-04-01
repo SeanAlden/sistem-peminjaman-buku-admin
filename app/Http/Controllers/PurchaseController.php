@@ -54,7 +54,6 @@ class PurchaseController extends Controller
         $search = $request->input('search', '');
         $perPage = (int) $request->input('per_page', 5);
 
-        // Memulai query pada model Purchase
         $query = Purchase::with(['supplier', 'book']); // Eager load relasi
 
         // ... (logika pencarian Anda tidak perlu diubah) ...
