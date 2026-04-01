@@ -221,7 +221,7 @@ class TransactionController extends Controller
      */
     public function trial_balance()
     {
-        $coins = ChartOfAccount::all(); // will use account model
+        $coins = ChartOfAccount::all(); 
         $entries = \DB::table('journal_entries')
             ->select('coa_id', \DB::raw('SUM(debit) as total_debit'), \DB::raw('SUM(credit) as total_credit'))
             ->groupBy('coa_id')
