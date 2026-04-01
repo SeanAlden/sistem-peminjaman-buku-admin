@@ -85,7 +85,6 @@ class TransactionController extends Controller
         // dan memastikan nilainya adalah integer
         $perPage = (int) $request->input('per_page', 5);
 
-        // Memulai query pada model Supplier
         // $query = Book::query();
         $query = Transaction::with('journalEntries.account')
             ->orderByDesc('transaction_date');
@@ -221,7 +220,7 @@ class TransactionController extends Controller
      */
     public function trial_balance()
     {
-        $coins = ChartOfAccount::all(); 
+        $coins = ChartOfAccount::all();
         $entries = \DB::table('journal_entries')
             ->select('coa_id', \DB::raw('SUM(debit) as total_debit'), \DB::raw('SUM(credit) as total_credit'))
             ->groupBy('coa_id')
