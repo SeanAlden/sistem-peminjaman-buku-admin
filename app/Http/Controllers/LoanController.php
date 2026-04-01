@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\Book;
 use App\Models\Loan;
+use App\Models\Reservation;
 use Illuminate\Http\Request;
-use App\Models\Reservation; // Pastikan Reservation di-import
-use Illuminate\Support\Facades\Log; // Pastikan Log di-import
+use Illuminate\Support\Facades\Log;
 
 class LoanController extends Controller
 {
@@ -90,7 +90,7 @@ class LoanController extends Controller
         } elseif ($now->gt($expectedReturnDate)) {
             $statusNote = 'Overdue';
             $lateDays = $expectedReturnDate->diffInDays($now);
-            $fine = $lateDays * 1000; 
+            $fine = $lateDays * 1000;
         }
 
 
