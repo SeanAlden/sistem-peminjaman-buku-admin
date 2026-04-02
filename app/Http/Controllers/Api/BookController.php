@@ -219,7 +219,6 @@ class BookController extends Controller
             ->with(['category:id,name,description,created_at,updated_at'])
             ->get();
 
-        // 🚀 S3 URL diproses SEKALI
         $baseS3Url = config('filesystems.disks.s3.url');
 
         $books->each(function ($book) use ($baseS3Url) {
