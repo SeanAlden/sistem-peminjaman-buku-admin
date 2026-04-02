@@ -125,7 +125,6 @@ class AdminAuthController extends Controller
 
         if ($request->hasFile('profile_image')) {
 
-            // Hapus foto lama di S3
             if ($user->profile_image) {
                 Storage::disk('s3')->delete($user->profile_image);
             }
