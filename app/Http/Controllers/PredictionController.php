@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\DB;
 
 class PredictionController extends Controller
 {
-    // View Predictions
     public function index(Request $request)
     {
         // Mengambil nilai 'search' dari request, defaultnya string kosong
