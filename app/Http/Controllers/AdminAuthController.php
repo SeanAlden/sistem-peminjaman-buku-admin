@@ -123,7 +123,6 @@ class AdminAuthController extends Controller
             'profile_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        // Jika upload baru
         if ($request->hasFile('profile_image')) {
 
             // Hapus foto lama di S3
