@@ -129,7 +129,6 @@ class AdminAuthController extends Controller
                 Storage::disk('s3')->delete($user->profile_image);
             }
 
-            // Upload baru
             $image = $request->file('profile_image');
             $filename = 'profile_images/' . time() . '_' . Str::random(10) . '.' . $image->getClientOriginalExtension();
 
