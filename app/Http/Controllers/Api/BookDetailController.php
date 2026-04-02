@@ -28,7 +28,7 @@ class BookDetailController extends Controller
                 ->where('book_id', $book->id)
                 ->where('status', 'borrowed')
                 ->exists();
-            
+
             // Cari data reservasi aktif
             $activeReservation = Reservation::where('user_id', $user->id)
                 ->where('book_id', $book->id)
@@ -41,7 +41,6 @@ class BookDetailController extends Controller
             $bookData->active_reservation_status = $activeReservation ? $activeReservation->status : null;
 
         } else {
-            // Default value jika tidak ada user yang login
             $bookData->is_borrowed_by_user = false;
             $bookData->has_active_reservation_by_user = false;
             $bookData->active_reservation_id = null;
