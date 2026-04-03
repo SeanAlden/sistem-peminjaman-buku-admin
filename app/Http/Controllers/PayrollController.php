@@ -39,7 +39,6 @@ class PayrollController extends Controller
             });
         }
 
-        // Lakukan pagination pada hasil query
         // 'appends' digunakan agar parameter 'search' dan 'per_page' tetap ada di URL pagination
         $payrolls = $query->paginate($perPage)->appends($request->except('page'));
 
