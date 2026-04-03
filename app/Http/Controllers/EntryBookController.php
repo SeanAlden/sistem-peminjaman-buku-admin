@@ -383,7 +383,7 @@ use App\Models\Purchase;
 use App\Models\EntryBook;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log; // Pastikan ini di-import
+use Illuminate\Support\Facades\Log;
 
 class EntryBookController extends Controller
 {
