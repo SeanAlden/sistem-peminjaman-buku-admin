@@ -12,7 +12,6 @@ class SupplierController extends Controller
         // $suppliers = Supplier::all();
         // return view('suppliers.supplier_list', compact('suppliers'));
 
-        // Mengambil nilai 'search' dari request, defaultnya string kosong
         $search = $request->input('search', '');
 
         // Mengambil nilai 'per_page' dari request, defaultnya 10
