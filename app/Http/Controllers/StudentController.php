@@ -22,7 +22,6 @@ class StudentController extends Controller
         $query = Student::query();
 
         if (!empty($search)) {
-            // --- HELPER FUZZY SEARCH ---
             // Jika user mengetik "sean", string ini akan menjadi "%s%e%a%n%"
             $fuzzySearch = '%' . implode('%', mb_str_split(str_replace(' ', '', $search))) . '%';
             $query->where(function ($q) use ($search, $fuzzySearch) {
