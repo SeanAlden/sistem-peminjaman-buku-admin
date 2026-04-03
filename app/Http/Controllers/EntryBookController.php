@@ -607,7 +607,7 @@ class EntryBookController extends Controller
             // 4. --- LOGIKA FIFO UNTUK MENGURANGI KUANTITAS ---
             $purchasesToDeduct = Purchase::where('book_id', $book->id)
                 ->where('quantity', '>', 0)
-                ->orderBy('purchase_date', 'asc') // Urutkan dari yang paling lama
+                ->orderBy('purchase_date', 'asc')
                 ->get();
 
             foreach ($purchasesToDeduct as $purchase) {
