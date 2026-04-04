@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    // Menampilkan daftar kategori
     public function index(Request $request)
     {
         // Mengambil nilai 'search' dari request, defaultnya string kosong
