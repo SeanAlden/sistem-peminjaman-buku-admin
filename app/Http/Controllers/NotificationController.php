@@ -129,7 +129,6 @@ class NotificationController extends Controller
         $user = auth()->user();
 
         if ($user->usertype === 'admin') {
-            // Admin: tandai semua notifikasi di tabel
             Notification::where('is_read', false)
                 ->update(['is_read' => true]);
         } else {
