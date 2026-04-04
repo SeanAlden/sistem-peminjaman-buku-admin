@@ -201,7 +201,7 @@ class TransactionController extends Controller
                 $rows[] = [
                     'transaction_id' => $rev->id,
                     'coa_id' => $je->coa_id,
-                    'debit' => $je->credit, // swap
+                    'debit' => $je->credit,
                     'credit' => $je->debit,
                     'created_at' => $now,
                     'updated_at' => $now,
