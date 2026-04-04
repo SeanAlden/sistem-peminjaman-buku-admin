@@ -15,7 +15,7 @@ class ReservationController extends Controller
     public function index()
     {
         $reservations = Reservation::where('user_id', Auth::id())
-            ->with('book:id,title,image_url') // Ambil hanya data buku yang perlu
+            ->with('book:id,title,image_url')
             ->orderBy('created_at', 'desc')
             ->get();
 
