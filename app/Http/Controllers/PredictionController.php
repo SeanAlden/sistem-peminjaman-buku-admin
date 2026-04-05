@@ -146,14 +146,14 @@ class PredictionController extends Controller
             );
         }
 
-        // 🔥 Tambahkan metode prediksi baru
+        // Tambahkan metode prediksi baru
         $this->predictWithDES();
 
         return redirect()->route('predictions.index')->with('success', 'Prediksi berhasil diperbarui.');
     }
 
     /**
-     * 🔮 Double Exponential Smoothing Prediction
+     * Double Exponential Smoothing Prediction
      */
     private function predictWithDES()
     {
