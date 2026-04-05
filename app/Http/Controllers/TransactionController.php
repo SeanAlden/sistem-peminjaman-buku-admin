@@ -89,7 +89,6 @@ class TransactionController extends Controller
         $query = Transaction::with('journalEntries.account')
             ->orderByDesc('transaction_date');
 
-        // Jika ada keyword pencarian, tambahkan kondisi where
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
                 $q->
