@@ -36,7 +36,6 @@ class CategoryController extends Controller
         return view('categories.category_list', compact('categories', 'search', 'perPage'));
     }
 
-    // Form tambah kategori
     public function create()
     {
         return view('categories.add_category');
