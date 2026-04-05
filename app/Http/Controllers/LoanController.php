@@ -16,7 +16,6 @@ class LoanController extends Controller
         $search = $request->input('search', '');
         $perPage = (int) $request->input('per_page', 5);
 
-        // Mengurutkan berdasarkan status 'pending_return' terlebih dahulu
         $query = Loan::with(['book', 'user'])
             ->orderByRaw("FIELD(status, 'pending_return', 'borrowed', 'returned')")
             ->latest();
