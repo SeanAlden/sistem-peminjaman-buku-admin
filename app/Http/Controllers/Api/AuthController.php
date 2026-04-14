@@ -59,7 +59,7 @@ class AuthController extends Controller
         if (!$isStudent) {
             return response()->json([
                 'message' => 'Anda tidak dapat register karena belum terdaftar pada situs peminjaman buku ini.'
-            ], 403); // 403 Forbidden
+            ], 403);
         }
 
         // Cek email unik pada users
