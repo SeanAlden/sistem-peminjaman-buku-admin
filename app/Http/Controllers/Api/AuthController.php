@@ -54,7 +54,6 @@ class AuthController extends Controller
             'password' => 'required|string|confirmed|min:5|max:255'
         ]);
 
-        // Cek apakah email ada di tabel students
         $isStudent = DB::table('students')->where('email', $request->email)->exists();
 
         if (!$isStudent) {
