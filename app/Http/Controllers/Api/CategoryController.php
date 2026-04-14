@@ -23,7 +23,6 @@ class CategoryController extends Controller
     public function show(string $id)
     {
         try {
-            // Menggunakan with('books') untuk Eager Loading
             $category = Category::with('books')->findOrFail($id);
 
             return response()->json([
