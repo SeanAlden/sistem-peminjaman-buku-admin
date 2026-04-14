@@ -62,7 +62,6 @@ class AuthController extends Controller
             ], 403);
         }
 
-        // Cek email unik pada users
         if (User::where('email', $request->email)->exists()) {
             return response()->json([
                 'message' => 'Email sudah digunakan.'
