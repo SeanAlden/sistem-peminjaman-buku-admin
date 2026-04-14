@@ -65,7 +65,7 @@ class AuthController extends Controller
         if (User::where('email', $request->email)->exists()) {
             return response()->json([
                 'message' => 'Email sudah digunakan.'
-            ], 409); // 409 Conflict
+            ], 409);
         }
 
         $user = User::create([
