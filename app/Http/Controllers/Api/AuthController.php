@@ -296,7 +296,6 @@ class AuthController extends Controller
                 'public'
             );
 
-            // Simpan nama file ke database
             $user->profile_image = $filename;
             $user->save();
 
