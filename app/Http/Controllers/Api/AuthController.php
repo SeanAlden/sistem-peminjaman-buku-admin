@@ -287,7 +287,6 @@ class AuthController extends Controller
                 Storage::disk('s3')->delete('profile_images/' . $user->profile_image);
             }
 
-            // Upload baru ke S3
             $image = $request->file('profile_image');
             $filename = time() . '_' . \Illuminate\Support\Str::random(10) . '.' . $image->getClientOriginalExtension();
 
