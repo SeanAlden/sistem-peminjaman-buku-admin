@@ -299,7 +299,6 @@ class AuthController extends Controller
             $user->profile_image = $filename;
             $user->save();
 
-            // Generate URL publik dari S3
             $imageUrl = Storage::disk('s3')->url('profile_images/' . $filename);
 
             return response()->json([
