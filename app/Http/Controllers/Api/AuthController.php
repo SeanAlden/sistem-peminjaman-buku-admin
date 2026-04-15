@@ -290,7 +290,6 @@ class AuthController extends Controller
             $image = $request->file('profile_image');
             $filename = time() . '_' . \Illuminate\Support\Str::random(10) . '.' . $image->getClientOriginalExtension();
 
-            // Upload ke folder profile_images dengan visibility public
             Storage::disk('s3')->put(
                 'profile_images/' . $filename,
                 file_get_contents($image),
