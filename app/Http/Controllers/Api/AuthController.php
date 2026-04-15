@@ -283,7 +283,6 @@ class AuthController extends Controller
 
         if ($request->hasFile('profile_image')) {
 
-            // Hapus gambar lama di S3
             if ($user->profile_image) {
                 Storage::disk('s3')->delete('profile_images/' . $user->profile_image);
             }
