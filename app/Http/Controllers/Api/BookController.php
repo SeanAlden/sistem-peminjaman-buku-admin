@@ -118,7 +118,6 @@ class BookController extends Controller
 
     //     $books->map(function ($book) use ($reservedBookIds) {
 
-    //         // ✅ URL lengkap dari S3
     //         $book->image_url = $book->image_url
     //             ? Storage::disk('s3')->url($book->image_url)
     //             : null;
