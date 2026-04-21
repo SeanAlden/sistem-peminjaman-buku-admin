@@ -379,7 +379,6 @@ class BookController extends Controller
             ->with(['category:id,name,description,created_at,updated_at'])
             ->firstOrFail();
 
-        // Flag turunan (tanpa query)
         $bookData->has_active_reservation_by_user = !is_null($bookData->active_reservation_id);
         // $bookData->has_active_reservation_by_user =
         //     (bool) $bookData->active_reservation_id;
