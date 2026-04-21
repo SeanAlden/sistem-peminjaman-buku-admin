@@ -137,7 +137,6 @@ class BookController extends Controller
     // {
     //     $user = Auth::guard('sanctum')->user();
 
-    //     // Ambil reserved book IDs (jadi set, bukan array biasa)
     //     $reservedBookIds = collect();
 
     //     if ($user) {
