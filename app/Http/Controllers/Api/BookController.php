@@ -122,7 +122,6 @@ class BookController extends Controller
     //             ? Storage::disk('s3')->url($book->image_url)
     //             : null;
 
-    //         // Flag reserved
     //         $book->is_reserved_by_user = in_array($book->id, $reservedBookIds);
 
     //         return $book;
