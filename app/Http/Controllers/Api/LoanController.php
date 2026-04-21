@@ -180,7 +180,7 @@ class LoanController extends Controller
 
         foreach ($admins as $admin) {
             $notif = Notification::create([
-                'user_id' => $admin->id,   // ✅ admin id, valid di tabel users
+                'user_id' => $admin->id,
                 'title' => 'Request Pengembalian',
                 'message' => auth()->user()->name . " meminta pengembalian buku {$loan->book->title}",
             ]);
