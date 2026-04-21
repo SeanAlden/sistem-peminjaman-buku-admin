@@ -386,7 +386,6 @@ class BookController extends Controller
         $bookData->is_borrowed_by_user = (bool) $bookData->is_borrowed_by_user;
 
 
-        // 🚀 S3 URL TANPA EXISTS CHECK
         $baseS3Url = config('filesystems.disks.s3.url');
         $bookData->image_url = $bookData->image_url
             ? $baseS3Url . '/' . $bookData->image_url
