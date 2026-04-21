@@ -120,7 +120,6 @@ class BookController extends Controller
 
     //         // ✅ URL lengkap dari S3
     //         $book->image_url = $book->image_url
-    //             // ? Storage::disk('s3')->url('book_images/' . $book->image_url)
     //             ? Storage::disk('s3')->url($book->image_url)
     //             : null;
 
