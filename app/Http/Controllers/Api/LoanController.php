@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\Validator;
 
 class LoanController extends Controller
 {
-    // ... method store() dan index() tetap sama ...
     public function create(Request $request)
     {
         // $request->validate([
